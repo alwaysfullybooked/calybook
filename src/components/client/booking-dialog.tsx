@@ -148,8 +148,8 @@ export default function BookingDialog({
 
             {currentStep === "success" && (
               <div className="rounded-lg bg-orange-50 p-4 text-orange-800">
-                <p className="font-medium">Booking is pending payment.</p>
-                <p className="mt-2 text-sm">Please complete payment wihin 24 hours.</p>
+                <p className="font-medium">Please complete payment within 1 hour.</p>
+                <p className="mt-2 text-sm">Booking is on hold until payment is confirmed.</p>
                 <div className="mt-4 flex items-center justify-center gap-2">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/320px-LINE_logo.svg.png" alt="Line" className="mx-auto h-16 w-16" />
                   <img
