@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, Phone, Globe } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
 import { format, isSameDay, compareAsc, parseISO } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 
@@ -166,7 +167,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     }, new Map<string, typeof processedInventories>()),
                     ([day, dayInventories], dayIndex) => {
                       const date = safeParseDate(day);
-                      const dateStr = isNaN(date.getTime()) ? "Invalid date" : format(date, "EEEE, MMM d");
+                      const venueTimezone = dayInventories[0]?.timezone ?? "Asia/Bangkok";
+                      const dateStr = isNaN(date.getTime()) ? "Invalid date" : formatInTimeZone(date, venueTimezone, "EEEE, MMM d");
 
                       // Get bookings for this day
                       const dayBookings = bookings.filter((booking) => {
@@ -216,6 +218,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                         price={inventory.price}
                                         currency={inventory.currency}
                                         status={booking?.status ?? ""}
+                                        timezone={inventory.timezone}
                                       />
                                     </div>
                                   );

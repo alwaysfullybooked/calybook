@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
-import { format } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { createBooking } from "@/actions/bookings";
 
 type Step = "details" | "payment" | "success";
@@ -26,6 +26,7 @@ export default function BookingDialog({
   price,
   currency,
   status,
+  timezone,
 }: {
   email: string;
   venueName: string;
@@ -40,6 +41,7 @@ export default function BookingDialog({
   price?: string | null;
   currency?: string | null;
   status: string;
+  timezone: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -121,7 +123,7 @@ export default function BookingDialog({
                 </div>
                 <div className="space-y-2">
                   <Label>Date & Time</Label>
-                  <Input value={`${date} ${format(startDatetime, "HH:mm")} - ${format(endDatetime, "HH:mm")}`} disabled />
+                  <Input value={`${date} ${formatInTimeZone(startDatetime, timezone, "HH:mm")} - ${formatInTimeZone(endDatetime, timezone, "HH:mm")}`} disabled />
                 </div>
                 {price && currency && (
                   <div className="space-y-2">
