@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
-import { formatDateInTimeZone } from "@/lib/utils/dateWithTZ";
+import { format, toZonedTime } from "date-fns-tz";
 
 type Step = "details" | "payment" | "success";
 
@@ -62,7 +62,7 @@ export default function BookingDialog({
       if (!price || !currency) return;
       setIsLoading(true);
       try {
-        await createBooking(email, serviceId, serviceName, serviceType, serviceIndoor, price, currency, startDatetime, endDatetime, notes);
+        await createBooking(email, serviceId, serviceName, serviceType, serviceIndoor, price, currency, new Date(startDatetime), new Date(endDatetime), timezone, notes);
         setCurrentStep("success");
       } finally {
         setIsLoading(false);
@@ -98,11 +98,11 @@ export default function BookingDialog({
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className={`${status === "pending" ? "bg-orange-300" : status === "confirmed" ? "bg-red-300" : "bg-green-300 hover:bg-green-500"}`}
+          className={`${status === "pending" ? "bg-orange-300" : status === "confirmed" ? "bg-red-300" : "bg-green-500 hover:bg-green-600 text-white"}`}
           onClick={() => setIsOpen(true)}
           disabled={status === "confirmed" || status === "pending"}
         >
-          {serviceName}
+          {status === "pending" ? "Pending payment" : status === "confirmed" ? "Booked" : "Book"}
         </Button>
       </DialogTrigger>
       <DialogPortal>
@@ -125,7 +125,7 @@ export default function BookingDialog({
                 </div>
                 <div className="space-y-2">
                   <Label>Date & Time</Label>
-                  <Input value={`${date} ${formatDateInTimeZone(startDatetime, timezone, "HH:mm")} - ${formatDateInTimeZone(endDatetime, timezone, "HH:mm")}`} disabled />
+                  <Input value={`${date} ${format(toZonedTime(new Date(startDatetime), timezone), "HH:mm")} - ${format(toZonedTime(new Date(endDatetime), timezone), "HH:mm")}`} disabled />
                 </div>
                 {price && currency && (
                   <div className="space-y-2">

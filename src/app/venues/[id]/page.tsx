@@ -5,28 +5,34 @@ import { Calendar, MapPin, Phone, Globe } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
-import { formatDateInTimeZone, isSameDayInTimeZone, compareDatesInTimeZone, parseDateInTimeZone } from "@/lib/utils/dateWithTZ";
+import { format, parseISO, getHours, addMinutes } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
-// Helper function to safely parse dates
-const safeParseDate = (date: string | number | Date, tz: string): Date => {
-  return parseDateInTimeZone(date, tz);
+type InventoryWithPayment = {
+  id: string;
+  serviceId: string;
+  startDatetime: Date;
+  endDatetime: Date;
+  timezone: string;
+  price: string | null;
+  currency: string | null;
+  createdById: string;
+  createdAt: Date;
+  paymentImage: string;
+  date: string; // YYYY-MM-DD
+  startHourNumber: string;
+  endHourNumber: string;
 };
 
 export default async function VenuePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
 
-  // If not authenticated, redirect to login with callback URL
-  if (!session?.user) {
-    redirect(`/login?callbackUrl=/venues/${id}`);
-  }
-
-  if (!session.user.email) {
+  if (!session?.user?.email) {
     redirect(`/login?callbackUrl=/venues/${id}`);
   }
 
   const email = session.user.email;
-
   const venue = await alwaysbookbooked.venues.search(id);
 
   if (!venue) {
@@ -41,53 +47,73 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const services = venue?.services ?? [];
   const bookings = services.flatMap((service) => service.bookings);
   const timeslots = services.flatMap((service) => service.timeslots);
-  const inventories = services.flatMap((service) => service.inventories).sort((a, b) => compareDatesInTimeZone(a.startDatetime, b.startDatetime, a.timezone ?? "Asia/Bangkok"));
+  const inventories = services.flatMap((service) => service.inventories);
 
+  // Create services map for quick lookup
   const servicesMap = services.reduce((acc, service) => {
-    acc[service.id] = service.name;
+    acc[service.id] = service;
     return acc;
-  }, {} as Record<string, string>);
+  }, {} as Record<string, (typeof services)[number]>);
 
-  // Create a map of time to payment image
+  // Create payment map
   const paymentMap = payments.blobs.reduce((acc: Record<string, string>, blob) => {
-    const time = blob.pathname.split("/").pop()?.split(".")[0] ?? "";
-    acc[time] = blob.url;
+    const key = blob.pathname.split("/").pop()?.split(".")[0] ?? "";
+    acc[key] = blob.url;
     return acc;
   }, {});
 
-  // Create timeslots map with serviceId and startTime
+  // Create timeslots map
   const timeslotsMap = timeslots.reduce((acc, timeslot) => {
-    const startTimeStr = timeslot.startTime.split(":")[0];
-    const endTimeStr = timeslot.endTime.split(":")[0];
-
-    if (!startTimeStr || !endTimeStr) return acc;
-
-    const startTime = parseInt(startTimeStr);
-    const endTime = parseInt(endTimeStr);
-
-    for (let hour = startTime; hour <= endTime; hour++) {
-      const timeKey = `${hour.toString().padStart(2, "0")}:00`;
-      acc[`${timeslot.serviceId}|${timeKey}`] = timeslot;
+    for (let hour = parseInt(timeslot.startTime); hour <= parseInt(timeslot.endTime); hour++) {
+      const timeKey = `${timeslot.serviceId}|${hour.toString().padStart(2, "0")}:00`;
+      acc[timeKey] = timeslot;
     }
     return acc;
   }, {} as Record<string, (typeof timeslots)[number]>);
 
-  // Process inventories to include payment and pricing info
+  // Process inventories with timezone info
   const processedInventories = inventories.map((inventory) => {
-    const startHour = formatDateInTimeZone(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok", "HH:mm");
-    const timeslotKey = `${inventory.serviceId}|${startHour}`;
+    const zonedStartDate = toZonedTime(inventory.startDatetime, inventory.timezone);
+    const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
+    const dateKey = format(zonedStartDate, "yyyyMMdd");
+    const startHour = getHours(zonedStartDate);
+    const endHour = getHours(zonedEndDate);
+
+    // Find corresponding timeslot price
+    const startHourStr = String(startHour).padStart(2, "0");
+    const endHourStr = String(endHour).padStart(2, "0");
+    const timeslotKey = `${inventory.serviceId}|${startHourStr}:00`;
     const timeslot = timeslotsMap[timeslotKey];
 
+    // Get payment image
     const priceKey = timeslot ? `scan-${timeslot.price}-thb` : "";
     const paymentImage = paymentMap[priceKey] ?? "";
 
     return {
       ...inventory,
       paymentImage,
-      price: inventory.price ?? timeslot?.price ?? null,
-      currency: inventory.currency ?? timeslot?.currency ?? null,
-    };
+      date: dateKey,
+      startHourNumber: `${startHourStr}:00`,
+      endHourNumber: `${endHourStr}:00`,
+      priceKey,
+    } as InventoryWithPayment;
   });
+
+  // Group by date
+  const inventoriesByDate = processedInventories.reduce((acc, inventory) => {
+    const date = inventory.date;
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(inventory);
+    return acc;
+  }, {} as Record<string, InventoryWithPayment[]>);
+
+  // Get all unique dates from both bookings and inventories
+  const allDates = new Set([...bookings.map((b) => format(toZonedTime(b.startDatetime, b.timezone), "yyyyMMdd")), ...Object.keys(inventoriesByDate)]);
+
+  // Sort dates
+  const sortedDates = Array.from(allDates).sort();
 
   return (
     <main className="container mx-auto px-4 py-4 sm:py-6 md:py-8">
@@ -130,6 +156,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                 Reviews
               </TabsTrigger>
             </TabsList>
+
             <TabsContent value="services">
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {services.map((service) => (
@@ -144,93 +171,107 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                 ))}
               </div>
             </TabsContent>
+
             <TabsContent value="availability">
               <div className="mt-4">
                 <div className="mb-4 flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-gray-500" />
                   <span className="font-medium text-sm sm:text-base">Available Times</span>
                 </div>
-                <div className="space-y-6">
-                  {Array.from(
-                    processedInventories.reduce((acc, inventory) => {
-                      const day = formatDateInTimeZone(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok", "yyyy-MM-dd");
+                <div className="space-y-4">
+                  {sortedDates.map((date) => {
+                    const inventories = inventoriesByDate[date] ?? [];
+                    const dateObj = parseISO(date);
+                    const dateStr = format(dateObj, "EEEE, MMMM d");
 
-                      if (!acc.has(day)) acc.set(day, []);
-                      acc.get(day)!.push(inventory);
+                    // Get bookings for this day
+                    const dayBookings = bookings.filter((booking) => {
+                      const bookingDate = format(toZonedTime(booking.startDatetime, booking.timezone), "yyyyMMdd");
+                      return bookingDate === date;
+                    });
+
+                    // Group inventories by service
+                    const inventoriesByService = inventories.reduce((acc, inventory) => {
+                      const service = servicesMap[inventory.serviceId];
+                      const serviceName = service?.name ?? "Unknown Service";
+                      if (!acc[serviceName]) {
+                        acc[serviceName] = [];
+                      }
+                      acc[serviceName].push(inventory);
                       return acc;
-                    }, new Map<string, typeof processedInventories>()),
-                    ([day, dayInventories], dayIndex) => {
-                      const date = safeParseDate(day, dayInventories[0]?.timezone ?? "Asia/Bangkok");
-                      const venueTimezone = dayInventories[0]?.timezone ?? "Asia/Bangkok";
-                      const dateStr = isNaN(date.getTime()) ? "Invalid date" : formatDateInTimeZone(date, venueTimezone, "EEEE, MMM d");
+                    }, {} as Record<string, InventoryWithPayment[]>);
 
-                      // Get bookings for this day
-                      const dayBookings = bookings.filter((booking) => {
-                        const bookingDate = safeParseDate(booking.startDatetime, booking.timezone ?? "Asia/Bangkok");
-                        return isSameDayInTimeZone(bookingDate, date, venueTimezone);
-                      });
+                    return (
+                      <Card key={date} className="overflow-hidden border-0 shadow-sm">
+                        <CardHeader className="bg-gray-50/50 p-3">
+                          <CardTitle className="text-base font-semibold text-gray-900">{dateStr}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-3 space-y-4">
+                          {Object.entries(inventoriesByService).map(([serviceName, serviceInventories]) => (
+                            <div key={serviceName} className="space-y-2">
+                              <h3 className="text-sm font-medium text-gray-700">{serviceName}</h3>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                {serviceInventories.map((inventory) => {
+                                  const service = servicesMap[inventory.serviceId];
+                                  const booking = dayBookings.find((b) => {
+                                    const bookingStart = toZonedTime(b.startDatetime, b.timezone);
+                                    const bookingEnd = toZonedTime(b.endDatetime, b.timezone);
+                                    const inventoryStart = toZonedTime(inventory.startDatetime, inventory.timezone);
+                                    const inventoryEnd = toZonedTime(inventory.endDatetime, inventory.timezone);
 
-                      // Group by hour
-                      const hourMap = Array.from({ length: 16 }, (_, hourIndex) => {
-                        const hour = hourIndex + 8;
-                        const inventoriesAtHour = dayInventories.filter((inventory) => {
-                          const startHour = safeParseDate(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok").getHours();
-                          const endHour = safeParseDate(inventory.endDatetime, inventory.timezone ?? "Asia/Bangkok").getHours();
-                          return hour >= startHour && hour < endHour;
-                        });
-                        return { hour, inventoriesAtHour };
-                      });
+                                    return b.serviceId === inventory.serviceId && bookingStart.getTime() === inventoryStart.getTime() && bookingEnd.getTime() === inventoryEnd.getTime();
+                                  });
 
-                      return (
-                        <div key={dayIndex} className="space-y-2">
-                          <div className="font-medium text-sm sm:text-base">{dateStr}</div>
-                          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
-                            {hourMap.map(({ hour, inventoriesAtHour }, hourIndex) => (
-                              <div className={`p-2 text-xs sm:text-sm ${inventoriesAtHour.length ? "bg-gray-100" : ""}`} key={hourIndex}>
-                                {`${hour}:00`}
-                                {inventoriesAtHour.map((inventory) => {
-                                  const serviceName = servicesMap[inventory.serviceId] ?? "Unknown Service";
-                                  const booking = bookings.find(
-                                    (b) =>
-                                      b.serviceId === inventory.serviceId &&
-                                      isSameDayInTimeZone(
-                                        safeParseDate(b.startDatetime, b.timezone ?? "Asia/Bangkok"),
-                                        safeParseDate(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok"),
-                                        venueTimezone
-                                      ) &&
-                                      safeParseDate(b.startDatetime, b.timezone ?? "Asia/Bangkok").getHours() === hour
-                                  );
                                   return (
-                                    <div key={inventory.id} className="flex justify-center my-2">
-                                      <BookingDialog
-                                        email={email}
-                                        venueName={venue.name}
-                                        serviceName={serviceName}
-                                        serviceId={inventory.serviceId}
-                                        serviceType="Hard surface"
-                                        serviceIndoor={false}
-                                        date={dateStr}
-                                        startDatetime={inventory.startDatetime.getTime()}
-                                        endDatetime={inventory.endDatetime.getTime()}
-                                        paymentImage={inventory.paymentImage}
-                                        price={inventory.price}
-                                        currency={inventory.currency}
-                                        status={booking?.status ?? ""}
-                                        timezone={inventory.timezone}
-                                      />
-                                    </div>
+                                    <Card key={inventory.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                                      <CardContent className="p-3">
+                                        <div className="flex items-center justify-between">
+                                          <div className="space-y-1">
+                                            <div className="text-sm font-medium text-gray-900">
+                                              {inventory.startHourNumber} - {inventory.endHourNumber}
+                                            </div>
+                                            {inventory.price && (
+                                              <div className="text-xs text-gray-500">
+                                                {inventory.price} {inventory.currency}
+                                              </div>
+                                            )}
+                                          </div>
+                                          {booking?.status === "pending" ? (
+                                            <div className="px-3 py-1 text-xs font-medium text-yellow-600 bg-yellow-50 rounded-full">Pending</div>
+                                          ) : (
+                                            <BookingDialog
+                                              email={email}
+                                              venueName={venue.name}
+                                              serviceName={service?.name ?? "Unknown Service"}
+                                              serviceId={inventory.serviceId}
+                                              serviceType={service?.type ?? ""}
+                                              serviceIndoor={service?.indoor ?? false}
+                                              date={dateStr}
+                                              startDatetime={inventory.startDatetime.getTime()}
+                                              endDatetime={inventory.endDatetime.getTime()}
+                                              timezone={inventory.timezone}
+                                              paymentImage={inventory.paymentImage}
+                                              price={inventory.price}
+                                              currency={inventory.currency}
+                                              status={booking?.status ?? ""}
+                                            />
+                                          )}
+                                        </div>
+                                      </CardContent>
+                                    </Card>
                                   );
                                 })}
                               </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    }
-                  )}
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               </div>
             </TabsContent>
+
             <TabsContent value="reviews">
               <div className="mt-4">
                 <p className="text-sm sm:text-base">Reviews coming soon...</p>
@@ -238,8 +279,6 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
             </TabsContent>
           </Tabs>
         </div>
-
-        <div>{/* Sidebar content can be added here */}</div>
       </div>
     </main>
   );

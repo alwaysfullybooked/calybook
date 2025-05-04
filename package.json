@@ -18,7 +18,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@alwaysfullybooked/sdk": "0.1.5",
+    "@alwaysfullybooked/sdk": "0.1.8",
     "@auth/drizzle-adapter": "^1.7.2",
     "@hookform/resolvers": "^5.0.1",
     "@planetscale/database": "^1.19.0",

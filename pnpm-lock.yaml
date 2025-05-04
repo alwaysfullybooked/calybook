@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@alwaysfullybooked/sdk':
-        specifier: 0.1.5
-        version: 0.1.5(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(@types/node@20.17.32)(babel-jest@29.7.0(@babel/core@7.27.1))(esbuild@0.25.3)(jiti@2.4.2)(postcss@8.5.3)(react@19.1.0)(typescript@5.8.3)
+        specifier: 0.1.8
+        version: 0.1.8(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(@types/node@20.17.32)(babel-jest@29.7.0(@babel/core@7.27.1))(esbuild@0.25.3)(jiti@2.4.2)(postcss@8.5.3)(react@19.1.0)(typescript@5.8.3)
       '@auth/drizzle-adapter':
         specifier: ^1.7.2
         version: 1.9.0
@@ -226,8 +226,8 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@alwaysfullybooked/sdk@0.1.5':
-    resolution: {integrity: sha512-lBfpZufG6qI4X/i1ik0/t5eC+wewoVBC2cHN6A0Bbb7Zd3xJd1EYEOM68zXBck3+9nFVXwiAtl0sj2Lg04rTvQ==, tarball: https://npm.pkg.github.com/download/@alwaysfullybooked/sdk/0.1.5/cffe5021d6cc34c041d0f768a77e801aaad6e04c}
+  '@alwaysfullybooked/sdk@0.1.8':
+    resolution: {integrity: sha512-ODYnD8PhOjuM2juKOicNuJR/dy53PnlmJcBwISmzGFB9Hb6CG6W7Y9ryTMaw+nRPTPqOSKP4YyxgSZ+r06Pzwg==, tarball: https://npm.pkg.github.com/download/@alwaysfullybooked/sdk/0.1.8/490ab42e83c8a3457c35b63a8b63b339024a1aa9}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -3960,7 +3960,7 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@alwaysfullybooked/sdk@0.1.5(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(@types/node@20.17.32)(babel-jest@29.7.0(@babel/core@7.27.1))(esbuild@0.25.3)(jiti@2.4.2)(postcss@8.5.3)(react@19.1.0)(typescript@5.8.3)':
+  '@alwaysfullybooked/sdk@0.1.8(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(@types/node@20.17.32)(babel-jest@29.7.0(@babel/core@7.27.1))(esbuild@0.25.3)(jiti@2.4.2)(postcss@8.5.3)(react@19.1.0)(typescript@5.8.3)':
     dependencies:
       '@tanstack/react-query': 5.75.1(react@19.1.0)
       '@trpc/client': 11.1.2(@trpc/server@11.1.2(typescript@5.8.3))(typescript@5.8.3)
@@ -3972,7 +3972,6 @@ snapshots:
       ts-jest: 29.3.2(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.27.1))(esbuild@0.25.3)(jest@29.7.0(@types/node@20.17.32)(ts-node@10.9.2(@types/node@20.17.32)(typescript@5.8.3)))(typescript@5.8.3)
       ts-node: 10.9.2(@types/node@20.17.32)(typescript@5.8.3)
       tsup: 8.4.0(jiti@2.4.2)(postcss@8.5.3)(typescript@5.8.3)
-      zod: 3.24.3
     transitivePeerDependencies:
       - '@babel/core'
       - '@jest/transform'

@@ -2,7 +2,6 @@
 
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { revalidatePath } from "next/cache";
-import { parseDateInTimeZone } from "@/lib/utils/dateWithTZ";
 
 export async function createBooking(
   email: string,
@@ -12,8 +11,9 @@ export async function createBooking(
   serviceIndoor: boolean,
   price: string,
   currency: string,
-  startDatetime: number,
-  endDatetime: number,
+  startDatetime: Date,
+  endDatetime: Date,
+  timezone: string,
   notes: string | null
 ) {
   const { hashWithSignature } = await alwaysbookbooked.integrations.generateHash(email);
@@ -23,24 +23,17 @@ export async function createBooking(
     throw new Error("Failed to generate customer hash");
   }
 
-  const timezone = "Asia/Bangkok";
-  const startDate = parseDateInTimeZone(startDatetime, timezone);
-  const endDate = parseDateInTimeZone(endDatetime, timezone);
-
   await alwaysbookbooked.bookings.create({
-    customerHash: customerHash,
-
     serviceId,
     serviceName,
     serviceType,
     serviceIndoor,
-
+    customerHash,
+    startDatetime,
+    endDatetime,
+    timezone,
     price,
     currency,
-
-    startDatetime: startDate.getTime(),
-    endDatetime: endDate.getTime(),
-    timezone,
     status: "pending",
     notes: notes ?? null,
   });
