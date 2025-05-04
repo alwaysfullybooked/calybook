@@ -7,12 +7,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">JustBookIt</h3>
-            <p className="text-sm">The easiest way to book anything in Thailand.</p>
+            <p className="text-sm">The easiest way to book your activities in Thailand.</p>
           </div>
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              <li>
+              {/* <li>
                 <Link href="#" className="hover:text-gray-900">
                   Find Venues
                 </Link>
@@ -31,7 +31,7 @@ export default function Footer() {
                 <Link href="#" className="hover:text-gray-900">
                   Contact
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
           <div>
@@ -61,7 +61,7 @@ export default function Footer() {
           <p>&copy; {new Date().getFullYear()} JustBookIt</p>
           <div className="my-8 p-2">
             Made with{" "}
-            <Link href="https://alwaysfullybooked.com" className="text-gray-900 hover:text-gray-700">
+            <Link href="https://alwaysfullybooked.com" className="text-gray-900 hover:text-gray-700" target="_blank" rel="noopener noreferrer">
               <span className="bg-gradient-to-r from-green-500 via-orange-500 to-red-500 bg-clip-text text-transparent">AlwaysFullyBooked</span>
             </Link>
             , the booking engine platform for developers.
