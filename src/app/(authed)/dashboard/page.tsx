@@ -4,8 +4,9 @@ import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { auth } from "@/server/auth";
 import { Calendar, Clock, MapPin, X } from "lucide-react";
 import { redirect } from "next/navigation";
-import { format } from "date-fns";
+import { addMinutes, format, getHours } from "date-fns";
 import Link from "next/link";
+import { toZonedTime } from "date-fns-tz";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -28,23 +29,26 @@ export default async function DashboardPage() {
   });
 
   // Fetch service and venue information for each booking
-  const bookingsWithVenues = await Promise.all(
+  const processedBookings = await Promise.all(
     bookings.map(async (booking) => {
-      const services = await alwaysbookbooked.services.list();
-      const service = services.find((s) => s.id === booking.serviceId);
-      const venue = service ? await alwaysbookbooked.venues.search(service.venueId) : null;
+      const zonedStartDate = toZonedTime(booking.startDatetime, booking.timezone);
+      const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
+
       return {
         ...booking,
-        venueName: venue?.name ?? "Unknown Venue",
-        venueCity: venue?.city ?? "Unknown City",
-        venueCountry: venue?.country ?? "Unknown Country",
-        venueId: service?.venueId ?? "",
+        venueName: booking.service.venue.name,
+        venueCity: booking.service.venue.city,
+        venueCountry: booking.service.venue.country,
+        venueId: booking.service.venueId,
+
+        zonedStartDate,
+        zonedEndDate,
       };
     })
   );
 
-  const upcomingBookings = bookingsWithVenues.filter((booking) => booking.startDatetime > new Date());
-  const pastBookings = bookingsWithVenues.filter((booking) => booking.startDatetime < new Date());
+  const upcomingBookings = processedBookings.filter((booking) => booking.startDatetime > new Date());
+  const pastBookings = processedBookings.filter((booking) => booking.startDatetime < new Date());
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -93,7 +97,7 @@ export default async function DashboardPage() {
                           <span className="mx-2 text-gray-400">|</span>
                           <Clock className="h-5 w-5 text-primary" />
                           <span>
-                            {format(booking.startDatetime, "HH:mm")} - {format(booking.endDatetime, "HH:mm")}
+                            {format(booking.zonedStartDate, "HH:mm")} - {format(booking.zonedEndDate, "HH:mm")}
                           </span>
                           {booking.status === "pending" && <span className="px-2 py-1 text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>}
                           {booking.status === "confirmed" && <span className="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">Confirmed</span>}
