@@ -65,7 +65,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     const startTime = parseInt(startTimeStr);
     const endTime = parseInt(endTimeStr);
 
-    for (let hour = startTime; hour < endTime; hour++) {
+    for (let hour = startTime; hour <= endTime; hour++) {
       const timeKey = `${hour.toString().padStart(2, "0")}:00`;
       acc[`${timeslot.serviceId}|${timeKey}`] = timeslot;
     }
@@ -77,6 +77,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     const startHour = formatDateInTimeZone(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok", "HH:mm");
     const timeslotKey = `${inventory.serviceId}|${startHour}`;
     const timeslot = timeslotsMap[timeslotKey];
+
     const priceKey = timeslot ? `scan-${timeslot.price}-thb` : "";
     const paymentImage = paymentMap[priceKey] ?? "";
 
