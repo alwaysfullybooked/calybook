@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from "lucide-react";
-import { formatInTimeZone } from "date-fns-tz";
+import { ExternalLink, Loader2 } from "lucide-react";
+import { formatDateInTimeZone } from "@/lib/utils/dateWithTZ";
 import { createBooking } from "@/actions/bookings";
 
 type Step = "details" | "payment" | "success";
@@ -123,7 +124,7 @@ export default function BookingDialog({
                 </div>
                 <div className="space-y-2">
                   <Label>Date & Time</Label>
-                  <Input value={`${date} ${formatInTimeZone(startDatetime, timezone, "HH:mm")} - ${formatInTimeZone(endDatetime, timezone, "HH:mm")}`} disabled />
+                  <Input value={`${date} ${formatDateInTimeZone(startDatetime, timezone, "HH:mm")} - ${formatDateInTimeZone(endDatetime, timezone, "HH:mm")}`} disabled />
                 </div>
                 {price && currency && (
                   <div className="space-y-2">
@@ -153,7 +154,10 @@ export default function BookingDialog({
                 <p className="font-medium">Please complete payment within 1 hour.</p>
                 <p className="mt-2 text-sm">Booking is on hold until payment is confirmed.</p>
                 <div className="mt-4 flex items-center justify-center gap-2">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/320px-LINE_logo.svg.png" alt="Line" className="mx-auto h-16 w-16" />
+                  <p className="text-sm text-gray-500">👉</p>
+                  <Link href="https://line.me/R/ti/p/hottoshotto" target="_blank">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/320px-LINE_logo.svg.png" alt="Line" className="mx-auto h-16 w-16" />
+                  </Link>
                   <img
                     src={
                       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQAAAACgl2eQAAACQ0lEQVR4Xu2YMY6EMAxFjSgoOUJuMnMxpIzExeAmHIEyBcL7v6PdhRlpW75WuEBDeAXxfH87mP8dk72vvMUN1LiBGjdQ4z8Bhkj2sOzluebFmnXgUpYCOvctlYe1bs8VTwAk91UMmGxIoHzp5tWIDgmUIFAit1P/StiKKoAUI8Ez9FAaZF4PCD0AsGLcRaCfgrkWwIolSGH4vXBJC4iwhtep96U8+p9VKeCVqFem2henPLCVLAWY9WOIwoyVH6kmKgWUBiqg0Ts9AKmmPCYxwJjgePfOqdenjwsuWkA3+8u6HXrAQl663d77pgAA5xyd787mPhjcFKLYxQC4PSYQ6zerEwj1UN1ACIgNUA/R4T08AOnXAuozDh9QQbugvDAwnQVzPYCRo2UpIdXs61hF0A2UAHoUpQpnYksPDwjLUgLijZFgo5ti+KCHlrNorwfg7BvtfTPf8cs4xMsBSHUUfct6oqXi12ngVACcG4jAmBkeiuY0HWc5DWDkcMSTWtwS3Q/NXQFg0bNlDsyycYg3nimzFBA3tHf29Za+GmdKLYCmlEK5PKmhw2NIPpeeAhDTxryy6Fd2oz4GEjEA54sQwOJMNSg7V5YCEBGNCFOn13yf+qYCwEJKsKeWorXwqHRKtQLAQxpaErLsLC9nls+znALAQy5UwHeHaHFrPFhmPSAsv9YYO1Q5Dpw6QJzUal/nEb05iFYC+P6ixQkJs+aDn7XqxxgdgH8/dzHyaJHZoTgwfZT/tcAfcQM1bqDGDdS4gRrTF5xgu06lOVW2AAAAAElFTkSuQmCC"
@@ -162,7 +166,7 @@ export default function BookingDialog({
                     className="mx-auto max-w-[200px]"
                   />
                 </div>
-                <p className="mt-2 text-sm text-gray-500 text-center">Contact booking center with payment confirmation.</p>
+                <p className="mt-2 text-sm text-gray-500 text-center">Click here to open Line App or scan QR code to contact booking center with payment confirmation.</p>
               </div>
             )}
 

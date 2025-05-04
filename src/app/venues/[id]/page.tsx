@@ -3,20 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, Phone, Globe } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
-import { format, isSameDay, compareAsc, parseISO } from "date-fns";
-import { formatInTimeZone } from "date-fns-tz";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
+import { formatDateInTimeZone, isSameDayInTimeZone, compareDatesInTimeZone, parseDateInTimeZone } from "@/lib/utils/dateWithTZ";
 
 // Helper function to safely parse dates
-const safeParseDate = (date: string | number | Date): Date => {
-  if (typeof date === "number") {
-    return new Date(date);
-  }
-  if (typeof date === "string") {
-    return parseISO(date);
-  }
-  return date;
+const safeParseDate = (date: string | number | Date, tz: string): Date => {
+  return parseDateInTimeZone(date, tz);
 };
 
 export default async function VenuePage({ params }: { params: Promise<{ id: string }> }) {
@@ -48,7 +41,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const services = venue?.services ?? [];
   const bookings = services.flatMap((service) => service.bookings);
   const timeslots = services.flatMap((service) => service.timeslots);
-  const inventories = services.flatMap((service) => service.inventories).sort((a, b) => compareAsc(a.startDatetime, b.startDatetime));
+  const inventories = services.flatMap((service) => service.inventories).sort((a, b) => compareDatesInTimeZone(a.startDatetime, b.startDatetime, a.timezone ?? "Asia/Bangkok"));
 
   const servicesMap = services.reduce((acc, service) => {
     acc[service.id] = service.name;
@@ -81,7 +74,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
 
   // Process inventories to include payment and pricing info
   const processedInventories = inventories.map((inventory) => {
-    const startHour = format(inventory.startDatetime, "HH:mm");
+    const startHour = formatDateInTimeZone(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok", "HH:mm");
     const timeslotKey = `${inventory.serviceId}|${startHour}`;
     const timeslot = timeslotsMap[timeslotKey];
     const priceKey = timeslot ? `scan-${timeslot.price}-thb` : "";
@@ -159,29 +152,29 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                 <div className="space-y-6">
                   {Array.from(
                     processedInventories.reduce((acc, inventory) => {
-                      const day = format(inventory.startDatetime, "yyyy-MM-dd");
+                      const day = formatDateInTimeZone(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok", "yyyy-MM-dd");
 
                       if (!acc.has(day)) acc.set(day, []);
                       acc.get(day)!.push(inventory);
                       return acc;
                     }, new Map<string, typeof processedInventories>()),
                     ([day, dayInventories], dayIndex) => {
-                      const date = safeParseDate(day);
+                      const date = safeParseDate(day, dayInventories[0]?.timezone ?? "Asia/Bangkok");
                       const venueTimezone = dayInventories[0]?.timezone ?? "Asia/Bangkok";
-                      const dateStr = isNaN(date.getTime()) ? "Invalid date" : formatInTimeZone(date, venueTimezone, "EEEE, MMM d");
+                      const dateStr = isNaN(date.getTime()) ? "Invalid date" : formatDateInTimeZone(date, venueTimezone, "EEEE, MMM d");
 
                       // Get bookings for this day
                       const dayBookings = bookings.filter((booking) => {
-                        const bookingDate = safeParseDate(booking.startDatetime);
-                        return isSameDay(bookingDate, date);
+                        const bookingDate = safeParseDate(booking.startDatetime, booking.timezone ?? "Asia/Bangkok");
+                        return isSameDayInTimeZone(bookingDate, date, venueTimezone);
                       });
 
                       // Group by hour
                       const hourMap = Array.from({ length: 16 }, (_, hourIndex) => {
                         const hour = hourIndex + 8;
                         const inventoriesAtHour = dayInventories.filter((inventory) => {
-                          const startHour = safeParseDate(inventory.startDatetime).getHours();
-                          const endHour = safeParseDate(inventory.endDatetime).getHours();
+                          const startHour = safeParseDate(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok").getHours();
+                          const endHour = safeParseDate(inventory.endDatetime, inventory.timezone ?? "Asia/Bangkok").getHours();
                           return hour >= startHour && hour < endHour;
                         });
                         return { hour, inventoriesAtHour };
@@ -199,8 +192,12 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                   const booking = bookings.find(
                                     (b) =>
                                       b.serviceId === inventory.serviceId &&
-                                      isSameDay(safeParseDate(b.startDatetime), safeParseDate(inventory.startDatetime)) &&
-                                      safeParseDate(b.startDatetime).getHours() === hour
+                                      isSameDayInTimeZone(
+                                        safeParseDate(b.startDatetime, b.timezone ?? "Asia/Bangkok"),
+                                        safeParseDate(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok"),
+                                        venueTimezone
+                                      ) &&
+                                      safeParseDate(b.startDatetime, b.timezone ?? "Asia/Bangkok").getHours() === hour
                                   );
                                   return (
                                     <div key={inventory.id} className="flex justify-center my-2">
@@ -212,8 +209,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                         serviceType="Hard surface"
                                         serviceIndoor={false}
                                         date={dateStr}
-                                        startDatetime={safeParseDate(inventory.startDatetime).getTime()}
-                                        endDatetime={safeParseDate(inventory.endDatetime).getTime()}
+                                        startDatetime={safeParseDate(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok").getTime()}
+                                        endDatetime={safeParseDate(inventory.endDatetime, inventory.timezone ?? "Asia/Bangkok").getTime()}
                                         paymentImage={inventory.paymentImage}
                                         price={inventory.price}
                                         currency={inventory.currency}
