@@ -3,9 +3,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, Phone, Globe } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
-import { format, isSameDay, getHours, compareAsc } from "date-fns";
+import { format, isSameDay, compareAsc, parseISO } from "date-fns";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
+
+// Helper function to safely parse dates
+const safeParseDate = (date: string | number | Date): Date => {
+  if (typeof date === "number") {
+    return new Date(date);
+  }
+  if (typeof date === "string") {
+    return parseISO(date);
+  }
+  return date;
+};
 
 export default async function VenuePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -154,12 +165,12 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                       return acc;
                     }, new Map<string, typeof processedInventories>()),
                     ([day, dayInventories], dayIndex) => {
-                      const date = new Date(day);
-                      const dateStr = format(date, "EEEE, MMM d");
+                      const date = safeParseDate(day);
+                      const dateStr = isNaN(date.getTime()) ? "Invalid date" : format(date, "EEEE, MMM d");
 
                       // Get bookings for this day
                       const dayBookings = bookings.filter((booking) => {
-                        const bookingDate = new Date(booking.startDatetime);
+                        const bookingDate = safeParseDate(booking.startDatetime);
                         return isSameDay(bookingDate, date);
                       });
 
@@ -167,8 +178,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                       const hourMap = Array.from({ length: 16 }, (_, hourIndex) => {
                         const hour = hourIndex + 8;
                         const inventoriesAtHour = dayInventories.filter((inventory) => {
-                          const startHour = getHours(inventory.startDatetime);
-                          const endHour = getHours(inventory.endDatetime);
+                          const startHour = safeParseDate(inventory.startDatetime).getHours();
+                          const endHour = safeParseDate(inventory.endDatetime).getHours();
                           return hour >= startHour && hour < endHour;
                         });
                         return { hour, inventoriesAtHour };
@@ -185,7 +196,9 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                   const serviceName = servicesMap[inventory.serviceId] ?? "Unknown Service";
                                   const booking = bookings.find(
                                     (b) =>
-                                      b.serviceId === inventory.serviceId && isSameDay(new Date(b.startDatetime), new Date(inventory.startDatetime)) && getHours(new Date(b.startDatetime)) === hour
+                                      b.serviceId === inventory.serviceId &&
+                                      isSameDay(safeParseDate(b.startDatetime), safeParseDate(inventory.startDatetime)) &&
+                                      safeParseDate(b.startDatetime).getHours() === hour
                                   );
                                   return (
                                     <div key={inventory.id} className="flex justify-center my-2">
@@ -197,8 +210,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                         serviceType="Hard surface"
                                         serviceIndoor={false}
                                         date={dateStr}
-                                        startDatetime={new Date(`${day}T${hour}:00:00`).getTime()}
-                                        endDatetime={new Date(`${day}T${hour + 1}:00:00`).getTime()}
+                                        startDatetime={safeParseDate(inventory.startDatetime).getTime()}
+                                        endDatetime={safeParseDate(inventory.endDatetime).getTime()}
                                         paymentImage={inventory.paymentImage}
                                         price={inventory.price}
                                         currency={inventory.currency}

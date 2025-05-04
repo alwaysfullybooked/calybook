@@ -60,9 +60,9 @@ export default function Footer() {
         <div className="mt-8 border-t border-gray-200 pt-6 text-center text-sm">
           <p>&copy; {new Date().getFullYear()} JustBookIt</p>
           <div className="my-8 p-2">
-            Powered by{" "}
+            Made with{" "}
             <Link href="https://alwaysfullybooked.com" className="text-gray-900 hover:text-gray-700">
-              AlwaysFullyBooked
+              <span className="bg-gradient-to-r from-green-500 via-orange-500 to-red-500 bg-clip-text text-transparent">AlwaysFullyBooked</span>
             </Link>
             , the booking engine platform for developers.
           </div>
