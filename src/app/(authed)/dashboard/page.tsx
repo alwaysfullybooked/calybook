@@ -29,23 +29,21 @@ export default async function DashboardPage() {
   });
 
   // Fetch service and venue information for each booking
-  const processedBookings = await Promise.all(
-    bookings.map(async (booking) => {
-      const zonedStartDate = toZonedTime(booking.startDatetime, booking.timezone);
-      const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
+  const processedBookings = bookings.map((booking) => {
+    const zonedStartDate = toZonedTime(booking.startDatetime, booking.timezone);
+    const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
 
-      return {
-        ...booking,
-        venueName: booking.service.venue.name,
-        venueCity: booking.service.venue.city,
-        venueCountry: booking.service.venue.country,
-        venueId: booking.service.venueId,
+    return {
+      ...booking,
+      venueName: booking.service.venue.name,
+      venueCity: booking.service.venue.city,
+      venueCountry: booking.service.venue.country,
+      venueId: booking.service.venueId,
 
-        zonedStartDate,
-        zonedEndDate,
-      };
-    })
-  );
+      zonedStartDate,
+      zonedEndDate,
+    };
+  });
 
   const upcomingBookings = processedBookings.filter((booking) => booking.startDatetime > new Date());
   const pastBookings = processedBookings.filter((booking) => booking.startDatetime < new Date());
