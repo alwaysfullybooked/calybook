@@ -209,8 +209,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                         serviceType="Hard surface"
                                         serviceIndoor={false}
                                         date={dateStr}
-                                        startDatetime={safeParseDate(inventory.startDatetime, inventory.timezone ?? "Asia/Bangkok").getTime()}
-                                        endDatetime={safeParseDate(inventory.endDatetime, inventory.timezone ?? "Asia/Bangkok").getTime()}
+                                        startDatetime={inventory.startDatetime.getTime()}
+                                        endDatetime={inventory.endDatetime.getTime()}
                                         paymentImage={inventory.paymentImage}
                                         price={inventory.price}
                                         currency={inventory.currency}

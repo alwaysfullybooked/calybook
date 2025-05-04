@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ExternalLink, Loader2 } from "lucide-react";
-import { formatDateInTimeZone } from "@/lib/utils/dateWithTZ";
+import { Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
+import { formatDateInTimeZone } from "@/lib/utils/dateWithTZ";
 
 type Step = "details" | "payment" | "success";
 

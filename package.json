@@ -15,7 +15,8 @@
     "dev": "next dev --port 3001 --turbo",
     "preview": "next build && next start",
     "start": "next start --port 3001",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "vercel-remove": "vercel remove --yes justbookit"
   },
   "dependencies": {
     "@alwaysfullybooked/sdk": "0.1.5",
