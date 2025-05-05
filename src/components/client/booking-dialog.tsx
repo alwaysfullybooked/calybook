@@ -11,7 +11,7 @@ import { Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
 import { format, toZonedTime } from "date-fns-tz";
 
-type Step = "details" | "payment" | "success";
+type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
   email,
@@ -54,6 +54,11 @@ export default function BookingDialog({
     e.preventDefault();
 
     if (currentStep === "details") {
+      setCurrentStep("notes");
+      return;
+    }
+
+    if (currentStep === "notes") {
       setCurrentStep("payment");
       return;
     }
@@ -80,6 +85,8 @@ export default function BookingDialog({
     switch (currentStep) {
       case "details":
         return `Book ${serviceName}`;
+      case "notes":
+        return "Add Notes";
       case "payment":
         return "Make Payment";
       case "success":
@@ -110,7 +117,7 @@ export default function BookingDialog({
         <DialogContent className="max-w-[95vw] sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{getStepTitle()}</DialogTitle>
-            <DialogDescription>{serviceName}</DialogDescription>
+            <DialogDescription></DialogDescription>
           </DialogHeader>
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 py-2">
             {currentStep === "details" && (
@@ -133,20 +140,25 @@ export default function BookingDialog({
                     <Input value={`${price} ${currency}`} disabled />
                   </div>
                 )}
+              </>
+            )}
+
+            {currentStep === "notes" && (
+              <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="note">Note</Label>
-                  <Textarea id="note" placeholder="Add name, Line Id to help with booking confirmation." value={notes} onChange={(e) => setNotes(e.target.value)} className="min-h-[100px]" />
+                  <Textarea id="note" placeholder="Phone number, Line ID, etc." value={notes} onChange={(e) => setNotes(e.target.value)} className="min-h-[100px]" autoFocus={false} />
                 </div>
-              </>
+                <p className="text-sm text-muted-foreground">This information will help confirm your booking.</p>
+              </div>
             )}
 
             {currentStep === "payment" && paymentImage && (
               <div className="space-y-2">
-                <Label>QR Code</Label>
-                <div className="rounded-lg border p-4">
-                  <img src={paymentImage} alt="Payment QR Code" className="mx-auto max-w-[200px]" />
+                <Label>Scan the QR code to complete your payment</Label>
+                <div className="rounded-lg border">
+                  <img src={paymentImage} alt="Payment QR Code" className="mx-auto" />
                 </div>
-                <p className="mt-2 text-sm text-gray-500 text-center">Scan the QR code to complete your payment</p>
               </div>
             )}
 
@@ -179,7 +191,15 @@ export default function BookingDialog({
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button type="submit">Request Booking</Button>
+                  <Button type="submit">Next</Button>
+                </>
+              )}
+              {currentStep === "notes" && (
+                <>
+                  <Button type="button" variant="outline" onClick={() => setCurrentStep("details")}>
+                    Back
+                  </Button>
+                  <Button type="submit">Next</Button>
                 </>
               )}
               {currentStep === "payment" && (
