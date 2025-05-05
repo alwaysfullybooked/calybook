@@ -105,11 +105,11 @@ export default function BookingDialog({
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className={`${status === "pending" ? "bg-orange-300" : status === "confirmed" ? "bg-red-300" : "bg-green-500 hover:bg-green-600 text-white"}`}
+          className={`bg-green-500 hover:bg-green-600 text-white`}
           onClick={() => setIsOpen(true)}
-          disabled={status === "confirmed" || status === "pending"}
+          // disabled={status === "confirmed" || status === "pending"}
         >
-          {status === "pending" ? "Pending payment" : status === "confirmed" ? "Booked" : "Book"}
+          BOOK
         </Button>
       </DialogTrigger>
       <DialogPortal>

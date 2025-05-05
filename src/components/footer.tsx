@@ -16,17 +16,18 @@ export default function Footer() {
                 <Link href="#" className="hover:text-gray-900">
                   Find Venues
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link href="#" className="hover:text-gray-900">
                   About Us
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link href="/faq" className="hover:text-gray-900">
                   FAQs
                 </Link>
-              </li>
+              </li> */}
+              {/* 
               <li>
                 <Link href="#" className="hover:text-gray-900">
                   Contact

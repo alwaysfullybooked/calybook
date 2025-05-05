@@ -16,7 +16,6 @@ export default async function DashboardPage() {
   }
 
   const email = session.user.email;
-
   const { hashWithSignature } = await alwaysbookbooked.integrations.generateHash(email);
   const customerHash = hashWithSignature.split(":")[0];
 
