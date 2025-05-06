@@ -42,7 +42,7 @@ export default async function DashboardPage() {
   const pastBookings = processedBookings.filter((booking) => booking.startDatetime < new Date());
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="px-4 max-w-4xl mx-auto">
       <h1 className="mb-8 text-3xl font-bold">My Bookings</h1>
 
       <Tabs defaultValue="upcoming" className="w-full">

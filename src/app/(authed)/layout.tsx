@@ -59,10 +59,7 @@ export default async function AuthedLayout({ children }: Readonly<{ children: Re
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
-      <main className="flex-1 container mx-auto px-4 py-6">
-        <SidebarTrigger />
-        {children}
-      </main>
+      <main className="flex-1 px-4 py-6">{children}</main>
     </SidebarProvider>
   );
 }

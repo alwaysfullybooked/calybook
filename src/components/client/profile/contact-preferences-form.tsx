@@ -57,7 +57,7 @@ export function ContactPreferencesForm({ email, contactMethod, contactWhatsAppId
     <Card>
       <CardHeader>
         <CardTitle>Contact Preferences</CardTitle>
-        <CardDescription>Manage your contact preferences. We will use this to contact you for bookings and updates.</CardDescription>
+        <CardDescription>For bookings and updates.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
