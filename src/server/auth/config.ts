@@ -1,5 +1,5 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import type { DefaultSession, NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 
 import { db } from "@/server/db";
@@ -15,8 +15,10 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+
+      contactMethod: string;
+      contactWhatsAppId: string;
+      contactLineId: string;
     } & DefaultSession["user"];
   }
 

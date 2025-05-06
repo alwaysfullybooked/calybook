@@ -1,6 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import { index, mysqlTableCreator, primaryKey } from "drizzle-orm/mysql-core";
-import { type AdapterAccount } from "next-auth/adapters";
+import type { AdapterAccount } from "next-auth/adapters";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -25,6 +25,9 @@ export const users = createTable("user", (d) => ({
     })
     .default(sql`CURRENT_TIMESTAMP(3)`),
   image: d.varchar({ length: 255 }),
+  contactMethod: d.varchar({ length: 255 }).notNull().default("email"),
+  contactWhatsAppId: d.varchar({ length: 255 }),
+  contactLineId: d.varchar({ length: 255 }),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -47,7 +50,7 @@ export const accounts = createTable(
     id_token: d.text(),
     session_state: d.varchar({ length: 255 }),
   }),
-  (account) => [primaryKey({ columns: [account.provider, account.providerAccountId] }), index("accounts_user_id_idx").on(account.userId)]
+  (account) => [primaryKey({ columns: [account.provider, account.providerAccountId] }), index("accounts_user_id_idx").on(account.userId)],
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -61,7 +64,7 @@ export const sessions = createTable(
     userId: d.varchar({ length: 255 }).notNull(),
     expires: d.timestamp({ mode: "date" }).notNull(),
   }),
-  (session) => [index("session_user_id_idx").on(session.userId)]
+  (session) => [index("session_user_id_idx").on(session.userId)],
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -75,5 +78,5 @@ export const verificationTokens = createTable(
     token: d.varchar({ length: 255 }).notNull(),
     expires: d.timestamp({ mode: "date" }).notNull(),
   }),
-  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })]
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
 );

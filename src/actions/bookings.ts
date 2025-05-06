@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/server/auth";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { revalidatePath } from "next/cache";
 
@@ -16,8 +17,14 @@ export async function createBooking(
   startDatetime: Date,
   endDatetime: Date,
   timezone: string,
-  notes: string | null
+  notes: string | null,
 ) {
+  const session = await auth();
+
+  if (!session?.user?.id || !session.user?.email) {
+    throw new Error("Unauthorized");
+  }
+
   await alwaysbookbooked.bookings.create({
     customerId,
     customerContactMethod,
