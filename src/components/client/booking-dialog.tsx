@@ -14,7 +14,9 @@ import { format, toZonedTime } from "date-fns-tz";
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
-  email,
+  customerId,
+  customerContactMethod,
+  customerContactId,
   venueName,
   serviceName,
   serviceId,
@@ -29,7 +31,9 @@ export default function BookingDialog({
   status,
   timezone,
 }: {
-  email: string;
+  customerId: string;
+  customerContactMethod: string;
+  customerContactId: string;
   venueName: string;
   serviceName: string;
   serviceId: string;
@@ -67,7 +71,21 @@ export default function BookingDialog({
       if (!price || !currency) return;
       setIsLoading(true);
       try {
-        await createBooking(email, serviceId, serviceName, serviceType, serviceIndoor, price, currency, new Date(startDatetime), new Date(endDatetime), timezone, notes);
+        await createBooking(
+          customerId,
+          customerContactMethod,
+          customerContactId,
+          serviceId,
+          serviceName,
+          serviceType,
+          serviceIndoor,
+          price,
+          currency,
+          new Date(startDatetime),
+          new Date(endDatetime),
+          timezone,
+          notes
+        );
         setCurrentStep("success");
       } finally {
         setIsLoading(false);
@@ -105,7 +123,7 @@ export default function BookingDialog({
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className={`bg-green-500 hover:bg-green-600 text-white`}
+          className={"bg-green-500 hover:bg-green-600 text-white"}
           onClick={() => setIsOpen(true)}
           // disabled={status === "confirmed" || status === "pending"}
         >
@@ -117,7 +135,7 @@ export default function BookingDialog({
         <DialogContent className="max-w-[95vw] sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{getStepTitle()}</DialogTitle>
-            <DialogDescription></DialogDescription>
+            <DialogDescription />
           </DialogHeader>
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 py-2">
             {currentStep === "details" && (

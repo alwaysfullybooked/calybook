@@ -4,7 +4,9 @@ import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { revalidatePath } from "next/cache";
 
 export async function createBooking(
-  email: string,
+  customerId: string,
+  customerContactMethod: string,
+  customerContactId: string,
   serviceId: string,
   serviceName: string,
   serviceType: string,
@@ -16,19 +18,14 @@ export async function createBooking(
   timezone: string,
   notes: string | null
 ) {
-  const { hashWithSignature } = await alwaysbookbooked.integrations.generateHash(email);
-  const customerHash = hashWithSignature.split(":")[0];
-
-  if (!customerHash) {
-    throw new Error("Failed to generate customer hash");
-  }
-
   await alwaysbookbooked.bookings.create({
+    customerId,
+    customerContactMethod,
+    customerContactId,
     serviceId,
     serviceName,
     serviceType,
     serviceIndoor,
-    customerHash,
     startDatetime,
     endDatetime,
     timezone,

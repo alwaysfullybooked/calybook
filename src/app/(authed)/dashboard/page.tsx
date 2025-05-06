@@ -11,20 +11,14 @@ import { toZonedTime } from "date-fns-tz";
 export default async function DashboardPage() {
   const session = await auth();
 
-  if (!session?.user?.email) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 
-  const email = session.user.email;
-  const { hashWithSignature } = await alwaysbookbooked.integrations.generateHash(email);
-  const customerHash = hashWithSignature.split(":")[0];
+  const customerContactId = session.user.id;
 
-  if (!customerHash) {
-    throw new Error("Failed to generate customer hash");
-  }
-
-  const bookings = await alwaysbookbooked.bookings.search({
-    customerHash,
+  const bookings = await alwaysbookbooked.bookings.list({
+    customerContactId,
   });
 
   // Fetch service and venue information for each booking

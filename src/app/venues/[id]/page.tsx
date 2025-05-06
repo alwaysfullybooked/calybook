@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +8,7 @@ import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 import { format, parseISO, getHours, addMinutes } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
-import { getCustomerHash } from "@/lib/server-only";
+
 
 type InventoryWithPayment = {
   id: string;
@@ -36,10 +37,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   }
 
   const email = session.user.email;
-  const customerHash = await getCustomerHash();
+  const customerId = session.user.id;
   const venue = await alwaysbookbooked.venues.search(id);
-
-  console.log(customerHash);
 
   if (!venue) {
     return <div>Venue not found</div>;
@@ -70,7 +69,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
 
   // Create timeslots map
   const timeslotsMap = timeslots.reduce((acc, timeslot) => {
-    for (let hour = parseInt(timeslot.startTime); hour <= parseInt(timeslot.endTime); hour++) {
+    for (let hour = Number.parseInt(timeslot.startTime); hour <= Number.parseInt(timeslot.endTime); hour++) {
       const timeKey = `${timeslot.serviceId}|${hour.toString().padStart(2, "0")}:00`;
       acc[timeKey] = timeslot;
     }
@@ -142,12 +141,12 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                   <Phone className="h-5 w-5 text-gray-500" />
                   <span className="text-sm sm:text-base">Phone</span>
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <Globe className="h-5 w-5 text-gray-500" />
-                  <a href="#" className="text-sm text-blue-500 hover:underline sm:text-base" target="_blank" rel="noopener noreferrer">
+                  <Link href={venue.website} className="text-sm text-blue-500 hover:underline sm:text-base" target="_blank" rel="noopener noreferrer">
                     Website
-                  </a>
-                </div>
+                  </Link>
+                </div> */}
               </div>
             </CardContent>
           </Card>
@@ -227,7 +226,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                   });
 
                                   return (
-                                    <Card key={inventory.id} className="border-1 shadow-sm hover:shadow-md transition-shadow">
+                                    <Card key={inventory.id} className="border-1 hover:shadow-md shadow-sm transition-shadow">
                                       <CardContent className="p-3">
                                         <div className="flex items-center justify-between">
                                           <div className="space-y-1">
@@ -241,20 +240,22 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                           </div>
 
                                           {booking?.status === "confirmed" && (
-                                            <div className={`px-3 py-1 text-xs font-medium rounded-full ${booking.customerHash === customerHash ? "text-green-600" : "text-red-600"}`}>
-                                              {booking.customerHash === customerHash ? `BOOKED 👍` : `TAKEN ⛔️`}
+                                            <div className={`font-medium px-3 py-1 rounded-full text-xs ${booking.customerId === customerId ? "text-green-600" : "text-red-600"}`}>
+                                              {booking.customerId === customerId ? "BOOKED 👍" : "TAKEN ⛔️"}
                                             </div>
                                           )}
 
-                                          {/* {booking?.status === "pending" && booking?.customerHash !== customerHash && (
-                                            <div className="px-3 py-1 text-xs font-medium text-yellow-600 bg-yellow-50 rounded-full">
-                                              Pending {booking.customerHash} // {customerHash}
+                                          {booking?.status === "pending" && booking?.customerId === customerId && (
+                                            <div className="text-yellow-600 bg-yellow-50 font-medium px-3 py-1 rounded-full text-xs ">
+                                              Pending
                                             </div>
-                                          )} */}
+                                          )}
 
                                           {booking?.status !== "pending" && booking?.status !== "confirmed" && (
                                             <BookingDialog
-                                              email={email}
+                                              customerId={customerId}
+                                              customerContactMethod="email"
+                                              customerContactId={email}
                                               venueName={venue.name}
                                               serviceName={service?.name ?? "Unknown Service"}
                                               serviceId={inventory.serviceId}
