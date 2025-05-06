@@ -9,7 +9,6 @@ import { redirect } from "next/navigation";
 import { format, parseISO, getHours, addMinutes } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
-
 type InventoryWithPayment = {
   id: string;
   serviceId: string;
@@ -55,10 +54,13 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const inventories = services.flatMap((service) => service.inventories);
 
   // Create services map for quick lookup
-  const servicesMap = services.reduce((acc, service) => {
-    acc[service.id] = service;
-    return acc;
-  }, {} as Record<string, (typeof services)[number]>);
+  const servicesMap = services.reduce(
+    (acc, service) => {
+      acc[service.id] = service;
+      return acc;
+    },
+    {} as Record<string, (typeof services)[number]>,
+  );
 
   // Create payment map
   const paymentMap = payments.blobs.reduce((acc: Record<string, string>, blob) => {
@@ -68,13 +70,16 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   }, {});
 
   // Create timeslots map
-  const timeslotsMap = timeslots.reduce((acc, timeslot) => {
-    for (let hour = Number.parseInt(timeslot.startTime); hour <= Number.parseInt(timeslot.endTime); hour++) {
-      const timeKey = `${timeslot.serviceId}|${hour.toString().padStart(2, "0")}:00`;
-      acc[timeKey] = timeslot;
-    }
-    return acc;
-  }, {} as Record<string, (typeof timeslots)[number]>);
+  const timeslotsMap = timeslots.reduce(
+    (acc, timeslot) => {
+      for (let hour = Number.parseInt(timeslot.startTime); hour <= Number.parseInt(timeslot.endTime); hour++) {
+        const timeKey = `${timeslot.serviceId}|${hour.toString().padStart(2, "0")}:00`;
+        acc[timeKey] = timeslot;
+      }
+      return acc;
+    },
+    {} as Record<string, (typeof timeslots)[number]>,
+  );
 
   // Process inventories with timezone info
   const processedInventories = inventories.map((inventory) => {
@@ -107,14 +112,17 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   });
 
   // Group by date
-  const inventoriesByDate = processedInventories.reduce((acc, inventory) => {
-    const date = inventory.date;
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(inventory);
-    return acc;
-  }, {} as Record<string, InventoryWithPayment[]>);
+  const inventoriesByDate = processedInventories.reduce(
+    (acc, inventory) => {
+      const date = inventory.date;
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(inventory);
+      return acc;
+    },
+    {} as Record<string, InventoryWithPayment[]>,
+  );
 
   // Get all unique dates from both bookings and inventories
   const allDates = new Set([...bookings.map((b) => format(toZonedTime(b.startDatetime, b.timezone), "yyyyMMdd")), ...Object.keys(inventoriesByDate)]);
@@ -194,15 +202,18 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     });
 
                     // Group inventories by service
-                    const inventoriesByService = inventories.reduce((acc, inventory) => {
-                      const service = servicesMap[inventory.serviceId];
-                      const serviceName = service?.name ?? "Unknown Service";
-                      if (!acc[serviceName]) {
-                        acc[serviceName] = [];
-                      }
-                      acc[serviceName].push(inventory);
-                      return acc;
-                    }, {} as Record<string, InventoryWithPayment[]>);
+                    const inventoriesByService = inventories.reduce(
+                      (acc, inventory) => {
+                        const service = servicesMap[inventory.serviceId];
+                        const serviceName = service?.name ?? "Unknown Service";
+                        if (!acc[serviceName]) {
+                          acc[serviceName] = [];
+                        }
+                        acc[serviceName].push(inventory);
+                        return acc;
+                      },
+                      {} as Record<string, InventoryWithPayment[]>,
+                    );
 
                     return (
                       <Card key={date} className="overflow-hidden border-2 shadow-sm">
@@ -213,7 +224,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                           {Object.entries(inventoriesByService).map(([serviceName, serviceInventories]) => (
                             <div key={serviceName} className="space-y-2">
                               <h3 className="text-sm font-medium text-gray-700">{serviceName}</h3>
-                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                                 {serviceInventories.map((inventory) => {
                                   const service = servicesMap[inventory.serviceId];
                                   const booking = dayBookings.find((b) => {
@@ -240,16 +251,12 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                           </div>
 
                                           {booking?.status === "confirmed" && (
-                                            <div className={`font-medium px-3 py-1 rounded-full text-xs ${booking.customerId === customerId ? "text-green-600" : "text-red-600"}`}>
+                                            <div className={`font-medium px-3 py-1 rounded-full ${booking.customerId === customerId ? "text-green-600" : "text-red-600"}`}>
                                               {booking.customerId === customerId ? "BOOKED 👍" : "TAKEN ⛔️"}
                                             </div>
                                           )}
 
-                                          {booking?.status === "pending" && booking?.customerId === customerId && (
-                                            <div className="text-yellow-600 bg-yellow-50 font-medium px-3 py-1 rounded-full text-xs ">
-                                              Pending
-                                            </div>
-                                          )}
+                                          {booking?.status === "pending" && <div className="text-yellow-600 bg-yellow-50 font-medium px-3 py-1 rounded-full">Pending</div>}
 
                                           {booking?.status !== "pending" && booking?.status !== "confirmed" && (
                                             <BookingDialog
