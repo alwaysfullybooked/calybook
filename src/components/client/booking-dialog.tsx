@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
 import { format, toZonedTime } from "date-fns-tz";
@@ -15,8 +16,10 @@ type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
   customerId,
-  customerContactMethod,
-  customerContactId,
+  email,
+  contactMethod,
+  contactWhatsAppId,
+  contactLineId,
   venueName,
   serviceName,
   serviceId,
@@ -25,15 +28,17 @@ export default function BookingDialog({
   date,
   startDatetime,
   endDatetime,
+  timezone,
+  durationMinutes,
   paymentImage,
   price,
   currency,
-  status,
-  timezone,
 }: {
   customerId: string;
-  customerContactMethod: string;
-  customerContactId: string;
+  email: string;
+  contactMethod: string;
+  contactWhatsAppId: string;
+  contactLineId: string;
   venueName: string;
   serviceName: string;
   serviceId: string;
@@ -42,17 +47,20 @@ export default function BookingDialog({
   date: string;
   startDatetime: number;
   endDatetime: number;
+  timezone: string;
+  durationMinutes: number;
   paymentImage?: string;
   price?: string | null;
   currency?: string | null;
-  status: string;
-  timezone: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>("details");
   const [notes, setNotes] = useState("");
+  const [customerContactMethod, setCustomerContactMethod] = useState(contactMethod);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const customerContactId = customerContactMethod === "email" ? email : customerContactMethod === "line" ? contactLineId : contactWhatsAppId;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +92,7 @@ export default function BookingDialog({
           new Date(startDatetime),
           new Date(endDatetime),
           timezone,
-          notes
+          notes,
         );
         setCurrentStep("success");
       } finally {
@@ -97,6 +105,7 @@ export default function BookingDialog({
     setIsOpen(false);
     setCurrentStep("details");
     setNotes("");
+    setCustomerContactMethod(contactMethod);
   };
 
   const getStepTitle = () => {
@@ -150,7 +159,7 @@ export default function BookingDialog({
                 </div>
                 <div className="space-y-2">
                   <Label>Date & Time</Label>
-                  <Input value={`${date} ${format(toZonedTime(new Date(startDatetime), timezone), "HH:mm")} - ${format(toZonedTime(new Date(endDatetime), timezone), "HH:mm")}`} disabled />
+                  <Input value={`${date} ${format(toZonedTime(new Date(startDatetime), timezone), "HH:mm")} - ${durationMinutes} minutes`} disabled />
                 </div>
                 {price && currency && (
                   <div className="space-y-2">
@@ -164,8 +173,31 @@ export default function BookingDialog({
             {currentStep === "notes" && (
               <div className="space-y-4">
                 <div className="space-y-2">
+                  <Label htmlFor="contact-method">Contact Method</Label>
+                  <Select value={customerContactMethod} onValueChange={setCustomerContactMethod} disabled={!contactLineId || !contactWhatsAppId}>
+                    <SelectTrigger id="contact-method">
+                      <SelectValue placeholder="Select contact method" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="line">Line</SelectItem>
+                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact-value">{customerContactMethod === "email" ? "Email" : customerContactMethod === "line" ? "Line ID" : "WhatsApp Number"}</Label>
+                  <Input
+                    id="contact-value"
+                    placeholder={`Enter your ${customerContactMethod}`}
+                    value={customerContactMethod === "email" ? email : customerContactMethod === "line" ? contactLineId : contactWhatsAppId}
+                    autoFocus={false}
+                    disabled
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="note">Note</Label>
-                  <Textarea id="note" placeholder="Phone number, Line ID, etc." value={notes} onChange={(e) => setNotes(e.target.value)} className="min-h-[100px]" autoFocus={false} />
+                  <Textarea id="note" placeholder="Additional info (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} className="min-h-[100px]" autoFocus={false} />
                 </div>
                 <p className="text-sm text-muted-foreground">This information will help confirm your booking.</p>
               </div>

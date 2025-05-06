@@ -37,6 +37,10 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
 
   const email = session.user.email;
   const customerId = session.user.id;
+  const contactMethod = session.user.contactMethod;
+  const contactWhatsAppId = session.user.contactWhatsAppId;
+  const contactLineId = session.user.contactLineId;
+
   const venue = await alwaysbookbooked.venues.search(id);
 
   if (!venue) {
@@ -261,8 +265,10 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                           {booking?.status !== "pending" && booking?.status !== "confirmed" && (
                                             <BookingDialog
                                               customerId={customerId}
-                                              customerContactMethod="email"
-                                              customerContactId={email}
+                                              email={email}
+                                              contactMethod={contactMethod}
+                                              contactWhatsAppId={contactWhatsAppId}
+                                              contactLineId={contactLineId}
                                               venueName={venue.name}
                                               serviceName={service?.name ?? "Unknown Service"}
                                               serviceId={inventory.serviceId}
@@ -272,10 +278,10 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                               startDatetime={inventory.startDatetime.getTime()}
                                               endDatetime={inventory.endDatetime.getTime()}
                                               timezone={inventory.timezone}
+                                              durationMinutes={inventory.durationMinutes}
                                               paymentImage={inventory.paymentImage}
                                               price={inventory.price}
                                               currency={inventory.currency}
-                                              status={booking?.status ?? ""}
                                             />
                                           )}
                                         </div>
