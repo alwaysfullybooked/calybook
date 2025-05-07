@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -171,13 +170,10 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
               <TabsTrigger value="services" className="text-sm sm:text-base">
                 Services
               </TabsTrigger>
-              <TabsTrigger value="reviews" className="text-sm sm:text-base">
-                Reviews
-              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="services">
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {services.map((service) => (
                   <Card key={service.id}>
                     <CardHeader>
@@ -297,12 +293,6 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     );
                   })}
                 </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="reviews">
-              <div className="mt-4">
-                <p className="text-sm sm:text-base">Reviews coming soon...</p>
               </div>
             </TabsContent>
           </Tabs>
