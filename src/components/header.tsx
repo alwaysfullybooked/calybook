@@ -74,9 +74,6 @@ export default async function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
-          <Button size="sm" className="hidden bg-green-600 hover:bg-green-700 md:inline-flex">
-            Book Now
-          </Button>
         </div>
       </div>
     </header>
