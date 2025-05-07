@@ -197,7 +197,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                   {sortedDates.map((date) => {
                     const inventories = inventoriesByDate[date] ?? [];
                     const dateObj = parseISO(date);
-                    const dateStr = format(dateObj, "EEEE, MMMM d");
+                    const dateStr = format(dateObj, "EEEE, MMMM d, yyyy");
 
                     // Get bookings for this day
                     const dayBookings = bookings.filter((booking) => {
