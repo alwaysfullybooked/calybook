@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { format, parseISO, getHours, addMinutes } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
-type InventoryWithPayment = {
+type Booking = {
   id: string;
   serviceId: string;
   startDatetime: Date;
@@ -17,12 +17,17 @@ type InventoryWithPayment = {
   timezone: string;
   price: string | null;
   currency: string | null;
+  status: string;
   createdById: string;
   createdAt: Date;
-  paymentImage: string;
+  paymentImage: string | null;
   date: string; // YYYY-MM-DD
   startHourNumber: string;
   endHourNumber: string;
+  serviceName: string;
+  serviceType: string | null;
+  serviceIndoor: boolean | null;
+  customerContactId: string | null;
 };
 
 export default async function VenuePage({ params }: { params: Promise<{ id: string }> }) {
@@ -35,7 +40,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   }
 
   const email = session.user.email;
-  const customerId = session.user.id;
+  const customerContactId = session.user.id;
   const contactMethod = session.user.contactMethod;
   const contactWhatsAppId = session.user.contactWhatsAppId;
   const contactLineId = session.user.contactLineId;
@@ -54,7 +59,6 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const services = venue?.services ?? [];
   const bookings = services.flatMap((service) => service.bookings);
   const timeslots = services.flatMap((service) => service.timeslots);
-  const inventories = services.flatMap((service) => service.inventories);
 
   // Create services map for quick lookup
   const servicesMap = services.reduce(
@@ -64,13 +68,6 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     },
     {} as Record<string, (typeof services)[number]>,
   );
-
-  // Create payment map
-  const paymentMap = payments.blobs.reduce((acc: Record<string, string>, blob) => {
-    const key = blob.pathname.split("/").pop()?.split(".")[0] ?? "";
-    acc[key] = blob.url;
-    return acc;
-  }, {});
 
   // Create timeslots map
   const timeslotsMap = timeslots.reduce(
@@ -84,51 +81,47 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     {} as Record<string, (typeof timeslots)[number]>,
   );
 
-  // Process inventories with timezone info
-  const processedInventories = inventories.map((inventory) => {
-    const zonedStartDate = toZonedTime(inventory.startDatetime, inventory.timezone);
-    const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
-    const dateKey = format(zonedStartDate, "yyyyMMdd");
-    const startHour = getHours(zonedStartDate);
-    const endHour = getHours(zonedEndDate);
-    const durationMinutes = (endHour - startHour) * 60;
-
-    // Find corresponding timeslot price
-    const startHourStr = String(startHour).padStart(2, "0");
-    const endHourStr = String(endHour).padStart(2, "0");
-    const timeslotKey = `${inventory.serviceId}|${startHourStr}:00`;
-    const timeslot = timeslotsMap[timeslotKey];
-
-    // Get payment image
-    const priceKey = timeslot ? `scan-${timeslot.price}-thb` : "";
-    const paymentImage = paymentMap[priceKey] ?? "";
-
-    return {
-      ...inventory,
-      paymentImage,
-      date: dateKey,
-      startHourNumber: `${startHourStr}:00`,
-      endHourNumber: `${endHourStr}:00`,
-      durationMinutes,
-      priceKey,
-    } as InventoryWithPayment;
-  });
+  // Create payment map
+  const paymentMap = payments.blobs.reduce((acc: Record<string, string>, blob) => {
+    const key = blob.pathname.split("/").pop()?.split(".")[0] ?? "";
+    acc[key] = blob.url;
+    return acc;
+  }, {});
 
   // Group by date
-  const inventoriesByDate = processedInventories.reduce(
-    (acc, inventory) => {
-      const date = inventory.date;
+  const bookingsByDate = bookings.reduce(
+    (acc, booking) => {
+      const date = format(toZonedTime(booking.startDatetime, booking.timezone), "yyyyMMdd");
+
       if (!acc[date]) {
         acc[date] = [];
       }
-      acc[date].push(inventory);
+
+      const zonedStartDate = toZonedTime(booking.startDatetime, booking.timezone);
+      const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
+      const startHour = getHours(zonedStartDate);
+      const endHour = getHours(zonedEndDate);
+      const durationMinutes = (endHour - startHour) * 60;
+      const priceKey = `scan-${booking.price}-thb`;
+      const paymentImage = paymentMap[priceKey] ?? null;
+
+      const processedBooking = {
+        ...booking,
+        date,
+        startHourNumber: format(zonedStartDate, "HH:mm"),
+        endHourNumber: format(zonedEndDate, "HH:mm"),
+        durationMinutes,
+        paymentImage,
+      };
+
+      acc[date].push(processedBooking);
       return acc;
     },
-    {} as Record<string, InventoryWithPayment[]>,
+    {} as Record<string, Booking[]>,
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...bookings.map((b) => format(toZonedTime(b.startDatetime, b.timezone), "yyyyMMdd")), ...Object.keys(inventoriesByDate)]);
+  const allDates = new Set([...bookings.map((b) => format(toZonedTime(b.startDatetime, b.timezone), "yyyyMMdd"))]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
@@ -191,7 +184,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
               <div className="mt-4">
                 <div className="space-y-4">
                   {sortedDates.map((date) => {
-                    const inventories = inventoriesByDate[date] ?? [];
+                    const bookings = bookingsByDate[date] ?? [];
                     const dateObj = parseISO(date);
                     const dateStr = format(dateObj, "EEEE, MMMM d, yyyy");
 
@@ -202,17 +195,17 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     });
 
                     // Group inventories by service
-                    const inventoriesByService = inventories.reduce(
-                      (acc, inventory) => {
-                        const service = servicesMap[inventory.serviceId];
+                    const bookingsByService = bookings.reduce(
+                      (acc, booking) => {
+                        const service = servicesMap[booking.serviceId];
                         const serviceName = service?.name ?? "Unknown Service";
                         if (!acc[serviceName]) {
                           acc[serviceName] = [];
                         }
-                        acc[serviceName].push(inventory);
+                        acc[serviceName].push(booking);
                         return acc;
                       },
-                      {} as Record<string, InventoryWithPayment[]>,
+                      {} as Record<string, Booking[]>,
                     );
 
                     return (
@@ -221,63 +214,53 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                           <CardTitle className="text-xl font-semibold text-gray-900">{dateStr}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-3 space-y-4">
-                          {Object.entries(inventoriesByService).map(([serviceName, serviceInventories]) => (
+                          {Object.entries(bookingsByService).map(([serviceName, serviceBookings]) => (
                             <div key={serviceName} className="space-y-2">
                               <h3 className="text-sm font-medium text-gray-700">{serviceName}</h3>
                               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                                {serviceInventories.map((inventory) => {
-                                  const service = servicesMap[inventory.serviceId];
-                                  const booking = dayBookings.find((b) => {
-                                    const bookingStart = toZonedTime(b.startDatetime, b.timezone);
-                                    const bookingEnd = toZonedTime(b.endDatetime, b.timezone);
-                                    const inventoryStart = toZonedTime(inventory.startDatetime, inventory.timezone);
-                                    const inventoryEnd = toZonedTime(inventory.endDatetime, inventory.timezone);
-
-                                    return b.serviceId === inventory.serviceId && bookingStart.getTime() === inventoryStart.getTime() && bookingEnd.getTime() === inventoryEnd.getTime();
-                                  });
-
+                                {serviceBookings.map((booking) => {
                                   return (
-                                    <Card key={inventory.id} className="border-1 hover:shadow-md shadow-sm transition-shadow">
+                                    <Card key={booking.id} className="border-1 hover:shadow-md shadow-sm transition-shadow">
                                       <CardContent className="p-3">
                                         <div className="flex items-center justify-between">
                                           <div className="space-y-1">
-                                            <div className="text-sm font-medium text-gray-900">{inventory.startHourNumber}</div>
-                                            <div className="text-xs text-gray-500">{inventory.durationMinutes} minutes</div>
-                                            {inventory.price && (
+                                            <div className="text-sm font-medium text-gray-900">{booking.startHourNumber}</div>
+                                            <div className="text-xs text-gray-500">{booking.durationMinutes} minutes</div>
+                                            {booking.price && (
                                               <div className="text-xs text-gray-500 mt-3">
-                                                {inventory.price} {inventory.currency}
+                                                {booking.price} {booking.currency}
                                               </div>
                                             )}
                                           </div>
 
                                           {booking?.status === "confirmed" && (
-                                            <div className={`font-medium px-3 py-1 rounded-full ${booking.customerId === customerId ? "text-green-600" : "text-red-600"}`}>
-                                              {booking.customerId === customerId ? "BOOKED 👍" : "TAKEN ⛔️"}
+                                            <div className={`font-medium px-3 py-1 rounded-full ${booking.customerContactId === customerContactId ? "text-green-600" : "text-red-600"}`}>
+                                              {booking.customerContactId === customerContactId ? "BOOKED 👍" : "TAKEN ⛔️"}
                                             </div>
                                           )}
 
                                           {booking?.status === "pending" && <div className="text-yellow-600 bg-yellow-50 font-medium px-3 py-1 rounded-full">Pending</div>}
 
-                                          {booking?.status !== "pending" && booking?.status !== "confirmed" && (
+                                          {booking?.status === "available" && (
                                             <BookingDialog
-                                              customerId={customerId}
+                                              bookingId={booking.id}
                                               email={email}
-                                              contactMethod={contactMethod}
+                                              contactMethod="email"
                                               contactWhatsAppId={contactWhatsAppId}
                                               contactLineId={contactLineId}
                                               venueName={venue.name}
-                                              serviceName={service?.name ?? "Unknown Service"}
-                                              serviceId={inventory.serviceId}
-                                              serviceType={service?.type ?? ""}
-                                              serviceIndoor={service?.indoor ?? false}
+                                              serviceName={booking.serviceName}
+                                              serviceId={booking.serviceId}
+                                              serviceType={booking.serviceType ?? ""}
+                                              serviceIndoor={booking.serviceIndoor ?? false}
                                               date={dateStr}
-                                              startDatetime={inventory.startDatetime.getTime()}
-                                              endDatetime={inventory.endDatetime.getTime()}
-                                              timezone={inventory.timezone}
-                                              durationMinutes={inventory.durationMinutes}
-                                              paymentImage={inventory.paymentImage}
-                                              price={inventory.price}
-                                              currency={inventory.currency}
+                                              startDatetime={booking.startDatetime.getTime()}
+                                              endDatetime={booking.endDatetime.getTime()}
+                                              timezone={booking.timezone}
+                                              durationMinutes={booking.durationMinutes}
+                                              paymentImage={booking.paymentImage ?? undefined}
+                                              price={booking.price}
+                                              currency={booking.currency}
                                             />
                                           )}
                                         </div>

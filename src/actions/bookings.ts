@@ -4,40 +4,26 @@ import { auth } from "@/server/auth";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { revalidatePath } from "next/cache";
 
-export async function createBooking(
-  customerId: string,
-  customerContactMethod: string,
-  customerContactId: string,
-  serviceId: string,
-  serviceName: string,
-  serviceType: string,
-  serviceIndoor: boolean,
-  price: string,
-  currency: string,
-  startDatetime: Date,
-  endDatetime: Date,
-  timezone: string,
-  notes: string | null,
-) {
+export async function updateBooking(bookingId: string, serviceId: string, customerContactMethod: string, customerContactId: string, notes: string | null) {
   const session = await auth();
 
   if (!session?.user?.id || !session.user?.email) {
     throw new Error("Unauthorized");
   }
 
-  await alwaysbookbooked.bookings.create({
-    customerId,
+  console.log("updateBooking", {
+    id: bookingId,
+    serviceId,
     customerContactMethod,
     customerContactId,
-    serviceId,
-    serviceName,
-    serviceType,
-    serviceIndoor,
-    startDatetime,
-    endDatetime,
-    timezone,
-    price,
-    currency,
+    status: "pending",
+    notes: notes ?? null,
+  });
+
+  await alwaysbookbooked.bookings.update({
+    id: bookingId,
+    customerContactMethod,
+    customerContactId,
     status: "pending",
     notes: notes ?? null,
   });

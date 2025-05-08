@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { createBooking } from "@/actions/bookings";
+import { updateBooking } from "@/actions/bookings";
 import { format, toZonedTime } from "date-fns-tz";
+import { toast } from "sonner";
 
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
-  customerId,
+  bookingId,
   email,
   contactMethod,
   contactWhatsAppId,
@@ -23,18 +24,15 @@ export default function BookingDialog({
   venueName,
   serviceName,
   serviceId,
-  serviceType,
-  serviceIndoor,
   date,
   startDatetime,
-  endDatetime,
   timezone,
   durationMinutes,
   paymentImage,
   price,
   currency,
 }: {
-  customerId: string;
+  bookingId: string;
   email: string;
   contactMethod: string;
   contactWhatsAppId: string;
@@ -76,27 +74,21 @@ export default function BookingDialog({
     }
 
     if (currentStep === "payment") {
+      setCurrentStep("success");
+      return;
+    }
+
+    if (currentStep === "success") {
       if (!price || !currency) return;
       setIsLoading(true);
       try {
-        await createBooking(
-          customerId,
-          customerContactMethod,
-          customerContactId,
-          serviceId,
-          serviceName,
-          serviceType,
-          serviceIndoor,
-          price,
-          currency,
-          new Date(startDatetime),
-          new Date(endDatetime),
-          timezone,
-          notes,
-        );
-        setCurrentStep("success");
+        await updateBooking(bookingId, serviceId, customerContactMethod, customerContactId, notes);
+        toast.success("Booking submitted successfully");
+      } catch (error) {
+        toast.error("Failed to submit booking");
       } finally {
         setIsLoading(false);
+        setIsOpen(false);
       }
     }
   };
@@ -117,7 +109,7 @@ export default function BookingDialog({
       case "payment":
         return "Make Payment";
       case "success":
-        return "Booking Requested";
+        return "Submit Booking";
     }
   };
 
@@ -130,12 +122,7 @@ export default function BookingDialog({
       }}
     >
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className={"bg-green-500 hover:bg-green-600 text-white"}
-          onClick={() => setIsOpen(true)}
-          // disabled={status === "confirmed" || status === "pending"}
-        >
+        <Button variant="ghost" className={"bg-green-500 hover:bg-green-600 text-white"} onClick={() => setIsOpen(true)}>
           BOOK
         </Button>
       </DialogTrigger>
@@ -174,7 +161,7 @@ export default function BookingDialog({
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="contact-method">Contact Method</Label>
-                  <Select value={customerContactMethod} onValueChange={setCustomerContactMethod} disabled={!contactLineId || !contactWhatsAppId}>
+                  <Select value={customerContactMethod} onValueChange={setCustomerContactMethod} disabled={true}>
                     <SelectTrigger id="contact-method">
                       <SelectValue placeholder="Select contact method" />
                     </SelectTrigger>
@@ -214,8 +201,7 @@ export default function BookingDialog({
 
             {currentStep === "success" && (
               <div className="rounded-lg bg-orange-50 p-4 text-orange-800">
-                <p className="font-medium">Please complete payment within 1 hour.</p>
-                <p className="mt-2 text-sm">Booking is on hold until payment is confirmed.</p>
+                <p className="font-medium">Booking on hold until payment is confirmed.</p>
                 <div className="mt-4 flex items-center justify-center gap-2">
                   <p className="text-sm text-gray-500">👉</p>
                   <Link href="https://line.me/R/ti/p/hottoshotto" target="_blank">
@@ -257,24 +243,22 @@ export default function BookingDialog({
                   <Button type="button" variant="outline" onClick={() => setCurrentStep("details")}>
                     Back
                   </Button>
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Confirm Booking"
-                    )}
+                  <Button type="button" variant="outline" onClick={() => setCurrentStep("success")}>
+                    Done
                   </Button>
                 </>
               )}
               {currentStep === "success" && (
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Ok
-                  </Button>
-                </DialogClose>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Submit Booking"
+                  )}
+                </Button>
               )}
             </DialogFooter>
           </form>
