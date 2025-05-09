@@ -9,7 +9,7 @@ const TELEGRAM_USER_AGENT_REGEX = /telegram/i;
 type BrowserType = "line" | "telegram" | null;
 
 export default function TelegramBrowserBanner() {
-  const [showBanner, setShowBanner] = useState(true);
+  const [showBanner, setShowBanner] = useState(false);
   const [browserType, setBrowserType] = useState<BrowserType>(null);
   const [currentUrl, setCurrentUrl] = useState("");
 
