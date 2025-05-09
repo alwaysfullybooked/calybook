@@ -9,7 +9,7 @@ const TELEGRAM_USER_AGENT_REGEX = /telegram/i;
 type BrowserType = "line" | "telegram" | null;
 
 export default function TelegramBrowserBanner() {
-  const [showBanner, setShowBanner] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
   const [browserType, setBrowserType] = useState<BrowserType>(null);
   const [currentUrl, setCurrentUrl] = useState("");
 
@@ -36,9 +36,9 @@ export default function TelegramBrowserBanner() {
 
   return (
     <div className="bg-blue-600 text-white p-4 shadow-lg">
-      <div className="max-w-3xl mx-auto flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-medium">For the best experience, please open this page in your device's default browser</p>
+      <div className="flex flex-col items-center gap-3 mx-auto">
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-sm font-medium text-center">For the best experience, please open this page in your device's default browser</p>
         </div>
         <button
           onClick={() => {
