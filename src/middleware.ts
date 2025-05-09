@@ -19,7 +19,7 @@ export default async (req: NextRequest) => {
     // Get the current URL
     const url = new URL(req.url);
     // Create a deep link that will open in the default browser
-    const deepLink = `https://alwaysfullybooked.com${url.pathname}${url.search}`;
+    const deepLink = `https://not.alwaysfullybooked.com${url.pathname}${url.search}`;
     // Redirect to the deep link
     return NextResponse.redirect(deepLink);
   }
