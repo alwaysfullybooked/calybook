@@ -1,31 +1,31 @@
+// middleNextRequest, ware.js (place in the root of your project)
 import { NextResponse, type NextRequest } from "next/server";
 
-// Function to check if the request is coming from an in-app browser
-function isInAppBrowser(userAgent: string): boolean {
-  const inAppBrowsers = [
-    "Line", // Line app browser
-    "WhatsApp", // WhatsApp in-app browser
-    "Telegram", // Telegram in-app browser
-    "WeChat", // WeChat in-app browser
-  ];
+export function middleware(request: NextRequest) {
+  // Get user agent from request headers
+  const userAgent = request.headers.get("user-agent") || "";
+  const lowerCaseUserAgent = userAgent.toLowerCase();
 
-  return inAppBrowsers.some((browser) => userAgent.includes(browser));
-}
+  // Check if it's the LINE in-app browser
+  const isLine = lowerCaseUserAgent.includes("line") && !lowerCaseUserAgent.includes("chrome") && !lowerCaseUserAgent.includes("safari");
 
-export default async (req: NextRequest) => {
-  // Check for in-app browser
-  const userAgent = req.headers.get("user-agent") || "";
-  if (isInAppBrowser(userAgent)) {
-    // Get the current URL
-    const url = new URL(req.url);
-    // Create a deep link that will open in the default browser
-    const deepLink = "https://not.alwaysfullybooked.com";
-    // Redirect to the deep link
-    return NextResponse.redirect(deepLink);
+  // If it's LINE browser, add a parameter to the URL to indicate external browser should be used
+  if (isLine) {
+    // Create the external URL (current URL with a special parameter)
+    const url = new URL(request.url);
+
+    // Check if this is already a redirect attempt with our parameter
+    if (!url.searchParams.has("external_browser")) {
+      // Add a parameter to indicate we want to open in external browser
+      url.searchParams.set("external_browser", "true");
+
+      // Return response with a special header that can trigger external browser
+      return NextResponse.redirect(url);
+    }
   }
 
   return NextResponse.next();
-};
+}
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],

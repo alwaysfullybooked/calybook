@@ -7,6 +7,8 @@ import Footer from "../components/footer";
 import { cn } from "@/lib/utils";
 
 import "@/styles/globals.css";
+import ExternalBrowserRedirect from "@/components/client/external-browser";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NODE_ENV === "production" ? "https://not.alwaysfullybooked.com" : "http://localhost:3000"),
@@ -36,6 +38,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("bg-background text-foreground min-h-screen font-sans antialiased", GeistSans.variable, GeistMono.variable)}>
+        <Suspense>
+          <ExternalBrowserRedirect />
+        </Suspense>
         <Header />
         {children}
         <Footer />
