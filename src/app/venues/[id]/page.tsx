@@ -40,8 +40,6 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   }
 
   const email = session.user.email;
-  const customerContactId = session.user.id;
-  const contactMethod = session.user.contactMethod;
   const contactWhatsAppId = session.user.contactWhatsAppId;
   const contactLineId = session.user.contactLineId;
 
@@ -234,8 +232,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                           </div>
 
                                           {booking?.status === "confirmed" && (
-                                            <div className={`font-medium px-3 py-1 rounded-full ${booking.customerContactId === customerContactId ? "text-green-600" : "text-red-600"}`}>
-                                              {booking.customerContactId === customerContactId ? "BOOKED 👍" : "TAKEN ⛔️"}
+                                            <div className={`font-medium px-3 py-1 rounded-full ${booking.customerContactId === email ? "text-green-600" : "text-red-600"}`}>
+                                              {booking.customerContactId === email ? "BOOKED 👍" : "TAKEN ⛔️"}
                                             </div>
                                           )}
 
