@@ -46,14 +46,15 @@ export default async function DashboardPage() {
       <h1 className="mb-6 sm:mb-8 text-2xl sm:text-3xl font-bold text-center sm:text-left">My Bookings</h1>
 
       <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="upcoming" className="text-xs sm:text-base py-2">
+        <TabsList className="w-full justify-start overflow-x-auto">
+          <TabsTrigger value="upcoming" className="text-sm sm:text-base">
             Upcoming
           </TabsTrigger>
-          <TabsTrigger value="past" className="text-xs sm:text-base py-2">
+          <TabsTrigger value="past" className="text-sm sm:text-base">
             Past
           </TabsTrigger>
         </TabsList>
+
         <TabsContent value="upcoming">
           <div className="mt-3 sm:mt-4 space-y-4 sm:space-y-6">
             {upcomingBookings.length === 0 ? (
