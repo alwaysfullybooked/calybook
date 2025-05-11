@@ -56,7 +56,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
 
   const services = venue?.services ?? [];
   const bookings = services.flatMap((service) => service.bookings);
-  const timeslots = services.flatMap((service) => service.timeslots);
+  const pricelists = services.flatMap((service) => service.pricelists);
 
   // Create services map for quick lookup
   const servicesMap = services.reduce(
@@ -67,16 +67,16 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     {} as Record<string, (typeof services)[number]>,
   );
 
-  // Create timeslots map
-  const timeslotsMap = timeslots.reduce(
-    (acc, timeslot) => {
-      for (let hour = Number.parseInt(timeslot.startTime); hour <= Number.parseInt(timeslot.endTime); hour++) {
-        const timeKey = `${timeslot.serviceId}|${hour.toString().padStart(2, "0")}:00`;
-        acc[timeKey] = timeslot;
+  // Create pricelists map
+  const pricelistsMap = pricelists.reduce(
+    (acc, pricelist) => {
+      for (let hour = Number.parseInt(pricelist.startTime); hour <= Number.parseInt(pricelist.endTime); hour++) {
+        const timeKey = `${pricelist.serviceId}|${hour.toString().padStart(2, "0")}:00`;
+        acc[timeKey] = pricelist;
       }
       return acc;
     },
-    {} as Record<string, (typeof timeslots)[number]>,
+    {} as Record<string, (typeof pricelists)[number]>,
   );
 
   // Create payment map
