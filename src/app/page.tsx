@@ -44,11 +44,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
                   {venue.city}, {venue.country}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex-1">
+              <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
                 <p className="text-sm text-muted-foreground mb-4">Discover this amazing venue in {venue.city}</p>
-                <Button className="w-full" asChild>
-                  <Link href={`/venues/${venue.id}`}>View Details</Link>
+                <Button className="w-full" asChild disabled={true}>
+                  {/* <Link href={`/venues/${venue.id}`}>View Details</Link> */}
                 </Button>
+                Maintenance mode
               </CardContent>
             </Card>
           ))}
