@@ -6,7 +6,6 @@ import BookingDialog from "@/components/client/booking-dialog";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 import { format, parseISO, getHours, addMinutes } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 
 type Schedule = {
   isAvailable: boolean;
@@ -93,13 +92,13 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   // Group by date
   const scheduleByDate = availableschedule.reduce(
     (acc, slots) => {
-      const date = format(toZonedTime(slots.startDatetime, slots.timezone), "yyyyMMdd");
+      const date = format(slots.startDatetime, "yyyyMMdd");
 
       if (!acc[date]) {
         acc[date] = [];
       }
 
-      const zonedStartDate = toZonedTime(slots.startDatetime, slots.timezone);
+      const zonedStartDate = slots.startDatetime;
       const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
       const startHour = getHours(zonedStartDate);
       const endHour = getHours(zonedEndDate);
@@ -123,7 +122,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...availableschedule.map((b) => format(toZonedTime(b.startDatetime, b.timezone), "yyyyMMdd"))]);
+  const allDates = new Set([...availableschedule.map((b) => format(b.startDatetime, "yyyyMMdd"))]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
@@ -191,7 +190,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
 
                     // Get bookings for this day
                     const daySchedule = schedule.filter((booking) => {
-                      const bookingDate = format(toZonedTime(booking.startDatetime, booking.timezone), "yyyyMMdd");
+                      const bookingDate = format(booking.startDatetime, "yyyyMMdd");
                       return bookingDate === date;
                     });
 
