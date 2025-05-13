@@ -19,7 +19,7 @@
     "vercel-remove": "vercel remove -s -y justbookit"
   },
   "dependencies": {
-    "@alwaysfullybooked/node-sdk": "^0.1.11",
+    "@alwaysfullybooked/node-sdk": "^0.1.12",
     "@auth/drizzle-adapter": "^1.9.1",
     "@hookform/resolvers": "^5.0.1",
     "@planetscale/database": "^1.19.0",
