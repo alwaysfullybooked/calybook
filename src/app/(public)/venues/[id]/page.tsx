@@ -1,12 +1,11 @@
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Phone, Globe } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
-import { format, getHours, addMinutes, parseISO } from "date-fns";
-import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
+import { dateToFormatInTimezone } from "@/lib/utils";
 
 type Schedule = {
   isAvailable: boolean;
@@ -23,7 +22,7 @@ type Schedule = {
   createdById: string;
   createdAt: Date;
   paymentImage: string | null;
-  date: string; // YYYY-MM-DD
+  displayDate: string;
   startHourNumber: string;
   endHourNumber: string;
   serviceName: string;
@@ -93,36 +92,32 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   // Group by date
   const scheduleByDate = availableSchedule.reduce(
     (acc, slots) => {
-      const date = format(slots.startDatetime, "yyyyMMdd");
+      // Format the date in the venue's timezone
+      const displayDate = dateToFormatInTimezone(slots.startDatetime, slots.timezone, "EEEE, MMMM d, yyyy");
 
-      if (!acc[date]) {
-        acc[date] = [];
+      if (!acc[displayDate]) {
+        acc[displayDate] = [];
       }
 
-      const zonedStartDate = toZonedTime(slots.startDatetime, slots.timezone);
-      const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
-      const startHour = getHours(zonedStartDate);
-      const endHour = getHours(zonedEndDate);
       const priceKey = `scan-${slots.price}-thb`;
       const paymentImage = paymentMap[priceKey] ?? null;
 
       const processedSchedule = {
         ...slots,
-        date,
-        startHour,
-        endHour,
-        durationMinutes: slots.durationMinutes,
+        displayDate,
+        startHourNumber: dateToFormatInTimezone(slots.startDatetime, slots.timezone, "HH:mm"),
+        endHourNumber: dateToFormatInTimezone(slots.startDatetime, slots.timezone, "HH:mm"),
         paymentImage,
       };
 
-      acc[date].push(processedSchedule as unknown as Schedule);
+      acc[displayDate].push(processedSchedule as unknown as Schedule);
       return acc;
     },
     {} as Record<string, Schedule[]>,
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...availableSchedule.map((b) => format(b.startDatetime, "yyyyMMdd"))]);
+  const allDates = new Set([...availableSchedule.map((b) => dateToFormatInTimezone(b.startDatetime, b.timezone, "EEEE, MMMM d, yyyy"))]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
@@ -184,14 +179,12 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
               <div className="mt-4">
                 <div className="space-y-4">
                   {sortedDates.map((date) => {
-                    const schedule = scheduleByDate[date] ?? [];
-                    const dateStr = format(parseISO(date), "EEEE, MMMM d, yyyy");
+                    const scheduleDate = scheduleByDate[date] ?? [];
 
-                    // Group inventories by service
-                    const scheduleByService = schedule.reduce(
+                    // Group by service in a single pass
+                    const scheduleByService = scheduleDate.reduce(
                       (acc, booking) => {
-                        const service = servicesMap[booking.serviceId];
-                        const serviceName = service?.name ?? "Unknown Service";
+                        const serviceName = servicesMap[booking.serviceId]?.name ?? "Unknown Service";
                         if (!acc[serviceName]) {
                           acc[serviceName] = [];
                         }
@@ -202,55 +195,53 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     );
 
                     return (
-                      <Card key={dateStr} className="overflow-hidden border-2 shadow-sm">
+                      <Card key={date} className="overflow-hidden border-2 shadow-sm">
                         <CardHeader className="bg-gray-300/50 p-3">
-                          <CardTitle className="text-xl font-semibold text-gray-900">{dateStr}</CardTitle>
+                          <CardTitle className="text-xl font-semibold text-gray-900">{date}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-3 space-y-4">
                           {Object.entries(scheduleByService).map(([serviceName, serviceSchedule]) => (
                             <div key={serviceName} className="space-y-2">
                               <h3 className="text-sm font-medium text-gray-700">{serviceName}</h3>
                               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                                {serviceSchedule.map((schedule) => {
-                                  return (
-                                    <Card key={schedule.id} className="border-1 hover:shadow-md shadow-sm transition-shadow">
-                                      <CardContent className="p-3">
-                                        <div className="flex items-center justify-between">
-                                          <div className="space-y-1">
-                                            <div className="text-sm font-medium text-gray-900">{format(schedule.startDatetime, "HH:mm")}</div>
-                                            <div className="text-xs text-gray-500">{schedule.durationMinutes} minutes</div>
-                                            {schedule.price && (
-                                              <div className="text-xs text-gray-500 mt-3">
-                                                {schedule.price} {schedule.currency}
-                                              </div>
-                                            )}
-                                          </div>
-
-                                          {schedule?.isAvailable && (
-                                            <BookingDialog
-                                              email={email}
-                                              contactMethod="email"
-                                              contactWhatsAppId={contactWhatsAppId}
-                                              contactLineId={contactLineId}
-                                              venueId={venue.id}
-                                              venueName={venue.name}
-                                              serviceName={serviceName}
-                                              serviceId={schedule.serviceId}
-                                              date={date}
-                                              startDatetime={schedule.startDatetime}
-                                              endDatetime={schedule.endDatetime}
-                                              timezone={schedule.timezone}
-                                              durationMinutes={schedule.durationMinutes}
-                                              paymentImage={schedule.paymentImage ?? undefined}
-                                              price={schedule.price}
-                                              currency={schedule.currency}
-                                            />
+                                {serviceSchedule.map((schedule) => (
+                                  <Card key={schedule.id} className="border-1 hover:shadow-md shadow-sm transition-shadow">
+                                    <CardContent className="p-3">
+                                      <div className="flex items-center justify-between">
+                                        <div className="space-y-1">
+                                          <div className="text-sm font-medium text-gray-900">{schedule.startHourNumber}</div>
+                                          <div className="text-xs text-gray-500">{schedule.durationMinutes} minutes</div>
+                                          {schedule.price && (
+                                            <div className="text-xs text-gray-500 mt-3">
+                                              {schedule.price} {schedule.currency}
+                                            </div>
                                           )}
                                         </div>
-                                      </CardContent>
-                                    </Card>
-                                  );
-                                })}
+
+                                        {schedule?.isAvailable && (
+                                          <BookingDialog
+                                            email={email}
+                                            contactMethod="email"
+                                            contactWhatsAppId={contactWhatsAppId}
+                                            contactLineId={contactLineId}
+                                            venueId={venue.id}
+                                            venueName={venue.name}
+                                            serviceName={serviceName}
+                                            serviceId={schedule.serviceId}
+                                            date={schedule.displayDate}
+                                            startDatetime={schedule.startDatetime}
+                                            endDatetime={schedule.endDatetime}
+                                            timezone={schedule.timezone}
+                                            durationMinutes={schedule.durationMinutes}
+                                            paymentImage={schedule.paymentImage ?? undefined}
+                                            price={schedule.price}
+                                            currency={schedule.currency}
+                                          />
+                                        )}
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                ))}
                               </div>
                             </div>
                           ))}
