@@ -21,8 +21,8 @@ export async function createBooking({
   serviceId: string;
   serviceName: string;
 
-  startDatetime: string;
-  endDatetime: string;
+  startDatetime: Date;
+  endDatetime: Date;
   timezone: string;
   price: string;
   currency: string;
@@ -36,11 +36,19 @@ export async function createBooking({
     throw new Error("Unauthorized");
   }
 
+  console.log({
+    venueId,
+    serviceId,
+    serviceName,
+    startDatetime,
+    endDatetime,
+  });
+
   await alwaysbookbooked.bookings.create({
     serviceId,
     serviceName,
-    startDatetime: new Date(startDatetime),
-    endDatetime: new Date(endDatetime),
+    startDatetime: startDatetime.toISOString(),
+    endDatetime: endDatetime.toISOString(),
     timezone,
     price,
     currency,
