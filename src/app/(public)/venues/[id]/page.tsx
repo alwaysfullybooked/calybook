@@ -8,7 +8,9 @@ import { redirect } from "next/navigation";
 import { format, parseISO, getHours, addMinutes } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
-type Booking = {
+type Schedule = {
+  isAvailable: boolean;
+
   id: string;
   serviceId: string;
   startDatetime: Date;
@@ -43,7 +45,9 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const contactWhatsAppId = session.user.contactWhatsAppId;
   const contactLineId = session.user.contactLineId;
 
-  const venue = await alwaysbookbooked.venues.search(id);
+  const venue = await alwaysbookbooked.venues.find(id);
+  const schedule = await alwaysbookbooked.venues.publicAvailability(id);
+  const availableschedule = schedule.filter((s) => s.isAvailable);
 
   if (!venue) {
     return <div>Venue not found</div>;
@@ -54,9 +58,9 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     prefix: "scan",
   });
 
-  const services = venue?.services ?? [];
-  const bookings = services.flatMap((service) => service.bookings);
-  const pricelists = services.flatMap((service) => service.pricelists);
+  const services = venue?.services;
+
+  // const pricelists = services.flatMap((service) => service.pricelists);
 
   // Create services map for quick lookup
   const servicesMap = services.reduce(
@@ -68,16 +72,16 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   );
 
   // Create pricelists map
-  const pricelistsMap = pricelists.reduce(
-    (acc, pricelist) => {
-      for (let hour = Number.parseInt(pricelist.startTime); hour <= Number.parseInt(pricelist.endTime); hour++) {
-        const timeKey = `${pricelist.serviceId}|${hour.toString().padStart(2, "0")}:00`;
-        acc[timeKey] = pricelist;
-      }
-      return acc;
-    },
-    {} as Record<string, (typeof pricelists)[number]>,
-  );
+  // const pricelistsMap = pricelists.reduce(
+  //   (acc, pricelist) => {
+  //     for (let hour = Number.parseInt(pricelist.startTime); hour <= Number.parseInt(pricelist.endTime); hour++) {
+  //       const timeKey = `${pricelist.serviceId}|${hour.toString().padStart(2, "0")}:00`;
+  //       acc[timeKey] = pricelist;
+  //     }
+  //     return acc;
+  //   },
+  //   {} as Record<string, (typeof pricelists)[number]>,
+  // );
 
   // Create payment map
   const paymentMap = payments.blobs.reduce((acc: Record<string, string>, blob) => {
@@ -87,24 +91,24 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   }, {});
 
   // Group by date
-  const bookingsByDate = bookings.reduce(
-    (acc, booking) => {
-      const date = format(toZonedTime(booking.startDatetime, booking.timezone), "yyyyMMdd");
+  const scheduleByDate = availableschedule.reduce(
+    (acc, slots) => {
+      const date = format(toZonedTime(slots.startDatetime, slots.timezone), "yyyyMMdd");
 
       if (!acc[date]) {
         acc[date] = [];
       }
 
-      const zonedStartDate = toZonedTime(booking.startDatetime, booking.timezone);
+      const zonedStartDate = toZonedTime(slots.startDatetime, slots.timezone);
       const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
       const startHour = getHours(zonedStartDate);
       const endHour = getHours(zonedEndDate);
       const durationMinutes = (endHour - startHour) * 60;
-      const priceKey = `scan-${booking.price}-thb`;
+      const priceKey = `scan-${slots.price}-thb`;
       const paymentImage = paymentMap[priceKey] ?? null;
 
-      const processedBooking = {
-        ...booking,
+      const processedSchedule = {
+        ...slots,
         date,
         startHourNumber: format(zonedStartDate, "HH:mm"),
         endHourNumber: format(zonedEndDate, "HH:mm"),
@@ -112,14 +116,14 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
         paymentImage,
       };
 
-      acc[date].push(processedBooking);
+      acc[date].push(processedSchedule as unknown as Schedule);
       return acc;
     },
-    {} as Record<string, Booking[]>,
+    {} as Record<string, Schedule[]>,
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...bookings.map((b) => format(toZonedTime(b.startDatetime, b.timezone), "yyyyMMdd"))]);
+  const allDates = new Set([...availableschedule.map((b) => format(toZonedTime(b.startDatetime, b.timezone), "yyyyMMdd"))]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
@@ -152,11 +156,10 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
               </div>
             </CardContent>
           </Card>
-
-          <Tabs defaultValue="availability" className="w-full">
+          <Tabs defaultValue="schedule" className="w-full">
             <TabsList className="w-full justify-start overflow-x-auto">
-              <TabsTrigger value="availability" className="text-sm sm:text-base">
-                Availability
+              <TabsTrigger value="schedule" className="text-sm sm:text-base">
+                Schedule
               </TabsTrigger>
               <TabsTrigger value="services" className="text-sm sm:text-base">
                 Services
@@ -178,22 +181,22 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
               </div>
             </TabsContent>
 
-            <TabsContent value="availability">
+            <TabsContent value="schedule">
               <div className="mt-4">
                 <div className="space-y-4">
                   {sortedDates.map((date) => {
-                    const bookings = bookingsByDate[date] ?? [];
+                    const schedule = scheduleByDate[date] ?? [];
                     const dateObj = parseISO(date);
                     const dateStr = format(dateObj, "EEEE, MMMM d, yyyy");
 
                     // Get bookings for this day
-                    const dayBookings = bookings.filter((booking) => {
+                    const daySchedule = schedule.filter((booking) => {
                       const bookingDate = format(toZonedTime(booking.startDatetime, booking.timezone), "yyyyMMdd");
                       return bookingDate === date;
                     });
 
                     // Group inventories by service
-                    const bookingsByService = bookings.reduce(
+                    const scheduleByService = schedule.reduce(
                       (acc, booking) => {
                         const service = servicesMap[booking.serviceId];
                         const serviceName = service?.name ?? "Unknown Service";
@@ -203,7 +206,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                         acc[serviceName].push(booking);
                         return acc;
                       },
-                      {} as Record<string, Booking[]>,
+                      {} as Record<string, Schedule[]>,
                     );
 
                     return (
@@ -212,53 +215,43 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                           <CardTitle className="text-xl font-semibold text-gray-900">{dateStr}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-3 space-y-4">
-                          {Object.entries(bookingsByService).map(([serviceName, serviceBookings]) => (
+                          {Object.entries(scheduleByService).map(([serviceName, serviceSchedule]) => (
                             <div key={serviceName} className="space-y-2">
                               <h3 className="text-sm font-medium text-gray-700">{serviceName}</h3>
                               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                                {serviceBookings.map((booking) => {
+                                {serviceSchedule.map((schedule) => {
                                   return (
-                                    <Card key={booking.id} className="border-1 hover:shadow-md shadow-sm transition-shadow">
+                                    <Card key={schedule.id} className="border-1 hover:shadow-md shadow-sm transition-shadow">
                                       <CardContent className="p-3">
                                         <div className="flex items-center justify-between">
                                           <div className="space-y-1">
-                                            <div className="text-sm font-medium text-gray-900">{booking.startHourNumber}</div>
-                                            <div className="text-xs text-gray-500">{booking.durationMinutes} minutes</div>
-                                            {booking.price && (
+                                            <div className="text-sm font-medium text-gray-900">{schedule.startHourNumber}</div>
+                                            <div className="text-xs text-gray-500">{schedule.durationMinutes} minutes</div>
+                                            {schedule.price && (
                                               <div className="text-xs text-gray-500 mt-3">
-                                                {booking.price} {booking.currency}
+                                                {schedule.price} {schedule.currency}
                                               </div>
                                             )}
                                           </div>
 
-                                          {booking?.status === "confirmed" && (
-                                            <div className={`font-medium px-3 py-1 rounded-full ${booking.customerContactId === email ? "text-green-600" : "text-red-600"}`}>
-                                              {booking.customerContactId === email ? "BOOKED 👍" : "TAKEN ⛔️"}
-                                            </div>
-                                          )}
-
-                                          {booking?.status === "pending" && <div className="text-yellow-600 bg-yellow-50 font-medium px-3 py-1 rounded-full">Pending</div>}
-
-                                          {booking?.status === "available" && (
+                                          {schedule?.isAvailable && (
                                             <BookingDialog
-                                              bookingId={booking.id}
                                               email={email}
                                               contactMethod="email"
                                               contactWhatsAppId={contactWhatsAppId}
                                               contactLineId={contactLineId}
+                                              venueId={venue.id}
                                               venueName={venue.name}
-                                              serviceName={booking.serviceName}
-                                              serviceId={booking.serviceId}
-                                              serviceType={booking.serviceType ?? ""}
-                                              serviceIndoor={booking.serviceIndoor ?? false}
+                                              serviceName={serviceName}
+                                              serviceId={schedule.serviceId}
                                               date={dateStr}
-                                              startDatetime={booking.startDatetime.getTime()}
-                                              endDatetime={booking.endDatetime.getTime()}
-                                              timezone={booking.timezone}
-                                              durationMinutes={booking.durationMinutes}
-                                              paymentImage={booking.paymentImage ?? undefined}
-                                              price={booking.price}
-                                              currency={booking.currency}
+                                              startDatetime={schedule.startDatetime}
+                                              endDatetime={schedule.endDatetime}
+                                              timezone={schedule.timezone}
+                                              durationMinutes={schedule.durationMinutes}
+                                              paymentImage={schedule.paymentImage ?? undefined}
+                                              price={schedule.price}
+                                              currency={schedule.currency}
                                             />
                                           )}
                                         </div>

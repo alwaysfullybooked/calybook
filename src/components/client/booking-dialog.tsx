@@ -9,14 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { updateBooking } from "@/actions/bookings";
+import { createBooking } from "@/actions/bookings";
 import { format, toZonedTime } from "date-fns-tz";
 import { toast } from "sonner";
 
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
-  bookingId,
+  venueId,
   email,
   contactMethod,
   contactWhatsAppId,
@@ -26,13 +26,14 @@ export default function BookingDialog({
   serviceId,
   date,
   startDatetime,
+  endDatetime,
   timezone,
   durationMinutes,
   paymentImage,
   price,
   currency,
 }: {
-  bookingId: string;
+  venueId: string;
   email: string;
   contactMethod: string;
   contactWhatsAppId: string;
@@ -40,11 +41,9 @@ export default function BookingDialog({
   venueName: string;
   serviceName: string;
   serviceId: string;
-  serviceType: string;
-  serviceIndoor: boolean;
   date: string;
-  startDatetime: number;
-  endDatetime: number;
+  startDatetime: Date;
+  endDatetime: Date;
   timezone: string;
   durationMinutes: number;
   paymentImage?: string;
@@ -82,7 +81,19 @@ export default function BookingDialog({
       if (!price || !currency) return;
       setIsLoading(true);
       try {
-        await updateBooking(bookingId, serviceId, customerContactMethod, customerContactId, notes);
+        await createBooking({
+          venueId,
+          serviceId,
+          serviceName,
+          startDatetime,
+          endDatetime,
+          timezone,
+          price,
+          currency,
+          customerContactMethod,
+          customerContactId,
+          notes,
+        });
         toast.success("Booking submitted successfully");
       } catch (error) {
         toast.error("Failed to submit booking");

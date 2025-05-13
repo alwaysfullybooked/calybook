@@ -7,7 +7,7 @@ import Link from "next/link";
 export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
   const { country, city } = await searchParams;
 
-  const venues = await alwaysbookbooked.venues.list();
+  const venues = await alwaysbookbooked.venues.search();
 
   const filteredVenues = venues
     .filter((f) => {
@@ -47,9 +47,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
                 <p className="text-sm text-muted-foreground mb-4">Discover this amazing venue in {venue.city}</p>
                 <Button className="w-full" asChild disabled={true}>
-                  {/* <Link href={`/venues/${venue.id}`}>View Details</Link> */}
+                  <Link href={`/venues/${venue.id}`}>View Details</Link>
                 </Button>
-                Maintenance mode
               </CardContent>
             </Card>
           ))}

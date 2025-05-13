@@ -4,29 +4,68 @@ import { auth } from "@/server/auth";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { revalidatePath } from "next/cache";
 
-export async function updateBooking(bookingId: string, serviceId: string, customerContactMethod: string, customerContactId: string, notes: string | null) {
+export async function createBooking({
+  venueId,
+  serviceId,
+  serviceName,
+  startDatetime,
+  endDatetime,
+  timezone,
+  price,
+  currency,
+  customerContactMethod,
+  customerContactId,
+  notes,
+}: {
+  venueId: string;
+  serviceId: string;
+  serviceName: string;
+
+  startDatetime: Date;
+  endDatetime: Date;
+  timezone: string;
+  price: string;
+  currency: string;
+  customerContactMethod: string;
+  customerContactId: string;
+  notes: string | null;
+}) {
   const session = await auth();
 
   if (!session?.user?.id || !session.user?.email) {
     throw new Error("Unauthorized");
   }
 
-  console.log("updateBooking", {
-    id: bookingId,
+  await alwaysbookbooked.bookings.create({
     serviceId,
+    serviceName,
+    startDatetime,
+    endDatetime,
+    timezone,
+    price,
+    currency,
+    notes,
     customerContactMethod,
     customerContactId,
-    status: "pending",
-    notes: notes ?? null,
   });
 
-  await alwaysbookbooked.bookings.update({
-    id: bookingId,
-    customerContactMethod,
-    customerContactId,
-    status: "pending",
-    notes: notes ?? null,
-  });
-
-  revalidatePath(`/venues/${serviceId}`);
+  revalidatePath(`/venues/${venueId}`);
 }
+
+// export async function updateBooking(bookingId: string, serviceId: string, customerContactMethod: string, customerContactId: string, notes: string | null) {
+//   const session = await auth();
+
+//   if (!session?.user?.id || !session.user?.email) {
+//     throw new Error("Unauthorized");
+//   }
+
+//   await alwaysbookbooked.bookings.update({
+//     id: bookingId,
+//     customerContactMethod,
+//     customerContactId,
+//     status: "pending",
+//     notes: notes ?? null,
+//   });
+
+//   revalidatePath(`/venues/${serviceId}`);
+// }
