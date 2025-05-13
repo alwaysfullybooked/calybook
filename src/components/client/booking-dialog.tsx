@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
-import { format, toZonedTime } from "date-fns-tz";
+import { format } from "date-fns";
 import { toast } from "sonner";
 
 type Step = "details" | "notes" | "payment" | "success";
@@ -157,7 +157,7 @@ export default function BookingDialog({
                 </div>
                 <div className="space-y-2">
                   <Label>Date & Time</Label>
-                  <Input value={`${date} ${format(toZonedTime(new Date(startDatetime), timezone), "HH:mm")} - ${durationMinutes} minutes`} disabled />
+                  <Input value={`${date} ${format(startDatetime, "HH:mm")} - ${durationMinutes} minutes`} disabled />
                 </div>
                 {price && currency && (
                   <div className="space-y-2">

@@ -4,9 +4,8 @@ import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { auth } from "@/server/auth";
 import { Calendar, Clock, MapPin, X } from "lucide-react";
 import { redirect } from "next/navigation";
-import { addMinutes, format, getHours } from "date-fns";
+import { addMinutes, format } from "date-fns";
 import Link from "next/link";
-import { toZonedTime } from "date-fns-tz";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -23,7 +22,7 @@ export default async function DashboardPage() {
 
   // Fetch service and venue information for each booking
   const processedBookings = bookings.map((booking) => {
-    const zonedStartDate = toZonedTime(booking.startDatetime, booking.timezone);
+    const zonedStartDate = booking.startDatetime;
     const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
 
     return {
