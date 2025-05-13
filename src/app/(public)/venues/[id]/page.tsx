@@ -5,7 +5,8 @@ import { MapPin, Phone, Globe } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
-import { format, parseISO, getHours, addMinutes } from "date-fns";
+import { format, getHours, addMinutes, parseISO } from "date-fns";
+import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
 
 type Schedule = {
   isAvailable: boolean;
@@ -46,7 +47,6 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
 
   const venue = await alwaysbookbooked.venues.find(id);
   const schedule = await alwaysbookbooked.venues.publicAvailability(id);
-  const availableschedule = schedule.filter((s) => s.isAvailable);
 
   if (!venue) {
     return <div>Venue not found</div>;
@@ -90,7 +90,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   }, {});
 
   // Group by date
-  const scheduleByDate = availableschedule.reduce(
+  const scheduleByDate = schedule.reduce(
     (acc, slots) => {
       const date = format(slots.startDatetime, "yyyyMMdd");
 
@@ -98,20 +98,19 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
         acc[date] = [];
       }
 
-      const zonedStartDate = slots.startDatetime;
+      const zonedStartDate = toZonedTime(slots.startDatetime, slots.timezone);
       const zonedEndDate = addMinutes(zonedStartDate, 60); // End time is start + 60 minutes
       const startHour = getHours(zonedStartDate);
       const endHour = getHours(zonedEndDate);
-      const durationMinutes = (endHour - startHour) * 60;
       const priceKey = `scan-${slots.price}-thb`;
       const paymentImage = paymentMap[priceKey] ?? null;
 
       const processedSchedule = {
         ...slots,
         date,
-        startHourNumber: format(zonedStartDate, "HH:mm"),
-        endHourNumber: format(zonedEndDate, "HH:mm"),
-        durationMinutes,
+        startHour,
+        endHour,
+        durationMinutes: slots.durationMinutes,
         paymentImage,
       };
 
@@ -122,7 +121,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...availableschedule.map((b) => format(b.startDatetime, "yyyyMMdd"))]);
+  const allDates = new Set([...schedule.map((b) => format(b.startDatetime, "yyyyMMdd"))]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
@@ -185,14 +184,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                 <div className="space-y-4">
                   {sortedDates.map((date) => {
                     const schedule = scheduleByDate[date] ?? [];
-                    const dateObj = parseISO(date);
-                    const dateStr = format(dateObj, "EEEE, MMMM d, yyyy");
-
-                    // Get bookings for this day
-                    const daySchedule = schedule.filter((booking) => {
-                      const bookingDate = format(booking.startDatetime, "yyyyMMdd");
-                      return bookingDate === date;
-                    });
+                    const dateStr = format(parseISO(date), "EEEE, MMMM d, yyyy");
 
                     // Group inventories by service
                     const scheduleByService = schedule.reduce(
@@ -209,7 +201,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     );
 
                     return (
-                      <Card key={date} className="overflow-hidden border-2 shadow-sm">
+                      <Card key={dateStr} className="overflow-hidden border-2 shadow-sm">
                         <CardHeader className="bg-gray-300/50 p-3">
                           <CardTitle className="text-xl font-semibold text-gray-900">{dateStr}</CardTitle>
                         </CardHeader>
@@ -224,7 +216,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                       <CardContent className="p-3">
                                         <div className="flex items-center justify-between">
                                           <div className="space-y-1">
-                                            <div className="text-sm font-medium text-gray-900">{schedule.startHourNumber}</div>
+                                            <div className="text-sm font-medium text-gray-900">{format(schedule.startDatetime, "HH:mm")}</div>
                                             <div className="text-xs text-gray-500">{schedule.durationMinutes} minutes</div>
                                             {schedule.price && (
                                               <div className="text-xs text-gray-500 mt-3">
@@ -243,7 +235,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                               venueName={venue.name}
                                               serviceName={serviceName}
                                               serviceId={schedule.serviceId}
-                                              date={dateStr}
+                                              date={date}
                                               startDatetime={schedule.startDatetime}
                                               endDatetime={schedule.endDatetime}
                                               timezone={schedule.timezone}

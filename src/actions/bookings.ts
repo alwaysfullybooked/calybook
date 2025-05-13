@@ -36,14 +36,6 @@ export async function createBooking({
     throw new Error("Unauthorized");
   }
 
-  console.log({
-    venueId,
-    serviceId,
-    serviceName,
-    startDatetime,
-    endDatetime,
-  });
-
   await alwaysbookbooked.bookings.create({
     serviceId,
     serviceName,

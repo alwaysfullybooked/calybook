@@ -6,6 +6,7 @@ import { Calendar, Clock, MapPin, X } from "lucide-react";
 import { redirect } from "next/navigation";
 import { addMinutes, format } from "date-fns";
 import Link from "next/link";
+import { formatInTimeZone } from "date-fns-tz";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -91,7 +92,7 @@ export default async function DashboardPage() {
                         <span className="mx-1 sm:mx-2 text-gray-400">|</span>
                         <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                         <span>
-                          {format(booking.zonedStartDate, "HH:mm")} - {format(booking.zonedEndDate, "HH:mm")}
+                          {formatInTimeZone(booking.zonedStartDate, booking.timezone, "HH:mm")} - {formatInTimeZone(booking.zonedEndDate, booking.timezone, "HH:mm")}
                         </span>
                         {booking.status === "pending" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>}
                         {booking.status === "confirmed" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-green-800 bg-green-100 rounded-full">Confirmed</span>}
