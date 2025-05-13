@@ -47,6 +47,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
 
   const venue = await alwaysbookbooked.venues.find(id);
   const schedule = await alwaysbookbooked.venues.publicAvailability(id);
+  const availableSchedule = schedule.filter((slot) => slot.isAvailable);
 
   if (!venue) {
     return <div>Venue not found</div>;
@@ -90,7 +91,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   }, {});
 
   // Group by date
-  const scheduleByDate = schedule.reduce(
+  const scheduleByDate = availableSchedule.reduce(
     (acc, slots) => {
       const date = format(slots.startDatetime, "yyyyMMdd");
 
@@ -121,7 +122,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...schedule.map((b) => format(b.startDatetime, "yyyyMMdd"))]);
+  const allDates = new Set([...availableSchedule.map((b) => format(b.startDatetime, "yyyyMMdd"))]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
