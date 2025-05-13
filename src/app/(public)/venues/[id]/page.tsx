@@ -244,8 +244,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                               serviceName={serviceName}
                                               serviceId={schedule.serviceId}
                                               date={dateStr}
-                                              startDatetime={schedule.startDatetime}
-                                              endDatetime={schedule.endDatetime}
+                                              startDatetime={schedule.startDatetime.toISOString()}
+                                              endDatetime={schedule.endDatetime.toISOString()}
                                               timezone={schedule.timezone}
                                               durationMinutes={schedule.durationMinutes}
                                               paymentImage={schedule.paymentImage ?? undefined}

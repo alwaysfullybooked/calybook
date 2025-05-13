@@ -21,8 +21,8 @@ export async function createBooking({
   serviceId: string;
   serviceName: string;
 
-  startDatetime: Date;
-  endDatetime: Date;
+  startDatetime: string;
+  endDatetime: string;
   timezone: string;
   price: string;
   currency: string;
@@ -39,8 +39,8 @@ export async function createBooking({
   await alwaysbookbooked.bookings.create({
     serviceId,
     serviceName,
-    startDatetime,
-    endDatetime,
+    startDatetime: new Date(startDatetime),
+    endDatetime: new Date(endDatetime),
     timezone,
     price,
     currency,

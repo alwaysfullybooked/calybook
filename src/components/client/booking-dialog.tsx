@@ -42,8 +42,8 @@ export default function BookingDialog({
   serviceName: string;
   serviceId: string;
   date: string;
-  startDatetime: Date;
-  endDatetime: Date;
+  startDatetime: string;
+  endDatetime: string;
   timezone: string;
   durationMinutes: number;
   paymentImage?: string;
