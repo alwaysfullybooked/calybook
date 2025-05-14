@@ -92,7 +92,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const scheduleByDate = availableSchedule.reduce(
     (acc, slots) => {
       // Format the date in the venue's timezone
-      const sortDate = slots.startDatetime.getTime();
+      const sortDate = dateToFormatInTimezone(slots.startDatetime, slots.timezone, "yyyy-MM-dd");
       const displayDate = dateToFormatInTimezone(slots.startDatetime, slots.timezone, "EEEE, MMMM d, yyyy");
 
       if (!acc[sortDate]) {
@@ -106,18 +106,18 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
         ...slots,
         displayDate,
         startHourNumber: dateToFormatInTimezone(slots.startDatetime, slots.timezone, "HH:mm"),
-        endHourNumber: dateToFormatInTimezone(slots.startDatetime, slots.timezone, "HH:mm"),
+        endHourNumber: dateToFormatInTimezone(slots.endDatetime, slots.timezone, "HH:mm"),
         paymentImage,
       };
 
       acc[sortDate].push(processedSchedule as unknown as Schedule);
       return acc;
     },
-    {} as Record<number, Schedule[]>,
+    {} as Record<string, Schedule[]>,
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...availableSchedule.map((b) => b.startDatetime.getTime())]);
+  const allDates = new Set([...availableSchedule.map((b) => dateToFormatInTimezone(b.startDatetime, b.timezone, "yyyy-MM-dd"))]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
