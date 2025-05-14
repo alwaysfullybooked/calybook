@@ -92,10 +92,11 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const scheduleByDate = availableSchedule.reduce(
     (acc, slots) => {
       // Format the date in the venue's timezone
+      const sortDate = slots.startDatetime.getTime();
       const displayDate = dateToFormatInTimezone(slots.startDatetime, slots.timezone, "EEEE, MMMM d, yyyy");
 
-      if (!acc[displayDate]) {
-        acc[displayDate] = [];
+      if (!acc[sortDate]) {
+        acc[sortDate] = [];
       }
 
       const priceKey = `scan-${slots.price}-thb`;
@@ -109,14 +110,14 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
         paymentImage,
       };
 
-      acc[displayDate].push(processedSchedule as unknown as Schedule);
+      acc[sortDate].push(processedSchedule as unknown as Schedule);
       return acc;
     },
     {} as Record<string, Schedule[]>,
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...availableSchedule.map((b) => dateToFormatInTimezone(b.startDatetime, b.timezone, "EEEE, MMMM d, yyyy"))]);
+  const allDates = new Set([...availableSchedule.map((b) => b.startDatetime.getTime())]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
@@ -180,6 +181,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                   {sortedDates.map((date) => {
                     const scheduleDate = scheduleByDate[date] ?? [];
 
+                    const timezone = scheduleDate[0]?.timezone ?? "Asia/Bangkok";
+
                     // Group by service in a single pass
                     const scheduleByService = scheduleDate.reduce(
                       (acc, booking) => {
@@ -196,7 +199,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     return (
                       <Card key={date} className="overflow-hidden border-2 shadow-sm">
                         <CardHeader className="bg-gray-300/50 p-3">
-                          <CardTitle className="text-xl font-semibold text-gray-900">{date}</CardTitle>
+                          <CardTitle className="text-xl font-semibold text-gray-900">{dateToFormatInTimezone(new Date(date), timezone, "EEEE, MMMM d, yyyy")}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-3 space-y-4">
                           {Object.entries(scheduleByService).map(([serviceName, serviceSchedule]) => (
