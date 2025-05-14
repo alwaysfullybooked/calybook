@@ -5,7 +5,7 @@ import { MapPin, Phone } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
-import { dateToFormatInTimezone } from "@/lib/utils";
+import { dateToFormatInTimezone } from "@/lib/datetime";
 
 type Schedule = {
   isAvailable: boolean;
@@ -45,8 +45,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const contactLineId = session.user.contactLineId;
 
   const venue = await alwaysbookbooked.venues.find(id);
-  const schedule = await alwaysbookbooked.venues.publicAvailability(id);
-  const availableSchedule = schedule.filter((slot) => slot.isAvailable);
+  const availableSchedule = await alwaysbookbooked.venues.publicAvailability(id);
 
   if (!venue) {
     return <div>Venue not found</div>;

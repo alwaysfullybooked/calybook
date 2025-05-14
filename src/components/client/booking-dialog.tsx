@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
 import { toast } from "sonner";
-import { dateToFormatInTimezone } from "@/lib/utils";
+import { dateToFormatInTimezone } from "@/lib/datetime";
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({

@@ -4,7 +4,7 @@ import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { auth } from "@/server/auth";
 import { Calendar, Clock, MapPin, X } from "lucide-react";
 import { redirect } from "next/navigation";
-import { dateToFormatInTimezone } from "@/lib/utils";
+import { dateToFormatInTimezone } from "@/lib/datetime";
 import Link from "next/link";
 
 export default async function DashboardPage() {
