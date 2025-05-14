@@ -113,7 +113,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
       acc[sortDate].push(processedSchedule as unknown as Schedule);
       return acc;
     },
-    {} as Record<string, Schedule[]>,
+    {} as Record<number, Schedule[]>,
   );
 
   // Get all unique dates from both bookings and inventories
