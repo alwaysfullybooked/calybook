@@ -4,7 +4,6 @@ import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { auth } from "@/server/auth";
 import { Calendar, Clock, MapPin, X } from "lucide-react";
 import { redirect } from "next/navigation";
-import { dateToFormatInTimezone } from "@/lib/datetime";
 import Link from "next/link";
 
 export default async function DashboardPage() {
@@ -31,8 +30,16 @@ export default async function DashboardPage() {
     };
   });
 
-  const upcomingBookings = processedBookings.filter((booking) => booking.startDatetime > new Date());
-  const pastBookings = processedBookings.filter((booking) => booking.startDatetime < new Date());
+  const today = (() => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  })();
+
+  const upcomingBookings = today ? processedBookings.filter((booking) => booking.date >= today) : [];
+  const pastBookings = today ? processedBookings.filter((booking) => booking.date < today) : [];
 
   return (
     <div className="px-2 sm:px-4 max-w-full sm:max-w-4xl mx-auto">
@@ -81,11 +88,11 @@ export default async function DashboardPage() {
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-sm sm:text-lg font-medium">
                         <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                        <span>{dateToFormatInTimezone(booking.startDatetime, booking.timezone, "EEE, MMM d")}</span>
+                        <span>{booking.date}</span>
                         <span className="mx-1 sm:mx-2 text-gray-400">|</span>
                         <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                         <span>
-                          {dateToFormatInTimezone(booking.startDatetime, booking.timezone, "HH:mm")} - {dateToFormatInTimezone(booking.endDatetime, booking.timezone, "HH:mm")}
+                          {booking.startTime} - {booking.endTime}
                         </span>
                         {booking.status === "pending" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>}
                         {booking.status === "confirmed" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-green-800 bg-green-100 rounded-full">Confirmed</span>}
@@ -133,10 +140,12 @@ export default async function DashboardPage() {
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                         <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className="text-xs sm:text-base">{dateToFormatInTimezone(booking.startDatetime, booking.timezone, "EEE, MMM d")}</span>
+                        <span className="text-xs sm:text-base">{booking.date}</span>
                         <span className="mx-1 sm:mx-2 text-gray-300">|</span>
                         <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className="text-xs sm:text-base">{dateToFormatInTimezone(booking.startDatetime, booking.timezone, "HH:mm")}</span>
+                        <span className="text-xs sm:text-base">
+                          {booking.startTime} - {booking.endTime}
+                        </span>
                         {booking.status === "pending" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>}
                         {booking.status === "confirmed" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-green-800 bg-green-100 rounded-full">Confirmed</span>}
                       </div>

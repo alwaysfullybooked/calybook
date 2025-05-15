@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
 import { toast } from "sonner";
-import { dateToFormatInTimezone } from "@/lib/datetime";
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
@@ -24,9 +23,8 @@ export default function BookingDialog({
   serviceName,
   serviceId,
   date,
-  startDatetime,
-  endDatetime,
-  timezone,
+  startTime,
+  endTime,
   durationMinutes,
   paymentImage,
   price,
@@ -41,9 +39,8 @@ export default function BookingDialog({
   serviceName: string;
   serviceId: string;
   date: string;
-  startDatetime: Date;
-  endDatetime: Date;
-  timezone: string;
+  startTime: string;
+  endTime: string;
   durationMinutes: number;
   paymentImage?: string;
   price?: string | null;
@@ -84,9 +81,9 @@ export default function BookingDialog({
           venueId,
           serviceId,
           serviceName,
-          startDatetime,
-          endDatetime,
-          timezone,
+          date,
+          startTime,
+          endTime,
           price,
           currency,
           customerContactMethod,
@@ -156,7 +153,7 @@ export default function BookingDialog({
                 </div>
                 <div className="space-y-2">
                   <Label>Date & Time</Label>
-                  <Input value={`${date} ${dateToFormatInTimezone(startDatetime, timezone, "HH:mm")} - ${durationMinutes} minutes`} disabled />
+                  <Input value={`${date} ${startTime} - ${durationMinutes} minutes`} disabled />
                 </div>
                 {price && currency && (
                   <div className="space-y-2">

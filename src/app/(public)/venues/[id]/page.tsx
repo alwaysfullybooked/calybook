@@ -5,15 +5,14 @@ import { MapPin, Phone } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
-import { dateToFormatInTimezone } from "@/lib/datetime";
 
 type Schedule = {
   isAvailable: boolean;
-
   id: string;
   serviceId: string;
-  startDatetime: Date;
-  endDatetime: Date;
+  date: string;
+  startTime: string;
+  endTime: string;
   durationMinutes: number;
   timezone: string;
   price: string | null;
@@ -22,7 +21,6 @@ type Schedule = {
   createdById: string;
   createdAt: Date;
   paymentImage: string | null;
-  displayDate: string;
   startHourNumber: string;
   endHourNumber: string;
   serviceName: string;
@@ -92,8 +90,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const scheduleByDate = availableSchedule.reduce(
     (acc, slots) => {
       // Format the date in the venue's timezone
-      const sortDate = dateToFormatInTimezone(slots.startDatetime, slots.timezone, "yyyy-MM-dd");
-      const displayDate = dateToFormatInTimezone(slots.startDatetime, slots.timezone, "EEEE, MMMM d, yyyy");
+      const sortDate = slots.date;
 
       if (!acc[sortDate]) {
         acc[sortDate] = [];
@@ -104,9 +101,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
 
       const processedSchedule = {
         ...slots,
-        displayDate,
-        startHourNumber: dateToFormatInTimezone(slots.startDatetime, slots.timezone, "HH:mm"),
-        endHourNumber: dateToFormatInTimezone(slots.endDatetime, slots.timezone, "HH:mm"),
+        startHourNumber: slots.startTime,
+        endHourNumber: slots.endTime,
         paymentImage,
       };
 
@@ -117,7 +113,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...availableSchedule.map((b) => dateToFormatInTimezone(b.startDatetime, b.timezone, "yyyy-MM-dd"))]);
+  const allDates = new Set([...availableSchedule.map((b) => b.date)]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
@@ -167,7 +163,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     <CardHeader>
                       <CardTitle className="text-lg sm:text-xl">{service.name}</CardTitle>
                       <CardDescription className="text-sm sm:text-base">
-                        {service.type} - {service.indoor ? "Indoor" : "Outdoor"}
+                        {/* {service.type} - {service.indoor ? "Indoor" : "Outdoor"} */}
+                        XXX
                       </CardDescription>
                     </CardHeader>
                   </Card>
@@ -199,7 +196,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     return (
                       <Card key={date} className="overflow-hidden border-2 shadow-sm">
                         <CardHeader className="bg-gray-300/50 p-3">
-                          <CardTitle className="text-xl font-semibold text-gray-900">{dateToFormatInTimezone(new Date(date), timezone, "EEEE, MMMM d, yyyy")}</CardTitle>
+                          <CardTitle className="text-xl font-semibold text-gray-900">{date}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-3 space-y-4">
                           {Object.entries(scheduleByService).map(([serviceName, serviceSchedule]) => (
@@ -220,26 +217,23 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                           )}
                                         </div>
 
-                                        {schedule?.isAvailable && (
-                                          <BookingDialog
-                                            email={email}
-                                            contactMethod="email"
-                                            contactWhatsAppId={contactWhatsAppId}
-                                            contactLineId={contactLineId}
-                                            venueId={venue.id}
-                                            venueName={venue.name}
-                                            serviceName={serviceName}
-                                            serviceId={schedule.serviceId}
-                                            date={schedule.displayDate}
-                                            startDatetime={schedule.startDatetime}
-                                            endDatetime={schedule.endDatetime}
-                                            timezone={schedule.timezone}
-                                            durationMinutes={schedule.durationMinutes}
-                                            paymentImage={schedule.paymentImage ?? undefined}
-                                            price={schedule.price}
-                                            currency={schedule.currency}
-                                          />
-                                        )}
+                                        <BookingDialog
+                                          email={email}
+                                          contactMethod="email"
+                                          contactWhatsAppId={contactWhatsAppId}
+                                          contactLineId={contactLineId}
+                                          venueId={venue.id}
+                                          venueName={venue.name}
+                                          serviceName={serviceName}
+                                          serviceId={schedule.serviceId}
+                                          date={schedule.date}
+                                          startTime={schedule.startTime}
+                                          endTime={schedule.endTime}
+                                          durationMinutes={schedule.durationMinutes}
+                                          paymentImage={schedule.paymentImage ?? undefined}
+                                          price={schedule.price}
+                                          currency={schedule.currency}
+                                        />
                                       </div>
                                     </CardContent>
                                   </Card>

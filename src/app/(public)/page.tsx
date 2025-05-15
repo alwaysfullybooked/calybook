@@ -7,21 +7,21 @@ import Link from "next/link";
 export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
   const { country, city } = await searchParams;
 
-  // const venues = await alwaysbookbooked.venues.search();
+  const venues = await alwaysbookbooked.venues.search();
 
-  // const filteredVenues = venues
-  //   .filter((f) => {
-  //     return f.country
-  //       ?.toLowerCase()
-  //       .replaceAll(" ", "-")
-  //       .includes(country?.toLowerCase() ?? "");
-  //   })
-  //   .filter((f) => {
-  //     return f.city
-  //       ?.toLowerCase()
-  //       .replaceAll(" ", "-")
-  //       .includes(city?.toLowerCase() ?? "");
-  //   });
+  const filteredVenues = venues
+    .filter((f) => {
+      return f.country
+        ?.toLowerCase()
+        .replaceAll(" ", "-")
+        .includes(country?.toLowerCase() ?? "");
+    })
+    .filter((f) => {
+      return f.city
+        ?.toLowerCase()
+        .replaceAll(" ", "-")
+        .includes(city?.toLowerCase() ?? "");
+    });
 
   return (
     <main className="flex min-h-screen flex-col items-center">
@@ -35,7 +35,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
           <HomeSearch />
         </div>
 
-        <div className="mb-8 p-4 bg-yellow-100 border border-yellow-400 rounded-lg">
+        {/* <div className="mb-8 p-4 bg-yellow-100 border border-yellow-400 rounded-lg">
           <div className="flex items-center">
             <svg className="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <title>Maintenance Mode</title>
@@ -50,10 +50,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               <h3 className="font-semibold text-yellow-800">Maintenance Mode</h3>
               <p className="text-yellow-700">Our system is currently undergoing maintenance. Some features may be temporarily unavailable.</p>
             </div>
-          </div>
-        </div>
+          </div> 
+        </div> */}
 
-        {/* {filteredVenues.map((venue) => (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredVenues.map((venue) => (
             <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
               <CardHeader className="flex-1">
                 <CardTitle className="text-xl">{venue.name}</CardTitle>
@@ -69,7 +70,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               </CardContent>
             </Card>
           ))}
-        </div> */}
+        </div>
       </div>
     </main>
   );
