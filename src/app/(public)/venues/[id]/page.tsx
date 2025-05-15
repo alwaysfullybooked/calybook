@@ -49,42 +49,15 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     return <div>Venue not found</div>;
   }
 
-  const payments = await alwaysbookbooked.blobs.search({
-    venueId: venue.id,
-    prefix: "scan",
-  });
-
   const services = venue?.services;
 
-  // const pricelists = services.flatMap((service) => service.pricelists);
-
-  // Create services map for quick lookup
-  const servicesMap = services.reduce(
+  const servicesMap = services?.reduce(
     (acc, service) => {
       acc[service.id] = service;
       return acc;
     },
     {} as Record<string, (typeof services)[number]>,
   );
-
-  // Create pricelists map
-  // const pricelistsMap = pricelists.reduce(
-  //   (acc, pricelist) => {
-  //     for (let hour = Number.parseInt(pricelist.startTime); hour <= Number.parseInt(pricelist.endTime); hour++) {
-  //       const timeKey = `${pricelist.serviceId}|${hour.toString().padStart(2, "0")}:00`;
-  //       acc[timeKey] = pricelist;
-  //     }
-  //     return acc;
-  //   },
-  //   {} as Record<string, (typeof pricelists)[number]>,
-  // );
-
-  // Create payment map
-  const paymentMap = payments.blobs.reduce((acc: Record<string, string>, blob) => {
-    const key = blob.pathname.split("/").pop()?.split(".")[0] ?? "";
-    acc[key] = blob.url;
-    return acc;
-  }, {});
 
   // Group by date
   const scheduleByDate = availableSchedule.reduce(
@@ -96,14 +69,10 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
         acc[sortDate] = [];
       }
 
-      const priceKey = `scan-${slots.price}-thb`;
-      const paymentImage = paymentMap[priceKey] ?? null;
-
       const processedSchedule = {
         ...slots,
         startHourNumber: slots.startTime,
         endHourNumber: slots.endTime,
-        paymentImage,
       };
 
       acc[sortDate].push(processedSchedule as unknown as Schedule);
@@ -111,6 +80,8 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     },
     {} as Record<string, Schedule[]>,
   );
+
+  console.log(scheduleByDate);
 
   // Get all unique dates from both bookings and inventories
   const allDates = new Set([...availableSchedule.map((b) => b.date)]);
