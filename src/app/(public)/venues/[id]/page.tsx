@@ -81,8 +81,6 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     {} as Record<string, Schedule[]>,
   );
 
-  console.log(scheduleByDate);
-
   // Get all unique dates from both bookings and inventories
   const allDates = new Set([...availableSchedule.map((b) => b.date)]);
 
