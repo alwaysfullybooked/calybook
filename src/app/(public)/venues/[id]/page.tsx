@@ -104,7 +104,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="h-5 w-5 text-gray-500" />
-                  <span className="text-sm sm:text-base">Phone</span>
+                  <span className="text-sm sm:text-base">{venue.phone}</span>
                 </div>
                 {/* <div className="flex items-center gap-2">
                   <Globe className="h-5 w-5 text-gray-500" />
@@ -131,10 +131,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                   <Card key={service.id}>
                     <CardHeader>
                       <CardTitle className="text-lg sm:text-xl">{service.name}</CardTitle>
-                      <CardDescription className="text-sm sm:text-base">
-                        {/* {service.type} - {service.indoor ? "Indoor" : "Outdoor"} */}
-                        XXX
-                      </CardDescription>
+                      <CardDescription className="text-sm sm:text-base">{service.description}</CardDescription>
                     </CardHeader>
                   </Card>
                 ))}

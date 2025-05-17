@@ -44,17 +44,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
             <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
               <CardHeader className="flex-1">
                 <CardTitle className="text-xl">{venue.name}</CardTitle>
-                <CardDescription className="text-base">{venue.address}</CardDescription>
-                <CardDescription className="text-base">
+                <CardDescription className="text-sm">{venue.address}</CardDescription>
+                <CardDescription className="text-sm">
                   {venue.city}, {venue.country}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-4">
                   <span className="font-bold">Tennis court booking</span>
                 </p>
                 <Button className="w-full" asChild disabled={true}>
-                  <Link href={`/venues/${venue.id}`}>View Details</Link>
+                  <Link href={`/venues/${venue.id}`}>Check availability</Link>
                 </Button>
               </CardContent>
             </Card>
