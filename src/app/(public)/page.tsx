@@ -7,21 +7,7 @@ import Link from "next/link";
 export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
   const { country, city } = await searchParams;
 
-  const venues = await alwaysbookbooked.venues.search();
-
-  const filteredVenues = venues
-    .filter((f) => {
-      return f.country
-        ?.toLowerCase()
-        .replaceAll(" ", "-")
-        .includes(country?.toLowerCase() ?? "");
-    })
-    .filter((f) => {
-      return f.city
-        ?.toLowerCase()
-        .replaceAll(" ", "-")
-        .includes(city?.toLowerCase() ?? "");
-    });
+  const venues = await alwaysbookbooked.venues.publicSearch(country ?? "thailand", city ?? "chiang-mai");
 
   return (
     <main className="flex min-h-screen flex-col items-center">
@@ -54,16 +40,19 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
         </div> */}
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredVenues.map((venue) => (
+          {venues.map((venue) => (
             <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
               <CardHeader className="flex-1">
                 <CardTitle className="text-xl">{venue.name}</CardTitle>
+                <CardDescription className="text-base">{venue.address}</CardDescription>
                 <CardDescription className="text-base">
                   {venue.city}, {venue.country}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
-                <p className="text-sm text-muted-foreground mb-4">Discover this amazing venue in {venue.city}</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  <span className="font-bold">Tennis court booking</span>
+                </p>
                 <Button className="w-full" asChild disabled={true}>
                   <Link href={`/venues/${venue.id}`}>View Details</Link>
                 </Button>

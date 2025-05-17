@@ -93,6 +93,7 @@ export default function BookingDialog({
         });
         toast.success("Booking submitted successfully");
       } catch (error) {
+        console.error(error);
         toast.error("Failed to submit booking");
       } finally {
         setIsLoading(false);

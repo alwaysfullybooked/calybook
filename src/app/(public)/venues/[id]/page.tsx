@@ -42,7 +42,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const contactWhatsAppId = session.user.contactWhatsAppId;
   const contactLineId = session.user.contactLineId;
 
-  const venue = await alwaysbookbooked.venues.find(id);
+  const venue = await alwaysbookbooked.venues.publicFind(id);
   const availableSchedule = await alwaysbookbooked.venues.publicAvailability(id);
 
   if (!venue) {
@@ -146,9 +146,6 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                 <div className="space-y-4">
                   {sortedDates.map((date) => {
                     const scheduleDate = scheduleByDate[date] ?? [];
-
-                    const timezone = scheduleDate[0]?.timezone ?? "Asia/Bangkok";
-
                     // Group by service in a single pass
                     const scheduleByService = scheduleDate.reduce(
                       (acc, booking) => {

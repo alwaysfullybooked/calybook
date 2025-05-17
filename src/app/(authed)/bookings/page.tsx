@@ -100,12 +100,6 @@ export default async function DashboardPage() {
                         {booking.status === "pending" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>}
                         {booking.status === "confirmed" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-green-800 bg-green-100 rounded-full">Confirmed</span>}
                       </div>
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className={`px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold ${booking.serviceIndoor ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}>
-                          {booking.serviceIndoor ? "Indoor" : "Outdoor"}
-                        </span>
-                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -151,12 +145,6 @@ export default async function DashboardPage() {
                         </span>
                         {booking.status === "pending" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>}
                         {booking.status === "confirmed" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-green-800 bg-green-100 rounded-full">Confirmed</span>}
-                      </div>
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className={`px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold ${booking.serviceIndoor ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}>
-                          {booking.serviceIndoor ? "Indoor" : "Outdoor"}
-                        </span>
                       </div>
                     </div>
                   </CardContent>

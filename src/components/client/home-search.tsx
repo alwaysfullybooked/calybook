@@ -5,37 +5,54 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 // import { Input } from "@/components/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 // import { Search } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-export default function HomeSearch() {
-  const [country, setCountry] = useState("thailand");
-  const [city, setCity] = useState("chiang-mai");
-  const [category, setCategory] = useState("*");
-  // const [search, setSearch] = useState("");
-  const didMount = useRef(false);
+// Define the location data structure
+const locations = {
+  Thailand: {
+    name: "Thailand",
+    cities: [
+      { value: "Chiang Mai", label: "Chiang Mai" },
+      { value: "Bangkok", label: "Bangkok" },
+      { value: "Phuket", label: "Phuket" },
+    ],
+  },
+  // Seychelles: {
+  //   name: "Seychelles",
+  //   cities: [
+  //     { value: "Mahe", label: "Mahe" },
+  //     { value: "Praslin", label: "Praslin" },
+  //   ],
+  // },
+} as const;
 
-  const { replace } = useRouter();
+export default function HomeSearch() {
+  const [country, setCountry] = useState<keyof typeof locations>("Thailand");
+  const [city, setCity] = useState<string>(locations.Thailand.cities[0].value);
+  // const [category, setCategory] = useState("*");
+  // const [search, setSearch] = useState("");
+
+  const router = useRouter();
   const pathname = usePathname();
 
-  const handleSearch = () => {
+  // Reset city when country changes
+  useEffect(() => {
+    setCity(locations[country].cities[0].value);
+  }, [country]);
+
+  // Update URL when selections change
+  useEffect(() => {
     const params = new URLSearchParams();
+
+    console.log(country, city);
+
     params.set("country", country);
     params.set("city", city);
-
-    if (category !== "*") params.set("category", category);
+    // if (category !== "*") params.set("category", category);
     // if (search) params.set("search", search);
-
-    replace(`${pathname}?${params.toString()}`);
-  };
-
-  useEffect(() => {
-    if (didMount.current) {
-      handleSearch();
-    } else {
-      didMount.current = true;
-    }
-  }, [country, city, category]);
+    router.push(`${pathname}?${params.toString()}`);
+  }, [country, city, router, pathname]);
 
   return (
     <Card className="mx-auto w-full">
@@ -44,22 +61,29 @@ export default function HomeSearch() {
         <CardDescription>Select your location and category to find available venues</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 max-w-sm">
-        <Select value={country} onValueChange={setCountry}>
+        <Select value={country} onValueChange={(value: keyof typeof locations) => setCountry(value)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Country" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="thailand">Thailand</SelectItem>
+            {Object.entries(locations).map(([value, { name }]) => (
+              <SelectItem key={value} value={value}>
+                {name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
-        <Select value={city} onValueChange={setCity}>
+
+        <Select value={city} onValueChange={(value: string) => setCity(value)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select City" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="chiang-mai">Chiang Mai</SelectItem>
-            <SelectItem value="bangkok">Bangkok</SelectItem>
-            <SelectItem value="phuket">Phuket</SelectItem>
+            {locations[country].cities.map(({ value, label }) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
