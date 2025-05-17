@@ -213,10 +213,8 @@ export default function BookingDialog({
                 <p className="font-medium">On hold for 1 hour.</p>
                 <p className="font-medium">Please complete payment.</p>
                 <div className="mt-4 flex flex-col items-center justify-center gap-2">
-                  <Link href="https://line.me/ti/p/3fSBoqC4vm" target="_blank">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/320px-LINE_logo.svg.png" alt="Line" className="mx-auto h-16 w-16" />
-                  </Link>
-                  <Image src="/images/line-id/line-hottoshotto.jpg" alt="Line Connect QR Code" width={200} height={200} className="mx-auto max-w-[200px]" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/320px-LINE_logo.svg.png" alt="Line" className="mx-auto h-16 w-16" />
+                  <Image src={`/images/line-id/${venueId}.jpg`} alt="Line Connect QR Code" width={200} height={200} className="mx-auto max-w-[200px]" />
                 </div>
                 <p className="mt-2 text-sm text-gray-500 text-center">Open Line App or scan QR code to contact booking center with payment confirmation.</p>
               </div>
