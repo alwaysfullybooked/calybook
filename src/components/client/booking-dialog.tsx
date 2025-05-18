@@ -21,9 +21,12 @@ export default function BookingDialog({
   contactWhatsAppId,
   contactLineId,
   venueName,
-  serviceName,
+
   serviceId,
-  date,
+  serviceName,
+  serviceDescription,
+  startDate,
+  endDate,
   startTime,
   endTime,
   durationMinutes,
@@ -37,9 +40,12 @@ export default function BookingDialog({
   contactWhatsAppId: string;
   contactLineId: string;
   venueName: string;
-  serviceName: string;
+
   serviceId: string;
-  date: string;
+  serviceName: string;
+  serviceDescription: string;
+  startDate: string;
+  endDate: string;
   startTime: string;
   endTime: string;
   durationMinutes: number;
@@ -82,7 +88,9 @@ export default function BookingDialog({
           venueId,
           serviceId,
           serviceName,
-          date,
+          serviceDescription,
+          startDate,
+          endDate,
           startTime,
           endTime,
           price,
@@ -155,7 +163,7 @@ export default function BookingDialog({
                 </div>
                 <div className="space-y-2">
                   <Label>Date & Time</Label>
-                  <Input value={`${date} ${startTime} - ${durationMinutes} minutes`} disabled />
+                  <Input value={`${startDate} ${startTime} - ${durationMinutes} minutes`} disabled />
                 </div>
                 {price && currency && (
                   <div className="space-y-2">

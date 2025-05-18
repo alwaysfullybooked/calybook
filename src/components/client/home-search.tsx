@@ -18,13 +18,13 @@ const locations = {
       { value: "Phuket", label: "Phuket" },
     ],
   },
-  // Seychelles: {
-  //   name: "Seychelles",
-  //   cities: [
-  //     { value: "Mahe", label: "Mahe" },
-  //     { value: "Praslin", label: "Praslin" },
-  //   ],
-  // },
+  Seychelles: {
+    name: "Seychelles",
+    cities: [
+      { value: "Mahe", label: "Mahe" },
+      { value: "Praslin", label: "Praslin" },
+    ],
+  },
 } as const;
 
 export default function HomeSearch() {
@@ -44,8 +44,6 @@ export default function HomeSearch() {
   // Update URL when selections change
   useEffect(() => {
     const params = new URLSearchParams();
-
-    console.log(country, city);
 
     params.set("country", country);
     params.set("city", city);

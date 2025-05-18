@@ -10,7 +10,8 @@ type Schedule = {
   isAvailable: boolean;
   id: string;
   serviceId: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   startTime: string;
   endTime: string;
   durationMinutes: number;
@@ -63,7 +64,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   const scheduleByDate = availableSchedule.reduce(
     (acc, slots) => {
       // Format the date in the venue's timezone
-      const sortDate = slots.date;
+      const sortDate = slots.startDate;
 
       if (!acc[sortDate]) {
         acc[sortDate] = [];
@@ -82,7 +83,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
   );
 
   // Get all unique dates from both bookings and inventories
-  const allDates = new Set([...availableSchedule.map((b) => b.date)]);
+  const allDates = new Set([...availableSchedule.map((b) => b.startDate)]);
 
   // Sort dates
   const sortedDates = Array.from(allDates).sort();
@@ -187,9 +188,11 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                                           contactLineId={contactLineId}
                                           venueId={venue.id}
                                           venueName={venue.name}
-                                          serviceName={serviceName}
                                           serviceId={schedule.serviceId}
-                                          date={schedule.date}
+                                          serviceName={serviceName}
+                                          serviceDescription={servicesMap[schedule.serviceId]?.description ?? ""}
+                                          startDate={schedule.startDate}
+                                          endDate={schedule.endDate}
                                           startTime={schedule.startTime}
                                           endTime={schedule.endTime}
                                           durationMinutes={schedule.durationMinutes}

@@ -41,8 +41,8 @@ export default async function DashboardPage() {
 
   const today = formatDate(new Date());
 
-  const upcomingBookings = today ? processedBookings.filter((booking) => booking.date >= today) : [];
-  const pastBookings = today ? processedBookings.filter((booking) => booking.date < today) : [];
+  const upcomingBookings = today ? processedBookings.filter((booking) => booking.startDate >= today) : [];
+  const pastBookings = today ? processedBookings.filter((booking) => booking.startDate < today) : [];
 
   return (
     <div className="px-2 sm:px-4 max-w-full sm:max-w-4xl mx-auto">
@@ -91,7 +91,7 @@ export default async function DashboardPage() {
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-sm sm:text-lg font-medium">
                         <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                        <span>{booking.date}</span>
+                        <span>{booking.startDate}</span>
                         <span className="mx-1 sm:mx-2 text-gray-400">|</span>
                         <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                         <span>
@@ -137,7 +137,7 @@ export default async function DashboardPage() {
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                         <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className="text-xs sm:text-base">{booking.date}</span>
+                        <span className="text-xs sm:text-base">{booking.startDate}</span>
                         <span className="mx-1 sm:mx-2 text-gray-300">|</span>
                         <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                         <span className="text-xs sm:text-base">
