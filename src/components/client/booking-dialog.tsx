@@ -50,8 +50,8 @@ export default function BookingDialog({
   endTime: string;
   durationMinutes: number;
   paymentImage?: string;
-  price?: string | null;
-  currency?: string | null;
+  price: string;
+  currency: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

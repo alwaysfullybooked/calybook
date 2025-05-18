@@ -16,8 +16,8 @@ type Schedule = {
   endTime: string;
   durationMinutes: number;
   timezone: string;
-  price: string | null;
-  currency: string | null;
+  price: string;
+  currency: string;
   status: string;
   createdById: string;
   createdAt: Date;
