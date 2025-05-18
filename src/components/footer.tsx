@@ -22,11 +22,11 @@ export default function Footer() {
                   About Us
                 </Link>
               </li> */}
-              {/* <li>
+              <li>
                 <Link href="/faq" className="hover:text-gray-900">
-                  FAQs
+                  FAQ
                 </Link>
-              </li> */}
+              </li>
               {/* 
               <li>
                 <Link href="#" className="hover:text-gray-900">

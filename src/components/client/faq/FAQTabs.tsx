@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 export type FAQCategory = {
@@ -47,8 +46,8 @@ export default function FAQTabs({ faqCategories }: { faqCategories: FAQCategory[
         <CardContent className="px-4 sm:px-6">
           <div className="space-y-4">
             {faqCategories[activeIndex]?.faqs?.map((faq, index) => (
-              <div key={index} className="border-b pb-4 last:border-b-0 last:pb-0">
-                <div className="flex cursor-pointer items-center justify-between py-2" onClick={() => toggleAccordion(index)}>
+              <div key={faq.question} className="border-b pb-4 last:border-b-0 last:pb-0">
+                <div className="flex cursor-pointer items-center justify-between py-2" onClick={() => toggleAccordion(index)} onKeyDown={(e) => e.key === "Enter" && toggleAccordion(index)}>
                   <h3 className="pr-4 text-sm font-medium sm:text-base">{faq.question}</h3>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +61,8 @@ export default function FAQTabs({ faqCategories }: { faqCategories: FAQCategory[
                     strokeLinejoin="round"
                     className={`h-5 w-5 flex-shrink-0 text-gray-500 transition-transform ${openIndexes[index] ? "rotate-180" : ""}`}
                   >
-                    <polyline points="6 9 12 15 18 9"></polyline>
+                    <title>Expand</title>
+                    <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </div>
                 {openIndexes[index] && <div className="pt-2 text-sm text-gray-600 sm:text-base">{faq.answer}</div>}
