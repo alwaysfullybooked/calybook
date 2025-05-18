@@ -80,7 +80,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
           </div>
         </div>
 
-        <div className="mb-12">
+        {/* <div className="mb-12">
           <h2 className="text-2xl font-bold tracking-tight mb-6">More Tennis Courts</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {moreCourts.map((court) => (
@@ -109,7 +109,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               </Card>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </main>
   );
