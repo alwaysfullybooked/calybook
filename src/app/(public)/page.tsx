@@ -3,11 +3,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import HomeSearch from "@/components/client/home-search";
 import Link from "next/link";
+import { courts } from "@/app/data/courts";
+import { moreCourts } from "@/app/data/courts";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
   const { country, city } = await searchParams;
 
   const venues = await alwaysbookbooked.venues.publicSearch(country ?? "thailand", city ?? "chiang-mai");
+
+  const mergedVenues = venues.map((venue) => ({
+    ...venue,
+    ...courts.find((court) => court.id === venue.id),
+  }));
 
   return (
     <main className="flex min-h-screen flex-col items-center">
@@ -39,26 +46,69 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
           </div> 
         </div> */}
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {venues.map((venue) => (
-            <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
-              <CardHeader className="flex-1">
-                <CardTitle className="text-xl">{venue.name}</CardTitle>
-                <CardDescription className="text-sm">{venue.address}</CardDescription>
-                <CardDescription className="text-sm">
-                  {venue.city}, {venue.country}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
-                <p className="text-muted-foreground mb-4">
-                  <span className="font-bold">Tennis court booking</span>
-                </p>
-                <Button className="w-full" asChild disabled={true}>
-                  <Link href={`/venues/${venue.id}`}>Check availability</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold tracking-tight mb-6">Featured Tennis Courts - Online Booking</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {mergedVenues.map((court) => (
+              <Card key={court.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
+                {court.image && <img src={court.image} alt={court.name} className="w-full h-48 object-cover rounded-t-xl" />}
+                <CardHeader className="flex-1">
+                  <CardTitle className="text-xl">{court.name}</CardTitle>
+                  <CardDescription className="text-sm">{court.address}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>{court.courts} Courts</span>
+                    <span>•</span>
+                    <span>{court.price}/hour</span>
+                  </div>
+                  {court.amenities && court.amenities.length > 0 && (
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {court.amenities.map((amenity) => (
+                        <span key={amenity} className="text-xs bg-secondary px-2 py-1 rounded-full">
+                          {amenity}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <Button className="w-full mt-4" asChild>
+                    <Link href={`/venues/${court.id}`}>Book Now</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold tracking-tight mb-6">More Tennis Courts</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {moreCourts.map((court) => (
+              <Card key={court.name} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
+                {court.image && <img src={court.image} alt={court.name} className="w-full h-48 object-cover rounded-t-xl" />}
+                <CardHeader className="flex-1">
+                  <CardTitle className="text-xl">{court.name}</CardTitle>
+                  <CardDescription className="text-sm">{court.address}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>{court.courts} Courts</span>
+                    <span>•</span>
+                    <span>{court.price}/hour</span>
+                  </div>
+                  {court.amenities && court.amenities.length > 0 && (
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {court.amenities.map((amenity) => (
+                        <span key={amenity} className="text-xs bg-secondary px-2 py-1 rounded-full">
+                          {amenity}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </main>
