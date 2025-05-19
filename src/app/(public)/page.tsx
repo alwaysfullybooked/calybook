@@ -4,12 +4,11 @@ import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import HomeSearch from "@/components/client/home-search";
 import Link from "next/link";
 import { courts } from "@/app/data/courts";
-import { moreCourts } from "@/app/data/courts";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
   const { country, city } = await searchParams;
 
-  const venues = await alwaysbookbooked.venues.publicSearch(country ?? "thailand", city ?? "chiang-mai");
+  const venues = await alwaysbookbooked.venues.publicSearch(country ?? "Thailand", city ?? "Chiang Mai");
 
   const mergedVenues = venues.map((venue) => ({
     ...venue,
