@@ -5,6 +5,7 @@ import { MapPin, Phone } from "lucide-react";
 import BookingDialog from "@/components/client/booking-dialog";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
+import { courts } from "@/app/data/courts";
 
 type Schedule = {
   isAvailable: boolean;
@@ -50,6 +51,11 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
     return <div>Venue not found</div>;
   }
 
+  const mergedVenue = {
+    ...venue,
+    ...courts.find((court) => court.id === venue.id),
+  };
+
   const services = venue?.services;
 
   const servicesMap = services?.reduce(
@@ -93,28 +99,39 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8">
         <div className="md:col-span-3">
           <Card className="mb-6 md:mb-8">
-            <CardHeader className="space-y-2">
-              <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{venue.name}</CardTitle>
-              <CardDescription className="text-base sm:text-lg">Description</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-gray-500" />
-                  <span className="text-sm sm:text-base">{venue.address}</span>
+            <div className="flex flex-col md:flex-row">
+              {mergedVenue.image && (
+                <div className="w-full md:w-1/3 h-48">
+                  <img src={mergedVenue.image} alt={mergedVenue.name} className="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-gray-500" />
-                  <span className="text-sm sm:text-base">{venue.phone}</span>
-                </div>
-                {/* <div className="flex items-center gap-2">
-                  <Globe className="h-5 w-5 text-gray-500" />
-                  <Link href={venue.website} className="text-sm text-blue-500 hover:underline sm:text-base" target="_blank" rel="noopener noreferrer">
-                    Website
-                  </Link>
-                </div> */}
+              )}
+              <div className="flex-1">
+                <CardHeader className="space-y-2">
+                  <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{mergedVenue.name}</CardTitle>
+                  <CardDescription className="text-base sm:text-lg">
+                    {mergedVenue.city}, {mergedVenue.country}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 mt-5">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-gray-500" />
+                      <span className="text-sm sm:text-base">{mergedVenue.address}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-5 w-5 text-gray-500" />
+                      <span className="text-sm sm:text-base">{mergedVenue.phone}</span>
+                    </div>
+                    {/* <div className="flex items-center gap-2">
+                      <Globe className="h-5 w-5 text-gray-500" />
+                      <Link href={venue.website} className="text-sm text-blue-500 hover:underline sm:text-base" target="_blank" rel="noopener noreferrer">
+                        Website
+                      </Link>
+                    </div> */}
+                  </div>
+                </CardContent>
               </div>
-            </CardContent>
+            </div>
           </Card>
           <Tabs defaultValue="schedule" className="w-full">
             <TabsList className="w-full justify-start overflow-x-auto">

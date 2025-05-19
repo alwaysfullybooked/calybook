@@ -21,7 +21,7 @@ export default function SignupPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl">Sign up for JustBookit</CardTitle>
+            <CardTitle className="text-xl">Sign up for CalyBook</CardTitle>
             <CardDescription>Create your account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

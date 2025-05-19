@@ -6,8 +6,8 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
-            <h3 className="mb-3 text-lg font-semibold text-gray-900">JustBookIt</h3>
-            <p className="text-sm">The easiest way to book your activities in Thailand.</p>
+            <h3 className="mb-3 text-lg font-semibold text-gray-900">CalyBook</h3>
+            <p className="text-sm">The easiest way to book your activities for Thailand and Seychelles.</p>
           </div>
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">Quick Links</h3>
@@ -62,13 +62,15 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200 pt-6 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} JustBookIt</p>
+          <p>
+            &copy; {new Date().getFullYear()}, <span className="font-bold">CalyBook</span>.
+          </p>
           <div className="my-8 p-2">
             Made with{" "}
-            <Link href="https://alwaysfullybooked.com" className="text-gray-900 hover:text-gray-700" target="_blank" rel="noopener noreferrer">
-              <span className="bg-gradient-to-r from-green-500 via-orange-500 to-red-500 bg-clip-text text-transparent">AlwaysFullyBooked</span>
+            <Link href="https://alwaysfullybooked.com" className="font-bold" target="_blank" rel="noopener noreferrer">
+              <span>AlwaysFullyBooked</span>
             </Link>
-            , the booking engine platform for developers.
+            , the booking engine platform.
           </div>
         </div>
       </div>

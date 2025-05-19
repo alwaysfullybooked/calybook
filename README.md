@@ -1,10 +1,10 @@
-# JustBookIt
+# CalyBook
 
 A modern web application for booking venues and services. Built with the T3 Stack.
 
 ## Project Description
 
-JustBookIt allows users to search for venues, view availability, and book services. It integrates with the AlwaysFullyBooked API for venue and booking management.
+CalyBook allows users to search for venues, view availability, and book services. It integrates with the AlwaysFullyBooked API for venue and booking management.
 
 ## Setup Instructions
 

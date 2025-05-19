@@ -22,9 +22,9 @@ export const translations = new Map<TranslationKey, TranslationValue>([
   [
     "welcome",
     {
-      en: "Welcome to JustBookIt",
-      th: "ยินดีต้อนรับสู่ JustBookIt",
-      zh: "欢迎使用 JustBookIt",
+      en: "Welcome to CalyBook",
+      th: "ยินดีต้อนรับสู่ CalyBook",
+      zh: "欢迎使用 CalyBook",
     },
   ],
   [

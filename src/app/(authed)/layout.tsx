@@ -8,14 +8,14 @@ import Link from "next/link";
 import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NODE_ENV === "production" ? "https://not.alwaysfullybooked.com" : "http://localhost:3000"),
-  title: "JustBookIt",
+  metadataBase: new URL(process.env.NODE_ENV === "production" ? "https://www.calybook.com" : "http://localhost:3000"),
+  title: "CalyBook",
   description: "Book all your activities.",
   openGraph: {
-    title: "JustBookIt",
+    title: "CalyBook",
     description: "Book all your activities.",
-    url: "https://not.alwaysfullybooked.com",
-    siteName: "JustBookIt",
+    url: "https://calybook.com",
+    siteName: "CalyBook",
   },
   twitter: {
     card: "summary_large_image",
@@ -37,7 +37,7 @@ export default async function AuthedLayout({ children }: Readonly<{ children: Re
         <Sidebar className="fixed top-16 h-[calc(100vh-4rem)] border-r bg-background">
           <SidebarHeader className="border-b px-4 py-3 md:hidden">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="text-xl font-bold text-green-600">JustBookIt</span>
+              <span className="text-3xl font-bold text-primary">CalyBook</span>
             </Link>
           </SidebarHeader>
           <SidebarContent className="px-2 py-4">

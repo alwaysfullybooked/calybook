@@ -55,8 +55,8 @@ export default function HomeSearch() {
   return (
     <Card className="mx-auto w-full">
       <CardHeader>
-        <CardTitle>Find and Book Venues</CardTitle>
-        <CardDescription>Select your location and category to find available venues</CardDescription>
+        <CardTitle>Find Venues and Book Services</CardTitle>
+        <CardDescription>Select your location</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 max-w-sm">
         <Select value={country} onValueChange={(value: keyof typeof locations) => setCountry(value)}>

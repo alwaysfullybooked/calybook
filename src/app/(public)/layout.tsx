@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NODE_ENV === "production" ? "https://not.alwaysfullybooked.com" : "http://localhost:3000"),
-  title: "JustBookIt",
+  metadataBase: new URL(process.env.NODE_ENV === "production" ? "https://www.calybook.com" : "http://localhost:3000"),
+  title: "CalyBook",
   description: "Book all your activities.",
   openGraph: {
-    title: "JustBookIt",
+    title: "CalyBook",
     description: "Book all your activities.",
-    url: "https://not.alwaysfullybooked.com",
-    siteName: "JustBookIt",
+    url: "https://www.calybook.com",
+    siteName: "CalyBook",
   },
   twitter: {
     card: "summary_large_image",
