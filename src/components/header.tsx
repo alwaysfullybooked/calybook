@@ -8,10 +8,10 @@ export default async function Header() {
   const session = await auth();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white">
+    <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold text-green-600">JustBookIt</span>
+          <span className="text-xl font-bold text-primary">JustBookIt</span>
         </Link>
 
         <div className="flex items-center gap-4">
