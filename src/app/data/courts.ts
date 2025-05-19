@@ -1,7 +1,7 @@
 export const courts = [
   {
     id: "48f2b149-d4f6-4cfc-b323-b668211f97ad",
-    name: "Serene Lake",
+    altName: "Serene Lake",
     address: "Mae Hia, Mueang",
     price: "฿200",
     courts: 4,
@@ -11,7 +11,7 @@ export const courts = [
   },
   {
     id: "a2861a49-50dd-4a8c-8261-3b9df761231c",
-    name: "K. Phak Court",
+    altName: "K. Phak Court",
     address: "San Phak Wan, Hang Dong",
     price: "฿200",
     courts: 2,
@@ -23,7 +23,7 @@ export const courts = [
 
 export const moreCourts = [
   {
-    name: "World Sport Club",
+    altName: "World Sport Club",
     address: "Nong Kwai, Hang Dong",
     price: "฿150",
     courts: 3,
@@ -32,7 +32,7 @@ export const moreCourts = [
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1744695875/bf8b99_05fd70a3884b4f8599575b112bc6779d_mv2_oh2gcg.webp",
   },
   {
-    name: "700 Years",
+    altName: "700 Years",
     address: "Don Kaeo, Mae Rim",
     price: "฿60",
     courts: 12,
@@ -41,7 +41,7 @@ export const moreCourts = [
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1744695875/bf8b99_a3bae7860c244d1db6757c65705e4d5d_mv2_pg0kis.webp",
   },
   {
-    name: "Nawarath",
+    altName: "Nawarath",
     address: "Chang Moi, Mueang",
     price: "฿100",
     courts: 4,
@@ -50,7 +50,7 @@ export const moreCourts = [
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1744695874/bf8b99_be672b4d12814bec86aff25ac0a7b851_mv2_xbvazc.webp",
   },
   {
-    name: "SL Court",
+    altName: "SL Court",
     address: "Chang Phueak, Mueang",
     price: "฿200",
     courts: 1,
@@ -60,7 +60,7 @@ export const moreCourts = [
   },
 
   {
-    name: "Panij",
+    altName: "Panij",
     address: "Wat Ket, Mueang",
     price: "฿120",
     courts: 4,
@@ -69,7 +69,7 @@ export const moreCourts = [
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1744695875/bf8b99_81e0daeadcc54a67ad62c2533e477b87_mv2_za3v7x.webp",
   },
   {
-    name: "Nut Tennis Court",
+    altName: "Nut Tennis Court",
     address: "Don Kaeo, Mae Rim",
     price: "฿80",
     courts: 2,
@@ -78,7 +78,7 @@ export const moreCourts = [
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1745655852/Nut_Tennis_Court_uf8qwi.jpg",
   },
   {
-    name: "Triple Ace",
+    altName: "Triple Ace",
     address: "Nong Phueng, Saraphi",
     price: "฿400",
     courts: 4,
