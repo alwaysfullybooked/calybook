@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">CalyBook</h3>
-            <p className="text-sm">The easiest way to book your activities for Thailand and Seychelles.</p>
+            <p className="text-sm">The easiest way to book your activities for Thailand.</p>
           </div>
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">Quick Links</h3>
