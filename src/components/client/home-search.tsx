@@ -18,13 +18,13 @@ const locations = {
       { value: "Phuket", label: "Phuket" },
     ],
   },
-  Seychelles: {
-    name: "Seychelles",
-    cities: [
-      { value: "Mahe", label: "Mahe" },
-      { value: "Praslin", label: "Praslin" },
-    ],
-  },
+  // Seychelles: {
+  //   name: "Seychelles",
+  //   cities: [
+  //     { value: "Mahe", label: "Mahe" },
+  //     { value: "Praslin", label: "Praslin" },
+  //   ],
+  // },
 } as const;
 
 export default function HomeSearch() {
