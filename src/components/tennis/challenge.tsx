@@ -220,6 +220,33 @@ export default function TennisChallenge() {
           </div>
         </section>
 
+        {/* Game Format */}
+        <section className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="flex items-center space-x-3 mb-6">
+            <Target className="h-6 w-6 text-blue-600" />
+            <h2 className="text-2xl font-semibold text-gray-900">Recommended Game Format</h2>
+          </div>
+
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-r-lg">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">Sets 1 & 2</h3>
+                <p className="text-blue-800">Regular 6-game sets with tiebreaks at 6-6</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">No-Ad Scoring</h3>
+                <p className="text-blue-800">Deuce point is sudden death (receiver chooses side)</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">Set 3</h3>
+                <p className="text-blue-800">10-point match tiebreaker instead of a full third set</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Quick Reference */}
         <section className="bg-gradient-to-r from-green-600 to-blue-600 rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold mb-6 text-center">Quick Reference</h2>
@@ -236,8 +263,8 @@ export default function TennisChallenge() {
             </div>
 
             <div className="bg-white bg-opacity-20 rounded-lg p-4">
-              <div className="text-2xl font-bold">2</div>
-              <div className="text-sm">Matches/Month</div>
+              <div className="text-2xl font-bold">1</div>
+              <div className="text-sm">Match/Month</div>
             </div>
 
             <div className="bg-white bg-opacity-20 rounded-lg p-4">
