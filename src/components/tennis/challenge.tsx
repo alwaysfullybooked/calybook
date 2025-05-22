@@ -120,7 +120,7 @@ export default function TennisChallenge() {
             <h2 className="text-2xl font-semibold text-gray-900">Challenge Rules</h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
               <h3 className="font-semibold text-purple-800 mb-2">Who Can You Challenge?</h3>
               <p className="text-purple-700 text-sm">
@@ -132,13 +132,6 @@ export default function TennisChallenge() {
               <h3 className="font-semibold text-purple-800 mb-2">Response Time</h3>
               <p className="text-purple-700 text-sm">
                 Challenged players must schedule match within <span className="font-bold">2 weeks</span>
-              </p>
-            </div>
-
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-              <h3 className="font-semibold text-purple-800 mb-2">Refusal Penalty</h3>
-              <p className="text-purple-700 text-sm">
-                Unreasonable refusals result in <span className="font-bold">-20 CP</span> penalty
               </p>
             </div>
           </div>
