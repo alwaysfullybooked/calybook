@@ -13,7 +13,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <main className="container mx-auto flex min-h-[calc(100vh-14rem)] items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold">Log in to JustBookit</h1>
+          <h1 className="mb-2 text-3xl font-bold">Log in to CalyBook</h1>
           <p className="text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="text-primary hover:underline">
