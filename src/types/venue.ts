@@ -7,12 +7,13 @@ export type Venue = {
   updatedAt: Date | null;
   phone: string | null;
   address: string | null;
+  image: string | null;
+  plusCode: string | null;
   city: string | null;
   country: string | null;
   timezone: string | null;
   emailForNotifications: string | null;
 
-  image: string | null;
   courts: number | null;
   price: string | null;
   amenities: string[] | null;

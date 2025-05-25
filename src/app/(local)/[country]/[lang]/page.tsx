@@ -29,7 +29,6 @@ export default async function CountryLangPage({ params, searchParams }: { params
 
     return {
       ...venue,
-      image: info?.image ?? null,
       courts: info?.courts?.tennis?.count ?? null,
       price: info?.courts?.tennis?.price ?? null,
       amenities: info?.amenities ?? null,

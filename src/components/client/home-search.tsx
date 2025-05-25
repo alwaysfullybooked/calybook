@@ -11,6 +11,7 @@ import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 
 import type { Venue } from "@/types/venue";
+import { MapPin } from "lucide-react";
 
 export default function HomeSearch({ country, venues, lang }: { country: keyof typeof locations; venues: Venue[]; lang: string }) {
   const router = useRouter();
@@ -106,14 +107,31 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
                 {venue.image && <img src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" />}
                 <CardHeader className="flex-1">
                   <CardTitle className="text-xl">{venue.name}</CardTitle>
-                  <CardDescription className="text-sm">{venue.address}</CardDescription>
+
+                  {venue.plusCode && (
+                    <CardDescription className="text-sm">
+                      <Link href={`https://www.google.com/maps/search/?q=${venue.plusCode}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        {venue.address}
+                      </Link>
+                    </CardDescription>
+                  )}
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>{venue.courts ? `${venue.courts} Courts` : ""}</span>
-                    <span>•</span>
-                    <span>{venue.price ? `${venue.price}/hour` : ""}</span>
-                  </div>
+                  {venue.courts && venue.price ? (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>{venue.courts ? `${venue.courts} Courts` : ""}</span>
+                      <span>•</span>
+                      <span>{venue.price ? `${venue.price}/hour` : ""}</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>-</span>
+                      <span>-</span>
+                      <span>-</span>
+                    </div>
+                  )}
+
                   {venue.amenities && venue.amenities.length > 0 && (
                     <div className="flex flex-wrap gap-2 justify-center">
                       {venue.amenities.map((amenity: string) => (
