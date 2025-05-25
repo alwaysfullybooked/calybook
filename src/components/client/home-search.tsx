@@ -110,7 +110,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
 
                   {venue.plusCode && (
                     <CardDescription className="text-sm">
-                      <Link href={`https://www.google.com/maps/search/?q=${venue.plusCode}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                      <Link href={`https://maps.google.com/?q=${venue.plusCode}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                         <MapPin className="w-4 h-4" />
                         {venue.address}
                       </Link>
