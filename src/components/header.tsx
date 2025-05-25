@@ -4,14 +4,15 @@ import { auth, signIn, signOut } from "@/server/auth";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-export default async function Header() {
+export default async function Header({ country, link }: { country: string; link: string }) {
   const session = await auth();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
+    <header className="sticky top-0 z-50 w-full bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center space-x-2">
+        <Link href={link} className="flex space-x-2">
           <span className="text-3xl font-bold text-primary">CalyBook</span>
+          <span className="font-bold">{country && country !== "Global" ? country : ""}</span>
         </Link>
 
         <div className="flex items-center gap-4">

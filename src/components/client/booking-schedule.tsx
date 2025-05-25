@@ -1,0 +1,224 @@
+"use client";
+
+import { useState } from "react";
+import { format, addMinutes, isEqual, parse, isAfter, isBefore } from "date-fns";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import BookingDialog from "@/components/client/booking-dialog";
+
+type Schedule = {
+  isAvailable: boolean;
+  id: string;
+  serviceId: string;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  endTime: string;
+  durationMinutes: number;
+  price: string;
+  currency: string;
+  paymentImage: string;
+  inventoryType: "spot" | "recurring";
+};
+
+type Service = {
+  id: string;
+  name: string;
+  description: string | null;
+};
+
+type VenueBookingEnhancedProps = {
+  email: string;
+  contactWhatsAppId: string | null;
+  contactLineId: string | null;
+  venueId: string;
+  venueName: string;
+  services: Service[];
+  availableSchedule: Schedule[];
+};
+
+export default function BookingSchedule({ email, contactWhatsAppId, contactLineId, venueId, venueName, services, availableSchedule }: VenueBookingEnhancedProps) {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
+
+  // Group by date
+  const scheduleByDate = availableSchedule.reduce(
+    (acc, slots) => {
+      const sortDate = slots.startDate;
+      if (!acc[sortDate]) {
+        acc[sortDate] = [];
+      }
+      acc[sortDate].push(slots);
+      return acc;
+    },
+    {} as Record<string, Schedule[]>,
+  );
+
+  // Get all unique dates
+  const allDates = Array.from(new Set(availableSchedule.map((b) => b.startDate))).sort();
+
+  // Filter services by category
+  const filteredServices = selectedCategory === "all" ? services : services.filter((service) => service.name.toLowerCase().includes(selectedCategory.toLowerCase()));
+
+  // Get schedule for selected date
+  const selectedDateSchedule = scheduleByDate[selectedDate] || [];
+
+  // Group schedule by service
+  const scheduleByService = selectedDateSchedule.reduce(
+    (acc, booking) => {
+      const serviceName = services.find((s) => s.id === booking.serviceId)?.name ?? "Unknown Service";
+      if (!acc[serviceName]) {
+        acc[serviceName] = [];
+      }
+      acc[serviceName].push(booking);
+      return acc;
+    },
+    {} as Record<string, Schedule[]>,
+  );
+
+  // Helper to generate all time slots for a service on a given day
+  function generateTimeSlots(serviceSchedule: Schedule[]): { startTime: string; endTime: string; duration: number }[] {
+    // Find earliest start and latest end
+    let minTime = "06:00";
+    let maxTime = "22:00";
+    let slotDuration = 60;
+    if (serviceSchedule.length > 0) {
+      const firstSlot = serviceSchedule[0] || { startTime: "06:00", endTime: "22:00", durationMinutes: 60 };
+      minTime = serviceSchedule.reduce((min, s) => (s.startTime < min ? s.startTime : min), firstSlot.startTime);
+      maxTime = serviceSchedule.reduce((max, s) => (s.endTime > max ? s.endTime : max), firstSlot.endTime);
+      slotDuration = firstSlot.durationMinutes || 60;
+    }
+    // Generate slots
+    const slots: { startTime: string; endTime: string; duration: number }[] = [];
+    let current = parse(minTime, "HH:mm", new Date());
+    const end = parse(maxTime, "HH:mm", new Date());
+    while (isBefore(current, end) || isEqual(current, end)) {
+      const slotStart = format(current, "HH:mm");
+      const slotEnd = format(addMinutes(current, slotDuration), "HH:mm");
+      if (isAfter(parse(slotEnd, "HH:mm", new Date()), end)) break;
+      slots.push({ startTime: slotStart, endTime: slotEnd, duration: slotDuration });
+      current = addMinutes(current, slotDuration);
+    }
+    return slots;
+  }
+
+  // Helper to determine slot status
+  function getSlotStatus(slot: { startTime: string; endTime: string }, serviceSchedule: Schedule[]): { status: "your" | "available" | "unavailable"; schedule?: Schedule } {
+    const found = serviceSchedule.find((s) => s.startTime === slot.startTime && s.endTime === slot.endTime);
+    if (found) {
+      if (found.isAvailable) return { status: "available", schedule: found };
+      return { status: "unavailable", schedule: found };
+    }
+    return { status: "unavailable" };
+  }
+
+  // Generate all time slots for the selected date
+  const allTimeSlots = generateTimeSlots(selectedDateSchedule);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Services</SelectItem>
+            <SelectItem value="tennis">Tennis</SelectItem>
+            <SelectItem value="pickleball">Pickleball</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={selectedDate} onValueChange={setSelectedDate}>
+          <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectValue>{selectedDate === format(new Date(), "yyyy-MM-dd") ? "Today" : format(new Date(selectedDate), "MMM dd, yyyy")}</SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={format(new Date(), "yyyy-MM-dd")}>Today</SelectItem>
+            {allDates
+              .filter((date) => date !== format(new Date(), "yyyy-MM-dd"))
+              .map((date) => (
+                <SelectItem key={date} value={date}>
+                  {format(new Date(date), "MMM dd, yyyy")}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {selectedDateSchedule.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-lg text-gray-600">No available slots for {selectedDate === format(new Date(), "yyyy-MM-dd") ? "today" : format(new Date(selectedDate), "MMMM dd, yyyy")}</p>
+          <p className="text-sm text-gray-500 mt-2">Please try another date or check back later.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse table-fixed">
+            <thead>
+              <tr>
+                <th className="w-[200px] p-2 text-left font-semibold text-gray-700 border-b">Service</th>
+                {allTimeSlots.map((slot) => (
+                  <th key={slot.startTime} className="w-[80px] p-2 text-center font-medium text-sm border-b">
+                    {slot.startTime}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredServices.map((service) => {
+                const serviceSchedule = scheduleByService[service.name] || [];
+                return (
+                  <tr key={service.id}>
+                    <td className="w-[50px] p-2 font-medium text-gray-700 border-b">{service.name}</td>
+                    {allTimeSlots.map((slot) => {
+                      const { status, schedule } = getSlotStatus(slot, serviceSchedule);
+                      let color = "";
+                      let label = "";
+                      if (status === "your") {
+                        color = "bg-blue-500 text-white border-blue-600";
+                        label = "Your booking";
+                      } else if (status === "available") {
+                        color = "bg-green-100 text-green-800 border-green-300 hover:bg-green-200";
+                        label = "Available";
+                      } else {
+                        color = "bg-gray-100 text-gray-400 border-gray-200";
+                        label = "Not available";
+                      }
+                      return (
+                        <td key={slot.startTime} className="w-[80px] border-b">
+                          <div className={`border flex flex-col items-center justify-center ${color} h-[80px]`}>
+                            <span className="text-xs font-semibold hidden">{label}</span>
+                            {status === "available" && schedule && (
+                              <BookingDialog
+                                email={email}
+                                contactMethod="email"
+                                contactWhatsAppId={contactWhatsAppId ?? ""}
+                                contactLineId={contactLineId ?? ""}
+                                venueId={venueId}
+                                venueName={venueName}
+                                serviceId={schedule.serviceId}
+                                serviceName={service.name}
+                                serviceDescription={service.description ?? ""}
+                                startDate={schedule.startDate}
+                                endDate={schedule.endDate}
+                                startTime={schedule.startTime}
+                                endTime={schedule.endTime}
+                                durationMinutes={schedule.durationMinutes}
+                                paymentImage={schedule.paymentImage ?? undefined}
+                                price={schedule.price}
+                                currency={schedule.currency}
+                              />
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -4,7 +4,7 @@ export default function TennisChallenge() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="shadow-lg text-green-600">
+      <header className="text-green-600">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="flex items-center space-x-3">
             <div>

@@ -1,4 +1,4 @@
-import { AlwaysFullyBooked } from "@alwaysfullybooked/node-sdk";
+import { AlwaysFullyBooked } from "@alwaysfullybooked/sdk";
 import { env } from "@/env";
 
 const apiKey = env.AFB_API_KEY;

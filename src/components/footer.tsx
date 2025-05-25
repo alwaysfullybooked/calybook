@@ -1,17 +1,34 @@
+import { locations } from "@/data/locations";
+import { BE, FR, HK, ID, SC, TH } from "country-flag-icons/react/3x2";
 import Link from "next/link";
 
-export default function Footer() {
+// Map country codes to their flag components
+const countryFlags: Record<string, React.ComponentType> = {
+  be: BE,
+  fr: FR,
+  hk: HK,
+  id: ID,
+  sc: SC,
+  th: TH,
+};
+
+export default function Footer({ country }: { country: string }) {
   return (
     <footer className="bg-white py-10 text-gray-600 border-t">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">CalyBook</h3>
-            <p className="text-sm">The easiest way to book your activities for Thailand.</p>
+            <p className="text-sm">The easiest way to book your activities for {country}.</p>
           </div>
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">Quick Links</h3>
             <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/" className="hover:text-gray-900">
+                  Homepage
+                </Link>
+              </li>
               {/* <li>
                 <Link href="#" className="hover:text-gray-900">
                   Find Venues
@@ -37,28 +54,18 @@ export default function Footer() {
           </div>
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">Connect</h3>
-            <div className="flex space-x-4">
-              {/* <a href="#" className="text-gray-600 hover:text-gray-900">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <title>Facebook</title>
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
-              </a> */}
-              {/* <a href="#" className="text-gray-600 hover:text-gray-900">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <title>Instagram</title>
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
-                </svg>
-              </a> */}
-              {/* <a href="#" className="text-gray-600 hover:text-gray-900">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <title>Line</title>
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                </svg>
-              </a> */}
-            </div>
+
+            <ul className="space-y-2 text-sm">
+              {Object.entries(locations).map(([countryCode, country]) => {
+                const Flag = countryFlags[countryCode];
+                return (
+                  <Link key={countryCode} href={`/${countryCode}/en`} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                    <div className="w-5 h-4">{Flag && <Flag />}</div>
+                    <span className="text-sm">{country.name}</span>
+                  </Link>
+                );
+              })}
+            </ul>
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200 pt-6 text-center text-sm">

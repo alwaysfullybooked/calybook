@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Footer from "@/components/footer";
+import Header from "@/components/header";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NODE_ENV === "production" ? "https://www.calybook.com" : "http://localhost:3000"),
@@ -18,11 +18,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PublicLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
-      {children}
-      <Footer />
+      <Header country="" link="/" />
+      <main className="container mx-auto">{children}</main>
     </>
   );
 }

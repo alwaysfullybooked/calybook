@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogPortal, DialogOverlay, DialogDescription } from "@/components/ui/dialog";
@@ -58,9 +58,33 @@ export default function BookingDialog({
   const [currentStep, setCurrentStep] = useState<Step>("details");
   const [notes, setNotes] = useState("");
   const [customerContactMethod, setCustomerContactMethod] = useState(contactMethod);
+  const [timeLeft, setTimeLeft] = useState(60);
   const formRef = useRef<HTMLFormElement>(null);
 
   const customerContactId = customerContactMethod === "email" ? email : customerContactMethod === "line" ? contactLineId : contactWhatsAppId;
+
+  useEffect(() => {
+    let timerId: NodeJS.Timeout;
+
+    if (currentStep === "payment") {
+      setTimeLeft(60); // Reset timer when entering payment step
+      timerId = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerId);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timerId) {
+        clearInterval(timerId);
+      }
+    };
+  }, [currentStep]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,7 +163,7 @@ export default function BookingDialog({
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost" className={"bg-green-500 hover:bg-green-600 text-white"} onClick={() => setIsOpen(true)}>
+        <Button variant="link" onClick={() => setIsOpen(true)} size="sm">
           BOOK
         </Button>
       </DialogTrigger>
@@ -209,17 +233,23 @@ export default function BookingDialog({
 
             {currentStep === "payment" && paymentImage && (
               <div className="space-y-2">
-                <Label>Scan the QR code to complete your payment</Label>
-                <div className="rounded-lg border">
-                  <img src={paymentImage} alt="Payment QR Code" className="mx-auto" />
-                </div>
+                <div className="rounded-lg">{timeLeft > 0 && <img src={paymentImage} alt="Payment QR Code" className="mx-auto" />}</div>
+
+                {timeLeft > 0 ? (
+                  <div className="text-center text-sm font-bold text-orange-600">
+                    <p>Time remaining: {timeLeft} seconds.</p>
+                  </div>
+                ) : (
+                  <div className="text-center text-sm font-bold text-orange-600">Timeout. Go back and try again.</div>
+                )}
+                <Label className="text-center text-sm font-bold text-orange-600">In the next step, you will be asked to submit proof of payment. Only press 'Next' when you have paid.</Label>
               </div>
             )}
 
             {currentStep === "success" && (
               <div className="rounded-lg bg-orange-50 p-4 text-orange-800 text-center">
-                <p className="font-medium">On hold for 1 hour.</p>
-                <p className="font-medium">Please complete payment.</p>
+                <p className="font-medium">Sent proof of payment to booking center.</p>
+                <p className="font-medium">Bookings without payment will be cancelled.</p>
                 <div className="mt-4 flex flex-col items-center justify-center gap-2">
                   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/320px-LINE_logo.svg.png" alt="Line" className="mx-auto h-16 w-16" />
                   <Image src={`/images/line-id/${venueId}.jpg`} alt="Line Connect QR Code" width={200} height={200} className="mx-auto max-w-[200px]" />
@@ -252,8 +282,8 @@ export default function BookingDialog({
                   <Button type="button" variant="outline" onClick={() => setCurrentStep("details")}>
                     Back
                   </Button>
-                  <Button type="button" variant="outline" onClick={() => setCurrentStep("success")}>
-                    Done
+                  <Button type="button" variant="outline" onClick={() => setCurrentStep("success")} disabled={timeLeft > 0}>
+                    {timeLeft > 0 ? "Waiting for payment" : "Next"}
                   </Button>
                 </>
               )}

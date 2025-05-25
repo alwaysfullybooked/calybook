@@ -6,6 +6,7 @@ import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, S
 import { HomeIcon, CalendarIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/components/footer";
+import Header from "@/components/header";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NODE_ENV === "production" ? "https://www.calybook.com" : "http://localhost:3000"),
@@ -33,6 +34,7 @@ export default async function AuthedLayout({ children }: Readonly<{ children: Re
 
   return (
     <>
+      <Header country="Global" link="/" />
       <SidebarProvider>
         <Sidebar className="fixed top-16 h-[calc(100vh-4rem)] border-r bg-background">
           <SidebarHeader className="border-b px-4 py-3 md:hidden">
