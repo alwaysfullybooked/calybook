@@ -16,44 +16,41 @@ const countryFlags: Record<string, React.ComponentType> = {
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background py-12 px-4">
-      <div className="w-full max-w-2xl bg-card text-card-foreground rounded-xl p-8">
-        <h1 className="text-3xl font-bold text-center mb-2">Welcome to Calybook</h1>
-        <p className="text-center text-muted-foreground mb-8">Booking has never been easier.</p>
-        <h2 className="text-xl font-semibold mb-4 text-center">Available Locations</h2>
-        <div className="space-y-6">
+    <div className="min-h-screen bg-background py-4 sm:py-6 md:py-8 px-3 sm:px-4">
+      <div className="w-full max-w-5xl mx-auto bg-card text-card-foreground rounded-xl p-3 sm:p-6 md:p-8">
+        <div className="max-w-2xl mx-auto mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-2">Welcome to Calybook</h1>
+          <p className="text-center text-muted-foreground text-base sm:text-lg">Booking has never been easier.</p>
+        </div>
+
+        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-5 text-center">Available Locations</h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {Object.entries(locations).map(([countryCode, country]) => {
             const Flag = countryFlags[countryCode];
             return (
-              <div key={countryCode} className="flex justify-between gap-4 bg-muted rounded-lg p-6 shadow-sm">
-                <div className="flex items-center gap-3">
+              <div key={countryCode} className="flex flex-col gap-3 bg-muted rounded-lg p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2">
                   {Flag && (
-                    <div className="w-8 h-6 rounded-sm">
+                    <div className="w-7 h-5 sm:w-8 sm:h-6 rounded-sm">
                       <Flag />
                     </div>
                   )}
-                  <h3 className="text-xl font-semibold text-primary">{country.name}</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-primary">{country.name}</h3>
                 </div>
 
                 {"languages" in country && (
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Languages</h4>
-                    {country.languages.map((lang) => (
-                      <Link key={lang.code} href={`/${countryCode}/${lang.code}`}>
-                        <Button variant="default" size="sm">
-                          {lang.label}
-                        </Button>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-
-                {"cities" in country && (
                   <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Locations</h4>
-                    <Button variant="ghost" size="sm">
-                      {country.cities.map((city) => city.label).join(", ")}
-                    </Button>
+                    <h4 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1.5">Languages</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {country.languages.map((lang) => (
+                        <Link key={lang.code} href={`/${countryCode}/${lang.code}`}>
+                          <Button variant="link" size="sm" className="text-xs sm:text-sm hover:scale-105 transition-transform">
+                            {lang.label}
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
