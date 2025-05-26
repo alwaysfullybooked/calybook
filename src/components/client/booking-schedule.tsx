@@ -7,6 +7,7 @@ import BookingDialog from "@/components/client/booking-dialog";
 
 type Schedule = {
   isAvailable: boolean;
+  bookingType: "single" | "group";
   id: string;
   serviceId: string;
   startDate: string;
@@ -231,6 +232,7 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                             <span className="text-xs font-semibold hidden">{label}</span>
                             {status === "available" && schedule && (
                               <BookingDialog
+                                bookingType={schedule.bookingType}
                                 email={email}
                                 contactMethod="email"
                                 contactWhatsAppId={contactWhatsAppId ?? ""}
@@ -245,10 +247,10 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                                 startTime={schedule.startTime}
                                 endTime={schedule.endTime}
                                 durationMinutes={schedule.durationMinutes}
-                                paymentImage={schedule.paymentImage ?? undefined}
                                 price={schedule.price}
                                 currency={schedule.currency}
-                                paymentType={schedule.paymentType}
+                                paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
+                                paymentImage={schedule.paymentImage ?? undefined}
                               />
                             )}
                           </div>

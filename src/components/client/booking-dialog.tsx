@@ -15,6 +15,7 @@ import { toast } from "sonner";
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
+  bookingType,
   venueId,
   email,
   contactMethod,
@@ -30,18 +31,18 @@ export default function BookingDialog({
   startTime,
   endTime,
   durationMinutes,
-  paymentImage,
   price,
   currency,
   paymentType,
+  paymentImage,
 }: {
+  bookingType: "single" | "group";
   venueId: string;
   email: string;
   contactMethod: string;
   contactWhatsAppId: string;
   contactLineId: string;
   venueName: string;
-
   serviceId: string;
   serviceName: string;
   serviceDescription: string;
@@ -50,10 +51,10 @@ export default function BookingDialog({
   startTime: string;
   endTime: string;
   durationMinutes: number;
-  paymentImage?: string;
   price: string;
   currency: string;
-  paymentType: string;
+  paymentType: "manual_prepaid" | "reservation_only" | "stripe_prepaid";
+  paymentImage: string | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -122,6 +123,7 @@ export default function BookingDialog({
       setIsLoading(true);
       try {
         await createBooking({
+          bookingType,
           venueId,
           serviceId,
           serviceName,
@@ -132,6 +134,8 @@ export default function BookingDialog({
           endTime,
           price,
           currency,
+          paymentType,
+          paymentImage,
           customerContactMethod,
           customerContactId,
           notes,
