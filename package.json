@@ -15,13 +15,13 @@
     "dev": "next dev --port 3001 --turbo",
     "preview": "next build && next start",
     "start": "next start --port 3001",
+    "clean": "git clean -xdf .next node_modules",
     "typecheck": "tsc --noEmit",
     "vercel-remove": "vercel remove -s -y calybook"
   },
   "dependencies": {
     "@ai-sdk/groq": "^1.2.9",
     "@ai-sdk/react": "^1.2.12",
-    "@alwaysfullybooked/node-sdk": "^0.1.23",
     "@alwaysfullybooked/sdk-node": "^0.1.28",
     "@auth/drizzle-adapter": "^1.9.1",
     "@hookform/resolvers": "^5.0.1",
