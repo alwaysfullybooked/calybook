@@ -17,6 +17,7 @@ type Schedule = {
   price: string;
   currency: string;
   paymentImage: string;
+  paymentType: string;
   inventoryType: "spot" | "recurring";
 };
 
@@ -247,6 +248,7 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                                 paymentImage={schedule.paymentImage ?? undefined}
                                 price={schedule.price}
                                 currency={schedule.currency}
+                                paymentType={schedule.paymentType}
                               />
                             )}
                           </div>

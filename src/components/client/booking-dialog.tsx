@@ -33,6 +33,7 @@ export default function BookingDialog({
   paymentImage,
   price,
   currency,
+  paymentType,
 }: {
   venueId: string;
   email: string;
@@ -52,6 +53,7 @@ export default function BookingDialog({
   paymentImage?: string;
   price: string;
   currency: string;
+  paymentType: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -95,7 +97,18 @@ export default function BookingDialog({
     }
 
     if (currentStep === "notes") {
-      setCurrentStep("payment");
+      switch (paymentType) {
+        case "manual_prepaid":
+          setCurrentStep("payment");
+          break;
+        case "reservation_only":
+          setCurrentStep("success");
+          break;
+        case "stripe_prepaid":
+          alert("Stripe prepaid");
+          // setCurrentStep("success");
+          break;
+      }
       return;
     }
 
@@ -164,12 +177,17 @@ export default function BookingDialog({
     >
       <DialogTrigger asChild>
         <Button variant="link" onClick={() => setIsOpen(true)} size="sm">
-          BOOK - {durationMinutes} minutes
+          BOOK - {durationMinutes} min
         </Button>
       </DialogTrigger>
       <DialogPortal>
-        <DialogOverlay className="bg-black/50" />
-        <DialogContent className="max-w-[95vw] sm:max-w-md">
+        <DialogOverlay className="bg-black" />
+        <DialogContent
+          className="max-w-[95vw] sm:max-w-md"
+          onPointerDownOutside={(e) => {
+            e.preventDefault();
+          }}
+        >
           <DialogHeader>
             <DialogTitle>{getStepTitle()}</DialogTitle>
             <DialogDescription />
@@ -246,7 +264,7 @@ export default function BookingDialog({
               </div>
             )}
 
-            {currentStep === "success" && (
+            {currentStep === "success" && paymentType === "manual_prepaid" && (
               <div className="rounded-lg bg-orange-50 p-4 text-orange-800 text-center">
                 <p className="font-medium">Sent proof of payment to booking center.</p>
                 <p className="font-medium">Bookings without payment will be cancelled.</p>
@@ -255,6 +273,12 @@ export default function BookingDialog({
                   <Image src={`/images/line-id/${venueId}.jpg`} alt="Line Connect QR Code" width={200} height={200} className="mx-auto max-w-[200px]" />
                 </div>
                 <p className="mt-2 text-sm text-gray-500 text-center">Open Line App or scan QR code to contact booking center with payment confirmation.</p>
+              </div>
+            )}
+
+            {currentStep === "success" && paymentType === "reservation_only" && (
+              <div className="rounded-lg bg-orange-50 p-4 text-orange-800 text-center">
+                <p className="font-medium">We&apos;ll contact you to confirm the booking by email at {email}.</p>
               </div>
             )}
 

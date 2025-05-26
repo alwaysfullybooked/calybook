@@ -22,7 +22,7 @@
   "dependencies": {
     "@ai-sdk/groq": "^1.2.9",
     "@ai-sdk/react": "^1.2.12",
-    "@alwaysfullybooked/sdk-node": "^0.1.28",
+    "@alwaysfullybooked/sdk-node": "^0.1.29",
     "@auth/drizzle-adapter": "^1.9.1",
     "@hookform/resolvers": "^5.0.1",
     "@modelcontextprotocol/sdk": "^1.12.0",
