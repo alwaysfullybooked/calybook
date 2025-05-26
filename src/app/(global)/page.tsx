@@ -36,7 +36,9 @@ export default function Home() {
                       <Flag />
                     </div>
                   )}
-                  <h3 className="text-base sm:text-lg font-semibold text-primary">{country.name}</h3>
+                  <Link href={`/${countryCode}`}>
+                    <h3 className="text-base sm:text-lg font-semibold text-primary">{country.name}</h3>
+                  </Link>
                 </div>
 
                 {"languages" in country && (

@@ -9,13 +9,13 @@ import TennisRankings from "@/components/tennis/rankings";
 import TennisChallenge from "@/components/tennis/challenge";
 import BookingSchedule from "@/components/client/booking-schedule";
 
-export default async function VenuePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function VenuePage({ params }: { params: Promise<{ country: string; lang: string; id: string }> }) {
+  const { country, lang, id } = await params;
 
   const session = await auth();
 
   if (!session?.user?.email) {
-    redirect(`/login?callbackUrl=/venues/${id}`);
+    redirect(`/login?callbackUrl=/${country}/${lang}/venues/${id}`);
   }
 
   const email = session.user.email;
