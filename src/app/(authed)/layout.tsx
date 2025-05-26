@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
-import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { HomeIcon, CalendarIcon, SettingsIcon } from "lucide-react";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider } from "@/components/ui/sidebar";
+import { CalendarIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
-import Footer from "@/components/footer";
 import Header from "@/components/header";
 
 export const metadata: Metadata = {

@@ -65,7 +65,7 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
   // Group schedule by service
   const scheduleByService = selectedDateSchedule.reduce(
     (acc, booking) => {
-      const serviceName = services.find((s) => s.id === booking.serviceId)?.name ?? "Unknown Service";
+      const serviceName = services.find((s) => s.id === booking.serviceId)?.id ?? "Unknown Service";
       if (!acc[serviceName]) {
         acc[serviceName] = [];
       }
@@ -77,35 +77,76 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
 
   // Helper to generate all time slots for a service on a given day
   function generateTimeSlots(serviceSchedule: Schedule[]): { startTime: string; endTime: string; duration: number }[] {
-    // Find earliest start and latest end
-    let minTime = "06:00";
-    let maxTime = "22:00";
-    let slotDuration = 60;
-    if (serviceSchedule.length > 0) {
-      const firstSlot = serviceSchedule[0] || { startTime: "06:00", endTime: "22:00", durationMinutes: 60 };
-      minTime = serviceSchedule.reduce((min, s) => (s.startTime < min ? s.startTime : min), firstSlot.startTime);
-      maxTime = serviceSchedule.reduce((max, s) => (s.endTime > max ? s.endTime : max), firstSlot.endTime);
-      slotDuration = firstSlot.durationMinutes || 60;
+    // If no schedule, return empty array
+    if (serviceSchedule.length === 0) {
+      return [];
     }
-    // Generate slots
-    const slots: { startTime: string; endTime: string; duration: number }[] = [];
-    let current = parse(minTime, "HH:mm", new Date());
-    const end = parse(maxTime, "HH:mm", new Date());
-    while (isBefore(current, end) || isEqual(current, end)) {
-      const slotStart = format(current, "HH:mm");
-      const slotEnd = format(addMinutes(current, slotDuration), "HH:mm");
-      if (isAfter(parse(slotEnd, "HH:mm", new Date()), end)) break;
-      slots.push({ startTime: slotStart, endTime: slotEnd, duration: slotDuration });
-      current = addMinutes(current, slotDuration);
+
+    // Sort schedule by start time to ensure consistent order
+    const sortedSchedule = [...serviceSchedule].sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+    // Generate 1-hour slots for display
+    const displaySlots: { startTime: string; endTime: string; duration: number }[] = [];
+    const processedSlots = new Set<string>();
+
+    for (const slot of sortedSchedule) {
+      const start = parse(slot.startTime, "HH:mm", new Date());
+      const end = parse(slot.endTime, "HH:mm", new Date());
+      let current = start;
+
+      while (isBefore(current, end) || isEqual(current, end)) {
+        const slotStart = format(current, "HH:mm");
+        const slotEnd = format(addMinutes(current, 60), "HH:mm");
+
+        // Skip if we've already processed this time slot
+        const slotKey = `${slotStart}-${slotEnd}`;
+        if (processedSlots.has(slotKey)) {
+          current = addMinutes(current, 60);
+          continue;
+        }
+
+        // Only add the slot if it doesn't exceed the original slot's end time
+        if (!isAfter(parse(slotEnd, "HH:mm", new Date()), end)) {
+          displaySlots.push({
+            startTime: slotStart,
+            endTime: slotEnd,
+            duration: 60, // Display slots are always 1 hour
+          });
+          processedSlots.add(slotKey);
+        }
+
+        current = addMinutes(current, 60);
+      }
     }
-    return slots;
+
+    return displaySlots;
   }
 
   // Helper to determine slot status
-  function getSlotStatus(slot: { startTime: string; endTime: string }, serviceSchedule: Schedule[]): { status: "your" | "available" | "unavailable"; schedule?: Schedule } {
-    const found = serviceSchedule.find((s) => s.startTime === slot.startTime && s.endTime === slot.endTime);
+  function getSlotStatus(
+    slot: { startTime: string; endTime: string },
+    serviceSchedule: Schedule[],
+  ): { status: "your" | "available" | "unavailable"; schedule?: Schedule; isPartOfLongerSlot?: boolean } {
+    // Find a slot that contains this time slot
+    const found = serviceSchedule.find((s) => {
+      const slotStart = parse(slot.startTime, "HH:mm", new Date());
+      const slotEnd = parse(slot.endTime, "HH:mm", new Date());
+      const scheduleStart = parse(s.startTime, "HH:mm", new Date());
+      const scheduleEnd = parse(s.endTime, "HH:mm", new Date());
+
+      // Check if this slot falls within the schedule slot
+      return (isEqual(slotStart, scheduleStart) || isAfter(slotStart, scheduleStart)) && (isEqual(slotEnd, scheduleEnd) || isBefore(slotEnd, scheduleEnd));
+    });
+
     if (found) {
-      if (found.isAvailable) return { status: "available", schedule: found };
+      // Only mark as available if this is the first hour of the slot
+      const isFirstHour = isEqual(parse(slot.startTime, "HH:mm", new Date()), parse(found.startTime, "HH:mm", new Date()));
+      if (found.isAvailable) {
+        if (isFirstHour) {
+          return { status: "available", schedule: found };
+        }
+        return { status: "unavailable", schedule: found, isPartOfLongerSlot: true };
+      }
       return { status: "unavailable", schedule: found };
     }
     return { status: "unavailable" };
@@ -157,7 +198,7 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
               <tr>
                 <th className="w-[200px] p-2 text-left font-semibold text-gray-700 border-b">Service</th>
                 {allTimeSlots.map((slot) => (
-                  <th key={slot.startTime} className="w-[80px] p-2 text-center font-medium text-sm border-b">
+                  <th key={`${slot.startTime}-${slot.endTime}`} className="w-[80px] p-2 text-center font-medium text-sm border-b">
                     {slot.startTime}
                   </th>
                 ))}
@@ -165,18 +206,18 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
             </thead>
             <tbody>
               {filteredServices.map((service) => {
-                const serviceSchedule = scheduleByService[service.name] || [];
+                const serviceSchedule = scheduleByService[service.id] || [];
                 return (
                   <tr key={service.id}>
                     <td className="w-[50px] p-2 font-medium text-gray-700 border-b">{service.name}</td>
                     {allTimeSlots.map((slot) => {
-                      const { status, schedule } = getSlotStatus(slot, serviceSchedule);
+                      const { status, schedule, isPartOfLongerSlot } = getSlotStatus(slot, serviceSchedule);
                       let color = "";
                       let label = "";
                       if (status === "your") {
                         color = "bg-blue-500 text-white border-blue-600";
                         label = "Your booking";
-                      } else if (status === "available") {
+                      } else if (status === "available" || isPartOfLongerSlot) {
                         color = "bg-green-100 text-green-800 border-green-300 hover:bg-green-200";
                         label = "Available";
                       } else {
@@ -184,7 +225,7 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                         label = "Not available";
                       }
                       return (
-                        <td key={slot.startTime} className="w-[80px] border-b">
+                        <td key={`${service.id}-${slot.startTime}-${slot.endTime}`} className="w-[80px] border-b">
                           <div className={`border flex flex-col items-center justify-center ${color} h-[80px]`}>
                             <span className="text-xs font-semibold hidden">{label}</span>
                             {status === "available" && schedule && (

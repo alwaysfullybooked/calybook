@@ -67,7 +67,9 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="h-5 w-5 text-gray-500" />
-                      <span className="text-sm sm:text-base">{mergedVenue.phone}</span>
+                      <a href={`tel:${mergedVenue.phone}`} className="text-sm sm:text-base hover:underline">
+                        {mergedVenue.phone}
+                      </a>
                     </div>
                     {/* <div className="flex items-center gap-2">
                       <Globe className="h-5 w-5 text-gray-500" />

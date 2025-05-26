@@ -164,7 +164,7 @@ export default function BookingDialog({
     >
       <DialogTrigger asChild>
         <Button variant="link" onClick={() => setIsOpen(true)} size="sm">
-          BOOK
+          BOOK - {durationMinutes} minutes
         </Button>
       </DialogTrigger>
       <DialogPortal>
