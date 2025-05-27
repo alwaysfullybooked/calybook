@@ -33,7 +33,6 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
 
   const mergedVenue = {
     ...venue,
-    image: info?.image ?? null,
     courts: info?.courts ?? null,
     price: info?.price ?? null,
     amenities: info?.amenities ?? null,
@@ -98,9 +97,12 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
               {/* <TabsTrigger value="ranking" className="text-sm sm:text-base">
                 Ranking (Mockup)
               </TabsTrigger> */}
-              <TabsTrigger value="challenger" className="text-sm sm:text-base">
-                Challenges (DRAFT)
+              <TabsTrigger value="reviews" className="text-sm sm:text-base">
+                Reviews (Coming soon)
               </TabsTrigger>
+              {/* <TabsTrigger value="challenger" className="text-sm sm:text-base">
+                Challenger (Draft)
+              </TabsTrigger> */}
               {/* <TabsTrigger value="services" className="text-sm sm:text-base">
                 Services
               </TabsTrigger> */}
@@ -118,6 +120,10 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                   availableSchedule={availableSchedule}
                 />
               </div>
+            </TabsContent>
+
+            <TabsContent value="reviews">
+              <div className="mt-4" />
             </TabsContent>
 
             <TabsContent value="ranking">
