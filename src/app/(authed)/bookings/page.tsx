@@ -19,8 +19,12 @@ export default async function DashboardPage() {
     customerContactId,
   });
 
+  const bookingGroups = await alwaysbookbooked.bookingGroups.list({
+    customerContactId,
+  });
+
   // Fetch service and venue information for each booking
-  const processedBookings = bookings.map((booking) => {
+  const processedBookings = [...bookings, ...bookingGroups].map((booking) => {
     return {
       ...booking,
       venueName: booking.service.venue.name,

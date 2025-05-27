@@ -17,9 +17,6 @@ export default function BookingDialog({
   bookingType,
   venueId,
   email,
-  contactMethod,
-  contactWhatsAppId,
-  contactLineId,
   venueName,
 
   serviceId,
@@ -59,11 +56,8 @@ export default function BookingDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>("details");
   const [notes, setNotes] = useState("");
-  const [customerContactMethod, setCustomerContactMethod] = useState(contactMethod);
   const [timeLeft, setTimeLeft] = useState(60);
   const formRef = useRef<HTMLFormElement>(null);
-
-  const customerContactId = customerContactMethod === "email" ? email : customerContactMethod === "line" ? contactLineId : contactWhatsAppId;
 
   useEffect(() => {
     let timerId: NodeJS.Timeout;
@@ -135,8 +129,9 @@ export default function BookingDialog({
           currency,
           paymentType,
           paymentImage,
-          customerContactMethod,
-          customerContactId,
+          customerContactMethod: "email",
+          customerContactId: email,
+          customerEmailId: email,
           notes,
         });
         toast.success("Booking submitted successfully");
@@ -154,7 +149,6 @@ export default function BookingDialog({
     setIsOpen(false);
     setCurrentStep("details");
     setNotes("");
-    setCustomerContactMethod(contactMethod);
   };
 
   const getStepTitle = () => {
@@ -223,7 +217,7 @@ export default function BookingDialog({
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="contact-method">Contact Method</Label>
-                  <Select value={customerContactMethod} onValueChange={setCustomerContactMethod} disabled={true}>
+                  <Select defaultValue="email" disabled={true}>
                     <SelectTrigger id="contact-method">
                       <SelectValue placeholder="Select contact method" />
                     </SelectTrigger>
@@ -235,14 +229,8 @@ export default function BookingDialog({
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contact-value">{customerContactMethod === "email" ? "Email" : customerContactMethod === "line" ? "Line ID" : "WhatsApp Number"}</Label>
-                  <Input
-                    id="contact-value"
-                    placeholder={`Enter your ${customerContactMethod}`}
-                    value={customerContactMethod === "email" ? email : customerContactMethod === "line" ? contactLineId : contactWhatsAppId}
-                    autoFocus={false}
-                    disabled
-                  />
+                  <Label htmlFor="contactEmailId">Email</Label>
+                  <Input id="contactEmailId" placeholder="Enter your email" defaultValue={email} autoFocus={false} disabled />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="note">Note</Label>

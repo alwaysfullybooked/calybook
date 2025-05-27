@@ -20,6 +20,7 @@ export async function createBooking({
   paymentImage,
   customerContactMethod,
   customerContactId,
+  customerEmailId,
   notes,
 }: {
   bookingType: "single" | "group";
@@ -37,6 +38,7 @@ export async function createBooking({
   paymentImage: string | null;
   customerContactMethod: string;
   customerContactId: string;
+  customerEmailId: string;
   notes: string | null;
 }) {
   const session = await auth();
@@ -63,6 +65,7 @@ export async function createBooking({
       notes,
       customerContactMethod,
       customerContactId,
+      customerEmailId,
     });
   }
 
@@ -82,6 +85,7 @@ export async function createBooking({
       notes,
       customerContactMethod,
       customerContactId,
+      customerEmailId,
     });
   }
 
