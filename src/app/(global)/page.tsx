@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { GB, HK, TH, SC, FR, BE, ID } from "country-flag-icons/react/3x2";
 
-import { locations } from "../../data/locations";
+import { locations } from "../../lib/locations";
 
 // Map country codes to their flag components
 const countryFlags: Record<string, React.ComponentType> = {

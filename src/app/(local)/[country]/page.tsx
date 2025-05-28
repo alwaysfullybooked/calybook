@@ -1,4 +1,4 @@
-import { locations } from "@/data/locations";
+import { locations } from "@/lib/locations";
 import { redirect } from "next/navigation";
 
 export const generateStaticParams = async () => {

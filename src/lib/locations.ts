@@ -50,3 +50,14 @@ export const locations: Record<string, Location> = {
     ],
   },
 } as const;
+
+export function getCountryCode(country: string | null) {
+  if (!country) return "";
+
+  const countryLower = country.toLowerCase();
+  const code = Object.keys(locations).find((key) => locations?.[key]?.name.toLowerCase() === countryLower);
+
+  if (!code) return "";
+
+  return code;
+}

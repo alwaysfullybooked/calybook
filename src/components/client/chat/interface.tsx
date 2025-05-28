@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { locations } from "@/data/locations";
+import { locations } from "@/lib/locations";
 
 export default function ChatInterface({ sessionId, country }: { sessionId: string; country: string }) {
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";

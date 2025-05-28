@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Footer from "@/components/footer";
-import { locations } from "@/data/locations";
+import { locations } from "@/lib/locations";
 import Header from "@/components/header";
 
 export const metadata: Metadata = {

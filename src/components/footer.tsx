@@ -1,4 +1,4 @@
-import { locations } from "@/data/locations";
+import { locations } from "@/lib/locations";
 import { BE, FR, HK, ID, SC, TH } from "country-flag-icons/react/3x2";
 import Link from "next/link";
 

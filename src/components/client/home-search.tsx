@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { locations } from "@/data/locations";
+import { locations } from "@/lib/locations";
 import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 

@@ -1,10 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { auth } from "@/server/auth";
 import { Calendar, Clock, Pencil } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+
+import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
+import { getCountryCode } from "@/lib/locations";
 
 export default async function BookingsPage() {
   const session = await auth();
@@ -71,7 +73,7 @@ export default async function BookingsPage() {
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="text-base sm:text-xl">
-                          <Link href={`/venues/${booking.service.venueId}`} className="hover:underline">
+                          <Link href={`${getCountryCode(booking.service.venue.country)}/en/venues/${booking.service.venueId}`} className="hover:underline">
                             {booking.service.venue.name}
                           </Link>
                         </CardTitle>

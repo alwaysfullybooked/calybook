@@ -3,7 +3,7 @@ import { getTranslations } from "@/lib/translations";
 
 import HomeSearch from "@/components/client/home-search";
 import { matchVenues } from "@/data/venues";
-import { locations } from "@/data/locations";
+import { locations } from "@/lib/locations";
 
 export async function generateStaticParams() {
   return [
