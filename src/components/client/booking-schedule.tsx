@@ -7,7 +7,7 @@ import BookingDialog from "@/components/client/booking-dialog";
 
 type Schedule = {
   isAvailable: boolean;
-  bookingType: "single" | "group";
+  type: "single" | "group";
   id: string;
   serviceId: string;
   startDate: string;
@@ -90,7 +90,7 @@ function MobileScheduleView({
                       <div className="text-sm font-medium">{slot.startTime}</div>
                       {schedule && (
                         <BookingDialog
-                          bookingType={schedule.bookingType}
+                          type={schedule.type}
                           email={email}
                           contactMethod="email"
                           contactWhatsAppId={contactWhatsAppId ?? ""}
@@ -328,7 +328,7 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                             <div className={`border flex flex-col items-center justify-center ${color} h-[80px]`}>
                               {status === "available" && schedule && (
                                 <BookingDialog
-                                  bookingType={schedule.bookingType}
+                                  type={schedule.type}
                                   email={email}
                                   contactMethod="email"
                                   contactWhatsAppId={contactWhatsAppId ?? ""}

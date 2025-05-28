@@ -5,7 +5,7 @@ import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { revalidatePath } from "next/cache";
 
 export async function createBooking({
-  bookingType,
+  type,
   venueId,
   serviceId,
   serviceName,
@@ -23,7 +23,7 @@ export async function createBooking({
   customerEmailId,
   notes,
 }: {
-  bookingType: "single" | "group";
+  type: "single" | "group";
   venueId: string;
   serviceId: string;
   serviceName: string;
@@ -46,52 +46,28 @@ export async function createBooking({
   if (!session?.user?.id || !session.user?.email) {
     throw new Error("Unauthorized");
   }
-
-  let booking: { id: string } | undefined;
-
-  if (bookingType === "single") {
-    booking = await alwaysbookbooked.bookings.create({
-      serviceId,
-      serviceName,
-      serviceDescription,
-      startDate,
-      endDate,
-      startTime,
-      endTime,
-      price,
-      currency,
-      paymentType,
-      paymentImage,
-      notes,
-      customerContactMethod,
-      customerContactId,
-      customerEmailId,
-    });
-  }
-
-  if (bookingType === "group") {
-    booking = await alwaysbookbooked.bookingGroups.create({
-      serviceId,
-      serviceName,
-      serviceDescription,
-      startDate,
-      endDate,
-      startTime,
-      endTime,
-      price,
-      currency,
-      paymentType,
-      paymentImage,
-      notes,
-      customerContactMethod,
-      customerContactId,
-      customerEmailId,
-    });
-  }
+  const result = await alwaysbookbooked.bookings.create({
+    type,
+    serviceId,
+    serviceName,
+    serviceDescription,
+    startDate,
+    endDate,
+    startTime,
+    endTime,
+    price,
+    currency,
+    paymentType,
+    paymentImage,
+    notes,
+    customerContactMethod,
+    customerContactId,
+    customerEmailId,
+  });
 
   revalidatePath(`/venues/${venueId}`);
 
-  return booking;
+  return result;
 }
 
 // export async function updateBooking(bookingId: string, serviceId: string, customerContactMethod: string, customerContactId: string, notes: string | null) {

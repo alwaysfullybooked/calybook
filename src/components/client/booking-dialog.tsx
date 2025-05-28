@@ -14,11 +14,10 @@ import { toast } from "sonner";
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
-  bookingType,
+  type,
   venueId,
   email,
   venueName,
-
   serviceId,
   serviceName,
   serviceDescription,
@@ -32,7 +31,7 @@ export default function BookingDialog({
   paymentType,
   paymentImage,
 }: {
-  bookingType: "single" | "group";
+  type: "single" | "group";
   venueId: string;
   email: string;
   contactMethod: string;
@@ -116,7 +115,7 @@ export default function BookingDialog({
       setIsLoading(true);
       try {
         await createBooking({
-          bookingType,
+          type,
           venueId,
           serviceId,
           serviceName,

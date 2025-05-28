@@ -17,15 +17,9 @@ export default async function BookingsPage() {
 
   const customerContactId = session.user.email;
 
-  const bookingSingle = await alwaysbookbooked.bookings.list({
+  const bookings = await alwaysbookbooked.bookings.list({
     customerContactId,
   });
-
-  const bookingGroup = await alwaysbookbooked.bookingGroups.list({
-    customerContactId,
-  });
-
-  const bookings = [...bookingSingle.flatMap((booking) => ({ ...booking, bookingType: "single" })), ...bookingGroup.flatMap((booking) => ({ ...booking, bookingType: "group" }))];
 
   const formatDate = (inputDate: Date | undefined) => {
     const date = inputDate ? new Date(inputDate) : new Date();
