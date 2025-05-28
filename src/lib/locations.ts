@@ -61,3 +61,7 @@ export function getCountryCode(country: string | null) {
 
   return code;
 }
+
+export function getCountry(code: string) {
+  return locations[code]?.name;
+}

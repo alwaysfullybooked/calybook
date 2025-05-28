@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { locations } from "@/lib/locations";
+import { locations, getCountry } from "@/lib/locations";
 import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 
@@ -21,7 +21,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
   // const [category, setCategory] = useState("*");
   // const [search, setSearch] = useState("");
 
-  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === city && venue.country === country);
+  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === city && venue.country === getCountry(country));
 
   useEffect(() => {
     const params = new URLSearchParams();
