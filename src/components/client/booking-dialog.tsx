@@ -55,14 +55,14 @@ export default function BookingDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>("details");
   const [notes, setNotes] = useState("");
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(45);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     let timerId: NodeJS.Timeout;
 
     if (currentStep === "payment") {
-      setTimeLeft(60); // Reset timer when entering payment step
+      setTimeLeft(45); // Reset timer when entering payment step
       timerId = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
