@@ -80,10 +80,12 @@ export default async function BookingsPage() {
                   </CardHeader>
                   <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
                     <div className="space-y-2 sm:space-y-3">
-                      <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                        <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className="text-xs sm:text-base">{booking.notes}</span>
-                      </div>
+                      {booking.notes && (
+                        <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                          <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+                          <span className="text-xs sm:text-base">{booking.notes}</span>
+                        </div>
+                      )}
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-sm sm:text-lg font-medium">
                         <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                         <span>{booking.startDate}</span>
@@ -130,10 +132,12 @@ export default async function BookingsPage() {
                   </CardHeader>
                   <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
                     <div className="space-y-2 sm:space-y-3">
-                      <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                        <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className="text-xs sm:text-base">{booking.notes}</span>
-                      </div>
+                      {booking.notes && (
+                        <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                          <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+                          <span className="text-xs sm:text-base">{booking.notes}</span>
+                        </div>
+                      )}
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                         <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                         <span className="text-xs sm:text-base">{booking.startDate}</span>
