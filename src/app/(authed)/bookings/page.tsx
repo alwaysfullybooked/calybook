@@ -2,11 +2,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { auth } from "@/server/auth";
-import { Calendar, Clock, MapPin, X } from "lucide-react";
+import { Calendar, Clock, Pencil } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-export default async function DashboardPage() {
+export default async function BookingsPage() {
   const session = await auth();
 
   if (!session?.user?.email) {
@@ -15,24 +15,15 @@ export default async function DashboardPage() {
 
   const customerContactId = session.user.email;
 
-  const bookings = await alwaysbookbooked.bookings.list({
+  const bookingSingle = await alwaysbookbooked.bookings.list({
     customerContactId,
   });
 
-  const bookingGroups = await alwaysbookbooked.bookingGroups.list({
+  const bookingGroup = await alwaysbookbooked.bookingGroups.list({
     customerContactId,
   });
 
-  // Fetch service and venue information for each booking
-  const processedBookings = [...bookings, ...bookingGroups].map((booking) => {
-    return {
-      ...booking,
-      venueName: booking.service.venue.name,
-      venueCity: booking.service.venue.city,
-      venueCountry: booking.service.venue.country,
-      venueId: booking.service.venueId,
-    };
-  });
+  const bookings = [...bookingSingle.flatMap((booking) => ({ ...booking, bookingType: "single" })), ...bookingGroup.flatMap((booking) => ({ ...booking, bookingType: "group" }))];
 
   const formatDate = (inputDate: Date | undefined) => {
     const date = inputDate ? new Date(inputDate) : new Date();
@@ -45,8 +36,8 @@ export default async function DashboardPage() {
 
   const today = formatDate(new Date());
 
-  const upcomingBookings = today ? processedBookings.filter((booking) => booking.startDate >= today) : [];
-  const pastBookings = today ? processedBookings.filter((booking) => booking.startDate < today) : [];
+  const upcomingBookings = today ? bookings.filter((booking) => booking.startDate >= today) : [];
+  const pastBookings = today ? bookings.filter((booking) => booking.startDate < today) : [];
 
   return (
     <div className="px-2 sm:px-4 max-w-full sm:max-w-4xl mx-auto">
@@ -80,19 +71,23 @@ export default async function DashboardPage() {
                     <div className="flex items-start justify-between">
                       <div>
                         <CardTitle className="text-base sm:text-xl">
-                          <Link href={`/venues/${booking.venueId}`} className="hover:underline">
-                            {booking.venueName}
+                          <Link href={`/venues/${booking.service.venueId}`} className="hover:underline">
+                            {booking.service.venue.name}
                           </Link>
                         </CardTitle>
                         <CardDescription className="text-gray-600 text-xs sm:text-base">{booking.serviceName}</CardDescription>
                         <div className="mt-1 text-xs sm:text-sm text-gray-500">
-                          {booking.venueCity}, {booking.venueCountry}
+                          {booking.service.venue.city}, {booking.service.venue.country}
                         </div>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
                     <div className="space-y-2 sm:space-y-3">
+                      <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                        <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+                        <span className="text-xs sm:text-base">{booking.notes}</span>
+                      </div>
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-sm sm:text-lg font-medium">
                         <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                         <span>{booking.startDate}</span>
@@ -123,13 +118,13 @@ export default async function DashboardPage() {
                   <CardHeader className={`rounded-t-md px-3 py-2 sm:px-6 sm:py-4 ${booking.status === "pending" ? "bg-orange-50" : booking.status === "confirmed" ? "bg-green-50" : "bg-gray-50"}`}>
                     <div>
                       <CardTitle className="text-base sm:text-lg">
-                        <Link href={`/venues/${booking.venueId}`} className="hover:underline">
-                          {booking.venueName}
+                        <Link href={`/venues/${booking.service.venueId}`} className="hover:underline">
+                          {booking.service.venue.name}
                         </Link>
                       </CardTitle>
                       <CardDescription className="text-gray-600 text-xs sm:text-base">{booking.serviceName}</CardDescription>
                       <div className="mt-1 text-xs sm:text-sm text-gray-500">
-                        {booking.venueCity}, {booking.venueCountry}
+                        {booking.service.venue.city}, {booking.service.venue.country}
                       </div>
                       {booking.status === "pending" && <span className="mt-2 inline-block px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>}
                       {booking.status === "confirmed" && (
@@ -139,6 +134,10 @@ export default async function DashboardPage() {
                   </CardHeader>
                   <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
                     <div className="space-y-2 sm:space-y-3">
+                      <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                        <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+                        <span className="text-xs sm:text-base">{booking.notes}</span>
+                      </div>
                       <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                         <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                         <span className="text-xs sm:text-base">{booking.startDate}</span>
