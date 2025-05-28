@@ -20,7 +20,6 @@ export default function BookingDialog({
   venueName,
   serviceId,
   serviceName,
-  serviceDescription,
   startDate,
   endDate,
   startTime,
@@ -30,13 +29,11 @@ export default function BookingDialog({
   currency,
   paymentType,
   paymentImage,
+  capacityLeft,
 }: {
   type: "single" | "group";
   venueId: string;
   email: string;
-  contactMethod: string;
-  contactWhatsAppId: string;
-  contactLineId: string;
   venueName: string;
   serviceId: string;
   serviceName: string;
@@ -50,10 +47,12 @@ export default function BookingDialog({
   currency: string;
   paymentType: "manual_prepaid" | "reservation_only" | "stripe_prepaid";
   paymentImage: string | null;
+  capacityLeft: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<Step>("details");
+  const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
   const [timeLeft, setTimeLeft] = useState(45);
   const formRef = useRef<HTMLFormElement>(null);
@@ -118,12 +117,11 @@ export default function BookingDialog({
           type,
           venueId,
           serviceId,
-          serviceName,
-          serviceDescription,
           startDate,
           endDate,
           startTime,
           endTime,
+          quantity,
           price,
           currency,
           paymentType,
@@ -206,6 +204,27 @@ export default function BookingDialog({
                   <Label>Date & Time</Label>
                   <Input value={`${startDate} ${startTime} - ${durationMinutes} minutes`} disabled />
                 </div>
+                {type === "group" && (
+                  <div className="space-y-2">
+                    <Label>Quantity</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={capacityLeft}
+                      value={quantity}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        if (val > capacityLeft) {
+                          setQuantity(capacityLeft);
+                        } else if (val < 1) {
+                          setQuantity(1);
+                        } else {
+                          setQuantity(val);
+                        }
+                      }}
+                    />
+                  </div>
+                )}
                 {price && currency && (
                   <div className="space-y-2">
                     <Label>Price</Label>

@@ -20,6 +20,7 @@ type Schedule = {
   paymentImage: string;
   paymentType: string;
   inventoryType: "spot" | "recurring";
+  capacityLeft: number;
 };
 
 type Service = {
@@ -45,8 +46,6 @@ function MobileScheduleView({
   allTimeSlots,
   getSlotStatus,
   email,
-  contactWhatsAppId,
-  contactLineId,
   venueId,
   venueName,
 }: {
@@ -92,9 +91,6 @@ function MobileScheduleView({
                         <BookingDialog
                           type={schedule.type}
                           email={email}
-                          contactMethod="email"
-                          contactWhatsAppId={contactWhatsAppId ?? ""}
-                          contactLineId={contactLineId ?? ""}
                           venueId={venueId}
                           venueName={venueName}
                           serviceId={schedule.serviceId}
@@ -109,6 +105,7 @@ function MobileScheduleView({
                           currency={schedule.currency}
                           paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
                           paymentImage={schedule.paymentImage ?? undefined}
+                          capacityLeft={schedule.capacityLeft}
                         />
                       )}
                     </div>
@@ -330,9 +327,6 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                                 <BookingDialog
                                   type={schedule.type}
                                   email={email}
-                                  contactMethod="email"
-                                  contactWhatsAppId={contactWhatsAppId ?? ""}
-                                  contactLineId={contactLineId ?? ""}
                                   venueId={venueId}
                                   venueName={venueName}
                                   serviceId={schedule.serviceId}
@@ -347,6 +341,7 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                                   currency={schedule.currency}
                                   paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
                                   paymentImage={schedule.paymentImage ?? undefined}
+                                  capacityLeft={schedule.capacityLeft}
                                 />
                               )}
                             </div>

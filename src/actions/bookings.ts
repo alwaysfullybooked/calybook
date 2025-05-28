@@ -8,12 +8,11 @@ export async function createBooking({
   type,
   venueId,
   serviceId,
-  serviceName,
-  serviceDescription,
   startDate,
   endDate,
   startTime,
   endTime,
+  quantity,
   price,
   currency,
   paymentType,
@@ -26,12 +25,11 @@ export async function createBooking({
   type: "single" | "group";
   venueId: string;
   serviceId: string;
-  serviceName: string;
-  serviceDescription: string;
   startDate: string;
   endDate: string;
   startTime: string;
   endTime: string;
+  quantity: number;
   price: string;
   currency: string;
   paymentType: "manual_prepaid" | "reservation_only" | "stripe_prepaid";
@@ -49,12 +47,11 @@ export async function createBooking({
   const result = await alwaysbookbooked.bookings.create({
     type,
     serviceId,
-    serviceName,
-    serviceDescription,
     startDate,
     endDate,
     startTime,
     endTime,
+    quantity,
     price,
     currency,
     paymentType,

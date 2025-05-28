@@ -11,7 +11,7 @@ import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 
 import type { Venue } from "@/types/venue";
-import { MapPin } from "lucide-react";
+import { ExternalLink, MapPin } from "lucide-react";
 
 export default function HomeSearch({ country, venues, lang }: { country: keyof typeof locations; venues: Venue[]; lang: string }) {
   const router = useRouter();
@@ -113,6 +113,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
                       <Link href={`https://maps.google.com/?q=${venue.plusCode}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                         <MapPin className="w-4 h-4" />
                         {venue.address}
+                        <ExternalLink className="w-4 h-4" />
                       </Link>
                     </CardDescription>
                   )}
