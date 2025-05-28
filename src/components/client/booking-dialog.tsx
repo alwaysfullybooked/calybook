@@ -174,7 +174,10 @@ export default function BookingDialog({
     >
       <DialogTrigger asChild>
         <Button variant="link" onClick={() => setIsOpen(true)} size="sm">
-          BOOK - {durationMinutes} min
+          <div className="flex flex-col items-center justify-center">
+            <div className="text-sm">BOOK</div>
+            <div className="text-sm">{durationMinutes} min</div>
+          </div>
         </Button>
       </DialogTrigger>
       <DialogPortal>

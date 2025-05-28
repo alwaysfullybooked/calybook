@@ -38,6 +38,91 @@ type VenueBookingEnhancedProps = {
   availableSchedule: Schedule[];
 };
 
+// Add this new component before the main BookingSchedule component
+function MobileScheduleView({
+  services,
+  scheduleByService,
+  allTimeSlots,
+  getSlotStatus,
+  email,
+  contactWhatsAppId,
+  contactLineId,
+  venueId,
+  venueName,
+}: {
+  services: Service[];
+  scheduleByService: Record<string, Schedule[]>;
+  allTimeSlots: { startTime: string; endTime: string; duration: number }[];
+  getSlotStatus: (slot: { startTime: string; endTime: string }, serviceSchedule: Schedule[]) => { status: "your" | "available" | "unavailable"; schedule?: Schedule; isPartOfLongerSlot?: boolean };
+  email: string;
+  contactWhatsAppId: string | null;
+  contactLineId: string | null;
+  venueId: string;
+  venueName: string;
+}) {
+  return (
+    <div className="space-y-6">
+      {services.map((service) => {
+        const serviceSchedule = scheduleByService[service.id] || [];
+        const availableSlots = allTimeSlots.filter((slot) => {
+          const { status } = getSlotStatus(slot, serviceSchedule);
+          return status === "available";
+        });
+
+        if (availableSlots.length === 0) {
+          return (
+            <div key={service.id} className="space-y-2">
+              <h3 className="font-medium text-gray-700">{service.name}</h3>
+              <div className="text-center py-4 text-gray-500">Not available</div>
+            </div>
+          );
+        }
+
+        return (
+          <div key={service.id} className="space-y-2">
+            <h3 className="font-medium text-gray-700">{service.name}</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {availableSlots.map((slot) => {
+                const { schedule } = getSlotStatus(slot, serviceSchedule);
+                return (
+                  <div key={`${service.id}-${slot.startTime}-${slot.endTime}`} className="border rounded-lg p-2 bg-green-100 text-green-800 border-green-300 hover:bg-green-200">
+                    <div className="text-center">
+                      <div className="text-sm font-medium">{slot.startTime}</div>
+                      {schedule && (
+                        <BookingDialog
+                          bookingType={schedule.bookingType}
+                          email={email}
+                          contactMethod="email"
+                          contactWhatsAppId={contactWhatsAppId ?? ""}
+                          contactLineId={contactLineId ?? ""}
+                          venueId={venueId}
+                          venueName={venueName}
+                          serviceId={schedule.serviceId}
+                          serviceName={service.name}
+                          serviceDescription={service.description ?? ""}
+                          startDate={schedule.startDate}
+                          endDate={schedule.endDate}
+                          startTime={schedule.startTime}
+                          endTime={schedule.endTime}
+                          durationMinutes={schedule.durationMinutes}
+                          price={schedule.price}
+                          currency={schedule.currency}
+                          paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
+                          paymentImage={schedule.paymentImage ?? undefined}
+                        />
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function BookingSchedule({ email, contactWhatsAppId, contactLineId, venueId, venueName, services, availableSchedule }: VenueBookingEnhancedProps) {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
@@ -194,75 +279,102 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
           <p className="text-sm text-gray-500 mt-2">Please try another date or check back later.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse table-fixed">
-            <thead>
-              <tr>
-                <th className="w-[200px] p-2 text-left font-semibold text-gray-700 border-b">Service</th>
-                {allTimeSlots.map((slot) => (
-                  <th key={`${slot.startTime}-${slot.endTime}`} className="w-[80px] p-2 text-center font-medium text-sm border-b">
-                    {slot.startTime}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredServices.map((service) => {
-                const serviceSchedule = scheduleByService[service.id] || [];
-                return (
-                  <tr key={service.id}>
-                    <td className="w-[50px] p-2 font-medium text-gray-700 border-b">{service.name}</td>
-                    {allTimeSlots.map((slot) => {
-                      const { status, schedule, isPartOfLongerSlot } = getSlotStatus(slot, serviceSchedule);
-                      let color = "";
-                      let label = "";
-                      if (status === "your") {
-                        color = "bg-blue-500 text-white border-blue-600";
-                        label = "Your booking";
-                      } else if (status === "available" || isPartOfLongerSlot) {
-                        color = "bg-green-100 text-green-800 border-green-300 hover:bg-green-200";
-                        label = "Available";
-                      } else {
-                        color = "bg-gray-100 text-gray-400 border-gray-200";
-                        label = "Not available";
-                      }
-                      return (
-                        <td key={`${service.id}-${slot.startTime}-${slot.endTime}`} className="w-[80px] border-b">
-                          <div className={`border flex flex-col items-center justify-center ${color} h-[80px]`}>
-                            <span className="text-xs font-semibold hidden">{label}</span>
-                            {status === "available" && schedule && (
-                              <BookingDialog
-                                bookingType={schedule.bookingType}
-                                email={email}
-                                contactMethod="email"
-                                contactWhatsAppId={contactWhatsAppId ?? ""}
-                                contactLineId={contactLineId ?? ""}
-                                venueId={venueId}
-                                venueName={venueName}
-                                serviceId={schedule.serviceId}
-                                serviceName={service.name}
-                                serviceDescription={service.description ?? ""}
-                                startDate={schedule.startDate}
-                                endDate={schedule.endDate}
-                                startTime={schedule.startTime}
-                                endTime={schedule.endTime}
-                                durationMinutes={schedule.durationMinutes}
-                                price={schedule.price}
-                                currency={schedule.currency}
-                                paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
-                                paymentImage={schedule.paymentImage ?? undefined}
-                              />
-                            )}
-                          </div>
+        <>
+          {/* Desktop View */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full border-collapse table-fixed">
+              <thead>
+                <tr>
+                  <th className="w-[200px] p-2 text-left font-semibold text-gray-700 border-b">Service</th>
+                  {allTimeSlots.map((slot) => (
+                    <th key={`${slot.startTime}-${slot.endTime}`} className="w-[80px] p-2 text-center font-medium text-sm border-b">
+                      {slot.startTime}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredServices.map((service) => {
+                  const serviceSchedule = scheduleByService[service.id] || [];
+                  const availableSlots = allTimeSlots.filter((slot) => {
+                    const { status } = getSlotStatus(slot, serviceSchedule);
+                    return status === "available";
+                  });
+
+                  if (availableSlots.length === 0) {
+                    return (
+                      <tr key={service.id}>
+                        <td className="w-[50px] p-2 font-medium text-gray-700 border-b">{service.name}</td>
+                        <td colSpan={allTimeSlots.length} className="p-2 text-center text-gray-500 border-b">
+                          Not available
                         </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      </tr>
+                    );
+                  }
+
+                  return (
+                    <tr key={service.id}>
+                      <td className="w-[50px] p-2 font-medium text-gray-700 border-b">{service.name}</td>
+                      {allTimeSlots.map((slot) => {
+                        const { status, schedule } = getSlotStatus(slot, serviceSchedule);
+                        let color = "";
+                        if (status === "available") {
+                          color = "bg-green-100 text-green-800 border-green-300 hover:bg-green-200";
+                        } else {
+                          color = "bg-gray-100 text-gray-400 border-gray-200";
+                        }
+                        return (
+                          <td key={`${service.id}-${slot.startTime}-${slot.endTime}`} className="w-[80px] border-b">
+                            <div className={`border flex flex-col items-center justify-center ${color} h-[80px]`}>
+                              {status === "available" && schedule && (
+                                <BookingDialog
+                                  bookingType={schedule.bookingType}
+                                  email={email}
+                                  contactMethod="email"
+                                  contactWhatsAppId={contactWhatsAppId ?? ""}
+                                  contactLineId={contactLineId ?? ""}
+                                  venueId={venueId}
+                                  venueName={venueName}
+                                  serviceId={schedule.serviceId}
+                                  serviceName={service.name}
+                                  serviceDescription={service.description ?? ""}
+                                  startDate={schedule.startDate}
+                                  endDate={schedule.endDate}
+                                  startTime={schedule.startTime}
+                                  endTime={schedule.endTime}
+                                  durationMinutes={schedule.durationMinutes}
+                                  price={schedule.price}
+                                  currency={schedule.currency}
+                                  paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
+                                  paymentImage={schedule.paymentImage ?? undefined}
+                                />
+                              )}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile View */}
+          <div className="md:hidden">
+            <MobileScheduleView
+              services={filteredServices}
+              scheduleByService={scheduleByService}
+              allTimeSlots={allTimeSlots}
+              getSlotStatus={getSlotStatus}
+              email={email}
+              contactWhatsAppId={contactWhatsAppId}
+              contactLineId={contactLineId}
+              venueId={venueId}
+              venueName={venueName}
+            />
+          </div>
+        </>
       )}
     </div>
   );
