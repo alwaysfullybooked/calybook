@@ -1,7 +1,7 @@
 export const matchVenues = [
   {
     id: "0030dcd4-7c6f-4bb7-a74b-89e406e73501",
-    altName: "Serene Lake",
+    altName: "North Club",
     altAddress: "Mae Hia, Mueang",
     courts: { tennis: { count: 4, price: "฿200" } },
     amenities: ["Pool", "Coffee Shop", "Showers"],
@@ -11,7 +11,6 @@ export const matchVenues = [
     id: "48f2b149-d4f6-4cfc-b323-b668211f97ad",
     altName: "Serene Lake",
     altAddress: "Mae Hia, Mueang",
-    price: "฿200",
     courts: { tennis: { count: 4, price: "฿200" } },
     amenities: ["Pool", "Coffee Shop", "Showers"],
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1744695875/bf8b99_f361efe4cb934ec995cf0aeb22dae817_mv2_dcoev7.webp",
@@ -24,18 +23,17 @@ export const matchVenues = [
     amenities: ["Pool", "Coffee Shop", "Showers"],
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1744695874/AF1QipM4h5ae_BvanFVm3fiu4VacbuSajmHC7i6zD_Kw_w408-h306-k-no_elxdup.webp",
   },
-];
-
-export const moreVenues = [
   {
+    id: "34c49d6f-2fc0-4c77-a927-de77d96b722f",
     altName: "World Sport Club",
     altAddress: "Nong Kwai, Hang Dong",
     courts: { tennis: { count: 3, price: "฿150" } },
-    amenities: ["Pool", "Showers"],
+    amenities: ["Pool", "Coffee Shop", "Showers"],
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1744695875/bf8b99_05fd70a3884b4f8599575b112bc6779d_mv2_oh2gcg.webp",
-    city: "Chiang Mai",
-    country: "Thailand",
   },
+];
+
+export const moreVenues = [
   {
     altName: "700 Years",
     altAddress: "Don Kaeo, Mae Rim",
