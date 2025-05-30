@@ -5,16 +5,16 @@ type Location = {
 };
 
 export const locations: Record<string, Location> = {
-  be: {
-    name: "Belgium",
-    languages: [{ code: "en", label: "English" }],
-    cities: [{ value: "Brussels", label: "Brussels" }],
-  },
-  fr: {
-    name: "France",
-    languages: [{ code: "en", label: "English" }],
-    cities: [{ value: "Paris", label: "Paris" }],
-  },
+  // be: {
+  //   name: "Belgium",
+  //   languages: [{ code: "en", label: "English" }],
+  //   cities: [{ value: "Brussels", label: "Brussels" }],
+  // },
+  // fr: {
+  //   name: "France",
+  //   languages: [{ code: "en", label: "English" }],
+  //   cities: [{ value: "Paris", label: "Paris" }],
+  // },
   hk: {
     name: "Hong Kong",
     languages: [{ code: "en", label: "English" }],

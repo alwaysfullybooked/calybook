@@ -8,15 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
 import { toast } from "sonner";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
   type,
   venueId,
-  email,
+  customerName,
+  customerEmailId,
   venueName,
   serviceId,
   serviceName,
@@ -30,10 +32,13 @@ export default function BookingDialog({
   paymentType,
   paymentImage,
   capacityLeft,
+  showParticipants,
+  participants,
 }: {
   type: "single" | "group";
   venueId: string;
-  email: string;
+  customerName: string;
+  customerEmailId: string;
   venueName: string;
   serviceId: string;
   serviceName: string;
@@ -48,6 +53,8 @@ export default function BookingDialog({
   paymentType: "manual_prepaid" | "reservation_only" | "stripe_prepaid";
   paymentImage: string | null;
   capacityLeft: number;
+  showParticipants: boolean;
+  participants: string | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -126,9 +133,10 @@ export default function BookingDialog({
           currency,
           paymentType,
           paymentImage,
+          customerName,
           customerContactMethod: "email",
-          customerContactId: email,
-          customerEmailId: email,
+          customerContactId: customerEmailId,
+          customerEmailId,
           notes,
         });
         toast.success("Booking submitted successfully");
@@ -170,12 +178,38 @@ export default function BookingDialog({
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="link" onClick={() => setIsOpen(true)} size="sm">
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button variant="link">
+              <div className="flex flex-col items-center justify-center">
+                <div className="text-xs">BOOK</div>
+                <div className="text-xs">{durationMinutes} min</div>
+              </div>
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-80">
+            <div className="flex justify-between space-x-4">
+              <div className="space-y-1">
+                <h4 className="text-sm font-semibold">{serviceName}</h4>
+                {showParticipants && <p className="text-sm">{participants}</p>}
+                <div className="flex items-center pt-2">
+                  <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />{" "}
+                  <span className="text-xs text-muted-foreground">
+                    {startDate} {startTime} - {durationMinutes} min
+                  </span>
+                </div>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+
+        {/* <Button variant="link" onClick={() => setIsOpen(true)} size="sm" className="p-0">
           <div className="flex flex-col items-center justify-center">
-            <div className="text-sm">BOOK</div>
-            <div className="text-sm">{durationMinutes} min</div>
+            <div className="text-xs">BOOK</div>
+            <div className="text-xs">{durationMinutes} min</div>
+            
           </div>
-        </Button>
+        </Button> */}
       </DialogTrigger>
       <DialogPortal>
         <DialogOverlay className="bg-black" />
@@ -206,7 +240,7 @@ export default function BookingDialog({
                 </div>
                 {type === "group" && (
                   <div className="space-y-2">
-                    <Label>Quantity</Label>
+                    <Label>Quantity ({capacityLeft} available)</Label>
                     <Input
                       type="number"
                       min={1}
@@ -228,7 +262,7 @@ export default function BookingDialog({
                 {price && currency && (
                   <div className="space-y-2">
                     <Label>Price</Label>
-                    <Input value={`${price} ${currency}`} disabled />
+                    <Input value={`${quantity * Number(price)} ${currency}`} disabled />
                   </div>
                 )}
               </>
@@ -251,7 +285,7 @@ export default function BookingDialog({
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="contactEmailId">Email</Label>
-                  <Input id="contactEmailId" placeholder="Enter your email" defaultValue={email} autoFocus={false} disabled />
+                  <Input id="contactEmailId" placeholder="Enter your email" defaultValue={customerEmailId} autoFocus={false} disabled />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="note">Note</Label>
@@ -290,7 +324,7 @@ export default function BookingDialog({
 
             {currentStep === "success" && paymentType === "reservation_only" && (
               <div className="rounded-lg bg-orange-50 p-4 text-orange-800 text-center">
-                <p className="font-medium">We&apos;ll contact you to confirm the booking by email at {email}.</p>
+                <p className="font-medium">We&apos;ll contact you to confirm the booking by email at {customerEmailId}.</p>
               </div>
             )}
 

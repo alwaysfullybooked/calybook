@@ -18,7 +18,9 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
     redirect(`/login?callbackUrl=/${country}/${lang}/venues/${id}`);
   }
 
-  const email = session.user.email;
+  const customerName = session.user.name ?? session.user.email;
+  const customerEmailId = session.user.email;
+
   const contactWhatsAppId = session.user.contactWhatsAppId;
   const contactLineId = session.user.contactLineId;
 
@@ -34,7 +36,6 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
   const mergedVenue = {
     ...venue,
     courts: info?.courts ?? null,
-    price: info?.price ?? null,
     amenities: info?.amenities ?? null,
   };
 
@@ -111,7 +112,8 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
             <TabsContent value="booking">
               <div className="mt-4">
                 <BookingSchedule
-                  email={email}
+                  customerName={customerName}
+                  customerEmailId={customerEmailId}
                   contactWhatsAppId={contactWhatsAppId}
                   contactLineId={contactLineId}
                   venueId={venue.id}

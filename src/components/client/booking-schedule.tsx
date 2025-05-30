@@ -7,7 +7,7 @@ import BookingDialog from "@/components/client/booking-dialog";
 
 type Schedule = {
   isAvailable: boolean;
-  type: "single" | "group";
+  bookingType: "single" | "group";
   id: string;
   serviceId: string;
   startDate: string;
@@ -21,6 +21,8 @@ type Schedule = {
   paymentType: string;
   inventoryType: "spot" | "recurring";
   capacityLeft: number;
+  showParticipants: boolean;
+  participants: string | null;
 };
 
 type Service = {
@@ -30,7 +32,8 @@ type Service = {
 };
 
 type VenueBookingEnhancedProps = {
-  email: string;
+  customerName: string;
+  customerEmailId: string;
   contactWhatsAppId: string | null;
   contactLineId: string | null;
   venueId: string;
@@ -45,7 +48,8 @@ function MobileScheduleView({
   scheduleByService,
   allTimeSlots,
   getSlotStatus,
-  email,
+  customerName,
+  customerEmailId,
   venueId,
   venueName,
 }: {
@@ -53,7 +57,8 @@ function MobileScheduleView({
   scheduleByService: Record<string, Schedule[]>;
   allTimeSlots: { startTime: string; endTime: string; duration: number }[];
   getSlotStatus: (slot: { startTime: string; endTime: string }, serviceSchedule: Schedule[]) => { status: "your" | "available" | "unavailable"; schedule?: Schedule; isPartOfLongerSlot?: boolean };
-  email: string;
+  customerName: string;
+  customerEmailId: string;
   contactWhatsAppId: string | null;
   contactLineId: string | null;
   venueId: string;
@@ -89,8 +94,9 @@ function MobileScheduleView({
                       <div className="text-sm font-medium">{slot.startTime}</div>
                       {schedule && (
                         <BookingDialog
-                          type={schedule.type}
-                          email={email}
+                          type={schedule.bookingType}
+                          customerName={customerName}
+                          customerEmailId={customerEmailId}
                           venueId={venueId}
                           venueName={venueName}
                           serviceId={schedule.serviceId}
@@ -106,6 +112,8 @@ function MobileScheduleView({
                           paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
                           paymentImage={schedule.paymentImage ?? undefined}
                           capacityLeft={schedule.capacityLeft}
+                          showParticipants={schedule.showParticipants}
+                          participants={schedule.participants}
                         />
                       )}
                     </div>
@@ -120,7 +128,7 @@ function MobileScheduleView({
   );
 }
 
-export default function BookingSchedule({ email, contactWhatsAppId, contactLineId, venueId, venueName, services, availableSchedule }: VenueBookingEnhancedProps) {
+export default function BookingSchedule({ customerName, customerEmailId, contactWhatsAppId, contactLineId, venueId, venueName, services, availableSchedule }: VenueBookingEnhancedProps) {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
 
@@ -301,8 +309,8 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                   if (availableSlots.length === 0) {
                     return (
                       <tr key={service.id}>
-                        <td className="w-[50px] p-2 font-medium text-gray-700 border-b">{service.name}</td>
-                        <td colSpan={allTimeSlots.length} className="p-2 text-center text-gray-500 border-b">
+                        <td className="w-[50px] p-2 font-medium text-gray-700 border-b text-sm">{service.name}</td>
+                        <td colSpan={allTimeSlots.length} className="p-2 text-center text-gray-500 border-b text-sm">
                           Not available
                         </td>
                       </tr>
@@ -311,7 +319,7 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
 
                   return (
                     <tr key={service.id}>
-                      <td className="w-[50px] p-2 font-medium text-gray-700 border-b">{service.name}</td>
+                      <td className="w-[50px] p-2 font-medium text-gray-700 border-b text-sm">{service.name}</td>
                       {allTimeSlots.map((slot) => {
                         const { status, schedule } = getSlotStatus(slot, serviceSchedule);
                         let color = "";
@@ -321,12 +329,13 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                           color = "bg-gray-100 text-gray-400 border-gray-200";
                         }
                         return (
-                          <td key={`${service.id}-${slot.startTime}-${slot.endTime}`} className="w-[80px] border-b">
-                            <div className={`border flex flex-col items-center justify-center ${color} h-[80px]`}>
+                          <td key={`${service.id}-${slot.startTime}-${slot.endTime}`} className="w-[60px] border-b">
+                            <div className={`border flex flex-col items-center justify-center ${color} h-[60px]`}>
                               {status === "available" && schedule && (
                                 <BookingDialog
-                                  type={schedule.type}
-                                  email={email}
+                                  type={schedule.bookingType}
+                                  customerName={customerName}
+                                  customerEmailId={customerEmailId}
                                   venueId={venueId}
                                   venueName={venueName}
                                   serviceId={schedule.serviceId}
@@ -342,6 +351,8 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
                                   paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
                                   paymentImage={schedule.paymentImage ?? undefined}
                                   capacityLeft={schedule.capacityLeft}
+                                  showParticipants={schedule.showParticipants}
+                                  participants={schedule.participants}
                                 />
                               )}
                             </div>
@@ -362,7 +373,8 @@ export default function BookingSchedule({ email, contactWhatsAppId, contactLineI
               scheduleByService={scheduleByService}
               allTimeSlots={allTimeSlots}
               getSlotStatus={getSlotStatus}
-              email={email}
+              customerName={customerName}
+              customerEmailId={customerEmailId}
               contactWhatsAppId={contactWhatsAppId}
               contactLineId={contactLineId}
               venueId={venueId}

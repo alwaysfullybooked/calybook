@@ -17,7 +17,7 @@ export default async function BookingsPage() {
 
   const customerContactId = session.user.email;
 
-  const bookings = await alwaysbookbooked.bookings.list({
+  const bookings = await alwaysbookbooked.bookings.search({
     customerContactId,
   });
 

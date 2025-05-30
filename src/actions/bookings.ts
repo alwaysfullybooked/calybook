@@ -17,6 +17,7 @@ export async function createBooking({
   currency,
   paymentType,
   paymentImage,
+  customerName,
   customerContactMethod,
   customerContactId,
   customerEmailId,
@@ -34,6 +35,7 @@ export async function createBooking({
   currency: string;
   paymentType: "manual_prepaid" | "reservation_only" | "stripe_prepaid";
   paymentImage: string | null;
+  customerName: string;
   customerContactMethod: string;
   customerContactId: string;
   customerEmailId: string;
@@ -57,6 +59,7 @@ export async function createBooking({
     paymentType,
     paymentImage,
     notes,
+    customerName,
     customerContactMethod,
     customerContactId,
     customerEmailId,
@@ -66,21 +69,3 @@ export async function createBooking({
 
   return result;
 }
-
-// export async function updateBooking(bookingId: string, serviceId: string, customerContactMethod: string, customerContactId: string, notes: string | null) {
-//   const session = await auth();
-
-//   if (!session?.user?.id || !session.user?.email) {
-//     throw new Error("Unauthorized");
-//   }
-
-//   await alwaysbookbooked.bookings.update({
-//     id: bookingId,
-//     customerContactMethod,
-//     customerContactId,
-//     status: "pending",
-//     notes: notes ?? null,
-//   });
-
-//   revalidatePath(`/venues/${serviceId}`);
-// }
