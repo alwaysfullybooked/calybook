@@ -1,102 +1,19 @@
-"use client";
-
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 
-import { locations, getCountry } from "@/lib/locations";
+import { getCountry, locations } from "@/lib/locations";
 import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 
 import type { Venue } from "@/types/venue";
 import { ExternalLink, MapPin } from "lucide-react";
 
-export default function HomeSearch({ country, venues, lang }: { country: keyof typeof locations; venues: Venue[]; lang: string }) {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const [city, setCity] = useState<string>(locations[country]?.cities[0]?.value ?? "");
-  const citySlug = locations[country]?.cities.find((c) => c.value === city)?.slug ?? "";
-
-  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === city && venue.country === getCountry(country));
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-
-    city && params.set("city", city);
-    // if (category !== "*") params.set("category", category);
-    // if (search) params.set("search", search);
-    router.push(`${pathname}?${params.toString()}`);
-  }, [city, router, pathname]);
+export default function HomeResults({ country, lang, city, venues }: { country: keyof typeof locations; lang: string; city: string; venues: Venue[] }) {
+  const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
+  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === cityLabel && venue.country === getCountry(country));
 
   return (
     <>
-      <Card className="mx-auto w-full">
-        <CardHeader>
-          <CardTitle>Find a Venue</CardTitle>
-          <CardDescription>Find a venue in {locations[country]?.name}. Filter by locations.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4 max-w-sm">
-          <Select value={city} onValueChange={(value: string) => setCity(value)}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Location" />
-            </SelectTrigger>
-            <SelectContent>
-              {locations[country]?.cities.map(({ value, label }) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* <Button variant="default" className="w-full" asChild>
-            <Link href={`/${country}/${lang}/chat`}>Or try our Booking AI Assistant</Link>
-          </Button> */}
-
-          {/* <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="*">All Categories</SelectItem>
-              <SelectItem value="tennis">Tennis</SelectItem>
-              <SelectItem value="golf">Golf</SelectItem>
-              <SelectItem value="yoga">Yoga</SelectItem>
-              <SelectItem value="pilates">Pilates</SelectItem>
-            </SelectContent>
-          </Select> */}
-
-          <div className="mt-4 flex gap-2">
-            {/* <Input placeholder="Search venues..." value={search} onChange={(e) => setSearch(e.target.value)} /> */}
-            {/* <Button onClick={handleSearch}>
-            <Search className="mr-2 h-4 w-4" />
-            Search
-          </Button> */}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* <div className="my-8 p-4 bg-yellow-100 border border-yellow-400 rounded-lg">
-        <div className="flex items-center">
-          <svg className="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <title>Maintenance Mode</title>
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-          <div>
-            <h3 className="font-semibold text-yellow-800">Maintenance Mode</h3>
-            <p className="text-yellow-700">Our system is currently undergoing maintenance. Some features may be temporarily unavailable.</p>
-          </div>
-        </div>
-      </div> */}
-
       {venues.length > 0 ? (
         <div className="my-8">
           <h2 className="text-2xl font-bold tracking-tight mb-6">Featured Venues</h2>
@@ -142,7 +59,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
                     </div>
                   )}
                   <Button className="w-full mt-4" asChild>
-                    <Link href={`/${country}/${lang}/${citySlug}/venues/${venue.id}`}>Book Now</Link>
+                    <Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>Book Now</Link>
                   </Button>
                 </CardContent>
               </Card>

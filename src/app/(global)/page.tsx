@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { GB, HK, TH, SC, FR, BE, ID } from "country-flag-icons/react/3x2";
+import { HK, TH, SC, ID } from "country-flag-icons/react/3x2";
 
 import { locations } from "../../lib/locations";
 
 // Map country codes to their flag components
 const countryFlags: Record<string, React.ComponentType> = {
-  be: BE,
-  fr: FR,
   hk: HK,
   id: ID,
   sc: SC,
@@ -41,14 +39,14 @@ export default function Home() {
                   </Link>
                 </div>
 
-                {"languages" in country && (
+                {"cities" in country && (
                   <div>
-                    <h4 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1.5">Languages</h4>
+                    <h4 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1.5">Cities</h4>
                     <div className="flex flex-wrap gap-1.5">
-                      {country.languages.map((lang) => (
-                        <Link key={lang.code} href={`/${countryCode}/${lang.code}`}>
+                      {country.cities.map((city) => (
+                        <Link key={city.value} href={`/${countryCode}/en/${city.slug}`}>
                           <Button variant="link" size="sm" className="text-xs sm:text-sm hover:scale-105 transition-transform">
-                            {lang.label}
+                            {city.label}
                           </Button>
                         </Link>
                       ))}

@@ -1,8 +1,10 @@
 type Location = {
   name: string;
   languages: { code: string; label: string }[];
-  cities: { value: string; label: string }[];
+  cities: { value: string; label: string; slug: string }[];
 };
+
+export const countries = ["th", "hk", "sc", "id"];
 
 export const locations: Record<string, Location> = {
   // be: {
@@ -19,25 +21,25 @@ export const locations: Record<string, Location> = {
     name: "Hong Kong",
     languages: [{ code: "en", label: "English" }],
     cities: [
-      { value: "Hong Kong", label: "Hong Kong" },
-      { value: "Kowloon", label: "Kowloon" },
-      { value: "New Territories", label: "New Territories" },
+      { value: "Hong Kong", label: "Hong Kong", slug: "hong-kong" },
+      { value: "Kowloon", label: "Kowloon", slug: "kowloon" },
+      { value: "New Territories", label: "New Territories", slug: "new-territories" },
     ],
   },
   id: {
     name: "Indonesia",
     languages: [{ code: "en", label: "English" }],
     cities: [
-      { value: "Jakarta", label: "Jakarta" },
-      { value: "Bali", label: "Bali" },
+      { value: "Jakarta", label: "Jakarta", slug: "jakarta" },
+      { value: "Bali", label: "Bali", slug: "bali" },
     ],
   },
   sc: {
     name: "Seychelles",
     languages: [{ code: "en", label: "English" }],
     cities: [
-      { value: "Mahe", label: "Mahe" },
-      { value: "Praslin", label: "Praslin" },
+      { value: "Mahe", label: "Mahe", slug: "mahe" },
+      { value: "Praslin", label: "Praslin", slug: "praslin" },
     ],
   },
   th: {
@@ -45,8 +47,8 @@ export const locations: Record<string, Location> = {
     languages: [{ code: "en", label: "English" }],
     cities: [
       // { value: "Bangkok", label: "Bangkok" },
-      { value: "Chiang Mai", label: "Chiang Mai" },
-      { value: "Phuket", label: "Phuket" },
+      { value: "Chiang Mai", label: "Chiang Mai", slug: "chiang-mai" },
+      { value: "Phuket", label: "Phuket", slug: "phuket" },
     ],
   },
 } as const;

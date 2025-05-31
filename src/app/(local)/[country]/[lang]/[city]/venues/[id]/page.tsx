@@ -1,7 +1,8 @@
+import Link from "next/link";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Phone } from "lucide-react";
+import { ExternalLink, MapPin, Phone } from "lucide-react";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 import { matchVenues } from "@/data/venues";
@@ -62,8 +63,11 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                 <CardContent>
                   <div className="space-y-3 mt-5">
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-gray-500" />
-                      <span className="text-sm sm:text-base">{mergedVenue.address}</span>
+                      <Link href={`https://maps.google.com/?q=${venue.plusCode}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        {venue.address}
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="h-5 w-5 text-gray-500" />

@@ -15,6 +15,13 @@ export async function generateStaticParams() {
   ];
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ country: string; lang: string }> }) {
+  const { country } = await params;
+  const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
+
+  return { title: `${countryLabel} - Calybook` };
+}
+
 export default async function CountryLangPage({ params, searchParams }: { params: Promise<{ country: string; lang: string }>; searchParams: Promise<{ city: string }> }) {
   const { country, lang } = await params;
   const { city } = await searchParams;
