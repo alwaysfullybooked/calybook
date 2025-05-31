@@ -15,10 +15,10 @@ export default async function BookingsPage() {
     redirect("/login");
   }
 
-  const customerContactId = session.user.email;
+  const customerEmailId = session.user.email;
 
-  const bookings = await alwaysbookbooked.bookings.search({
-    customerContactId,
+  const bookings = await alwaysbookbooked.bookings.searchCustomerBookings({
+    customerEmailId,
   });
 
   const formatDate = (inputDate: Date | undefined) => {
