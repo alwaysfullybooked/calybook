@@ -157,7 +157,7 @@ export default function BookingDialog({
         toast.error("Failed to submit booking");
       } finally {
         setIsLoading(false);
-        setIsOpen(false);
+        handleClose();
       }
     }
   };
