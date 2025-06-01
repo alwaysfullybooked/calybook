@@ -14,12 +14,10 @@ import { getCitySlug } from "@/lib/locations";
 export default async function VenuePage({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string }> }) {
   const { country, lang, city, id } = await params;
 
-  const cityCode = getCitySlug(country, city);
-
   const session = await auth();
 
   if (!session?.user?.email) {
-    redirect(`/login?callbackUrl=/${country}/${lang}/${cityCode}/venues/${id}`);
+    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${id}`);
   }
 
   const customerName = session.user.name ?? session.user.email;
