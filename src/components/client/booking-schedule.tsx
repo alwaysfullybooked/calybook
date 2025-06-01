@@ -271,7 +271,7 @@ export default function BookingSchedule({ customerName, customerEmailId, contact
               .filter((date) => date !== format(new Date(), "yyyy-MM-dd"))
               .map((date) => (
                 <SelectItem key={date} value={date}>
-                  {format(new Date(date), "MMM dd, yyyy")}
+                  {format(new Date(date), "EEE, MMM dd, yyyy")}
                 </SelectItem>
               ))}
           </SelectContent>

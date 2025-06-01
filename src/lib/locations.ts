@@ -67,3 +67,8 @@ export function getCountryCode(country: string | null) {
 export function getCountry(code: string) {
   return locations[code]?.name;
 }
+
+export function getCitySlug(country: string, city: string) {
+  const countryCode = getCountryCode(country);
+  return locations[countryCode]?.cities.find((c) => c.value.toLowerCase() === city.toLowerCase())?.slug;
+}

@@ -7,7 +7,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
-import { getCountryCode } from "@/lib/locations";
+import { getCitySlug, getCountryCode } from "@/lib/locations";
+import type { Booking } from "@/types/booking";
 
 export default async function BookingsPage() {
   const session = await auth();
@@ -58,66 +59,7 @@ export default async function BookingsPage() {
                   <span>No upcoming bookings. Book your next appointment!</span>
                 </div>
               ) : (
-                upcomingBookings.map((booking) => (
-                  <Card
-                    key={booking.id}
-                    className={`shadow-lg border border-gray-200 hover:shadow-xl transition-shadow ${
-                      booking.status === "pending" ? "border-orange-200" : booking.status === "confirmed" ? "border-green-200" : ""
-                    }`}
-                  >
-                    <CardHeader className={`rounded-t-md px-3 py-2 sm:px-6 sm:py-4 ${booking.status === "pending" ? "bg-orange-50" : booking.status === "confirmed" ? "bg-green-50" : "bg-gray-50"}`}>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-base sm:text-xl">
-                            <Link href={`${getCountryCode(booking.service.venue.country)}/en/venues/${booking.service.venueId}`} className="hover:underline">
-                              {booking.service.venue.name}
-                            </Link>
-                          </CardTitle>
-                          <CardDescription className="text-gray-600 text-xs sm:text-base">{booking.serviceName}</CardDescription>
-                          <div className="mt-1 text-xs sm:text-sm text-gray-500">
-                            {booking.service.venue.city}, {booking.service.venue.country}
-                          </div>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
-                      <div className="space-y-2 sm:space-y-3">
-                        {booking.notes && (
-                          <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                            <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                            <span className="text-xs sm:text-base">{booking.notes}</span>
-                          </div>
-                        )}
-                        <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-sm sm:text-lg font-medium">
-                          <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                          <span>{booking.startDate}</span>
-                          <span className="mx-1 sm:mx-2 text-gray-400">|</span>
-                          <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                          <span>
-                            {booking.startTime} - {booking.endTime}
-                          </span>
-                          {booking.type === "group" && <Badge variant="outline">Group</Badge>}
-                          {booking.status === "pending" && (
-                            <Badge variant="outline" className="border-orange-200 bg-orange-50 text-orange-700">
-                              Pending
-                            </Badge>
-                          )}
-                          {booking.status === "confirmed" && (
-                            <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
-                              Confirmed
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2">
-                        <Coins className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className="text-xs sm:text-base">
-                          {booking.price} {booking.currency}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
+                upcomingBookings.map((booking) => <BookingCard key={booking.id} booking={booking} />)
               )}
             </div>
           </TabsContent>
@@ -128,61 +70,80 @@ export default async function BookingsPage() {
                   <span>No past bookings found.</span>
                 </div>
               ) : (
-                pastBookings.map((booking) => (
-                  <Card key={booking.id} className={`shadow border border-gray-100 ${booking.status === "pending" ? "border-orange-200" : booking.status === "confirmed" ? "border-green-200" : ""}`}>
-                    <CardHeader className={`rounded-t-md px-3 py-2 sm:px-6 sm:py-4 ${booking.status === "pending" ? "bg-orange-50" : booking.status === "confirmed" ? "bg-green-50" : "bg-gray-50"}`}>
-                      <div>
-                        <CardTitle className="text-base sm:text-lg">
-                          <Link href={`/venues/${booking.service.venueId}`} className="hover:underline">
-                            {booking.service.venue.name}
-                          </Link>
-                        </CardTitle>
-                        <CardDescription className="text-gray-600 text-xs sm:text-base">{booking.serviceName}</CardDescription>
-                        <div className="mt-1 text-xs sm:text-sm text-gray-500">
-                          {booking.service.venue.city}, {booking.service.venue.country}
-                        </div>
-                        {booking.status === "pending" && (
-                          <span className="mt-2 inline-block px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>
-                        )}
-                        {booking.status === "confirmed" && (
-                          <span className="mt-2 inline-block px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-green-800 bg-green-100 rounded-full">Confirmed</span>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
-                      <div className="space-y-2 sm:space-y-3">
-                        {booking.notes && (
-                          <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                            <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                            <span className="text-xs sm:text-base">{booking.notes}</span>
-                          </div>
-                        )}
-                        <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                          <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                          <span className="text-xs sm:text-base">{booking.startDate}</span>
-                          <span className="mx-1 sm:mx-2 text-gray-300">|</span>
-                          <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                          <span className="text-xs sm:text-base">
-                            {booking.startTime} - {booking.endTime}
-                          </span>
-                          {booking.status === "pending" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-orange-800 bg-orange-100 rounded-full">Pending</span>}
-                          {booking.status === "confirmed" && <span className="px-1.5 py-0.5 text-[10px] sm:text-xs font-semibold text-green-800 bg-green-100 rounded-full">Confirmed</span>}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2">
-                        <Coins className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                        <span className="text-xs sm:text-base">
-                          {booking.price} {booking.currency}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
+                pastBookings.map((booking) => <BookingCard key={booking.id} booking={booking} />)
               )}
             </div>
           </TabsContent>
         </Tabs>
       </div>
     </div>
+  );
+}
+
+function BookingCard({ booking }: { booking: Booking }) {
+  return (
+    <Card
+      key={booking.id}
+      className={`shadow-lg border border-gray-200 hover:shadow-xl transition-shadow ${booking.status === "pending" ? "border-orange-200" : booking.status === "confirmed" ? "border-green-200" : ""}`}
+    >
+      <CardHeader className={`rounded-t-md px-3 py-2 sm:px-6 sm:py-4 ${booking.status === "pending" ? "bg-orange-50" : booking.status === "confirmed" ? "bg-green-50" : "bg-gray-50"}`}>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-base sm:text-xl">
+              {booking.service.venue.country && booking.service.venue.city ? (
+                <Link
+                  href={`${getCountryCode(booking.service.venue.country)}/en/${getCitySlug(booking.service.venue.country, booking.service.venue.city)}/venues/${booking.service.venueId}`}
+                  className="hover:underline"
+                >
+                  {booking.service.venue.name}
+                </Link>
+              ) : (
+                <span>{booking.service.venue.name}</span>
+              )}
+            </CardTitle>
+            <CardDescription className="text-gray-600 text-xs sm:text-base">{booking.serviceName}</CardDescription>
+            <div className="mt-1 text-xs sm:text-sm text-gray-500">
+              {booking.service.venue.city}, {booking.service.venue.country}
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="px-3 py-2 sm:px-6 sm:py-4">
+        <div className="space-y-2 sm:space-y-3">
+          {booking.notes && (
+            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+              <Pencil className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+              <span className="text-xs sm:text-base">{booking.notes}</span>
+            </div>
+          )}
+          <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-sm sm:text-lg font-medium">
+            <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span>{booking.startDate}</span>
+            <span className="mx-1 sm:mx-2 text-gray-400">|</span>
+            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span>
+              {booking.startTime} - {booking.endTime}
+            </span>
+            {booking.type === "group" && <Badge variant="outline">Group</Badge>}
+            {booking.status === "pending" && (
+              <Badge variant="outline" className="border-orange-200 bg-orange-50 text-orange-700">
+                Pending
+              </Badge>
+            )}
+            {booking.status === "confirmed" && (
+              <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
+                Confirmed
+              </Badge>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2">
+          <Coins className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
+          <span className="text-xs sm:text-base">
+            {booking.price} {booking.currency}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
