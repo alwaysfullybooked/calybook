@@ -16,10 +16,16 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ country: string; lang: string }> }) {
-  const { country } = await params;
+  const { country, lang } = await params;
+
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
 
-  return { title: `${countryLabel} - Calybook` };
+  return {
+    title: `${countryLabel} - ${lang.toUpperCase()} - Calybook`,
+    alternates: {
+      canonical: `https://www.calybook.com/${country}/${lang}`,
+    },
+  };
 }
 
 export default async function CountryLangPage({ params, searchParams }: { params: Promise<{ country: string; lang: string }>; searchParams: Promise<{ city: string }> }) {

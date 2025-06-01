@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { HK, TH, SC, ID } from "country-flag-icons/react/3x2";
@@ -10,6 +11,26 @@ const countryFlags: Record<string, React.ComponentType> = {
   id: ID,
   sc: SC,
   th: TH,
+};
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://www.calybook.com"),
+  title: "CalyBook",
+  description: "Book all your activities.",
+  openGraph: {
+    title: "CalyBook",
+    description: "Book all your activities.",
+    url: "https://www.calybook.com",
+    siteName: "CalyBook",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@digitalcentral",
+    creator: "@digitalcentral",
+  },
+  alternates: {
+    canonical: "https://www.calybook.com",
+  },
 };
 
 export default function Home() {

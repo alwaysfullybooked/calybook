@@ -5,6 +5,19 @@ export const generateStaticParams = async () => {
   return Object.keys(locations).map((country) => ({ country }));
 };
 
+export async function generateMetadata({ params }: { params: Promise<{ country: string }> }) {
+  const { country } = await params;
+
+  const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
+
+  return {
+    title: `${countryLabel} - Calybook`,
+    alternates: {
+      canonical: `https://www.calybook.com/${country}`,
+    },
+  };
+}
+
 export default async function CountryPage({
   params,
 }: {

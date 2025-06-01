@@ -9,8 +9,28 @@ import { matchVenues } from "@/data/venues";
 import TennisRankings from "@/components/tennis/rankings";
 import TennisChallenge from "@/components/tennis/challenge";
 import BookingSchedule from "@/components/client/booking-schedule";
-import { getCitySlug } from "@/lib/locations";
+import { locations } from "@/lib/locations";
 
+export async function generateMetadata({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string }> }) {
+  const { country, lang, city, id } = await params;
+
+  const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
+  const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
+  const venue = await alwaysbookbooked.venues.publicFind(id);
+
+  if (!venue) {
+    return {
+      title: `${countryLabel} - ${cityLabel} - Venue not found - ${lang.toUpperCase()} - Calybook`,
+    };
+  }
+
+  return {
+    title: `${countryLabel} - ${cityLabel} - ${venue.name} - ${lang.toUpperCase()} - Calybook`,
+    alternates: {
+      canonical: `https://www.calybook.com/${country}/${lang}/${city}/venues/${id}`,
+    },
+  };
+}
 export default async function VenuePage({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string }> }) {
   const { country, lang, city, id } = await params;
 

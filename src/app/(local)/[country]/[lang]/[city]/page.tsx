@@ -21,11 +21,17 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ country: string; lang: string; city: string }> }) {
-  const { country, city } = await params;
+  const { country, lang, city } = await params;
+
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
 
-  return { title: `${cityLabel} - ${countryLabel} - Calybook` };
+  return {
+    title: `${countryLabel} - ${cityLabel} - ${lang.toUpperCase()} - Calybook`,
+    alternates: {
+      canonical: `https://www.calybook.com/${country}/${lang}/${city}`,
+    },
+  };
 }
 
 export default async function CountryLangPage({ params }: { params: Promise<{ country: string; lang: string; city: string }> }) {
