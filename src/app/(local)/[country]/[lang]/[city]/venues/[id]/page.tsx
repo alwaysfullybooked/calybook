@@ -48,6 +48,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
 
   const venue = await alwaysbookbooked.venues.publicFind(id);
   const availableSchedule = await alwaysbookbooked.venues.publicAvailability(id);
+  const availableScheduleFiltered = availableSchedule.filter((f) => f.paymentType !== "manual_prepaid" || (f.paymentType === "manual_prepaid" && f.paymentImage));
 
   if (!venue) {
     return <div>Venue not found</div>;
@@ -147,7 +148,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                   venueId={venue.id}
                   venueName={venue.name}
                   services={services}
-                  availableSchedule={availableSchedule}
+                  availableSchedule={availableScheduleFiltered}
                 />
               </div>
             </TabsContent>
