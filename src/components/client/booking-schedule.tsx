@@ -32,6 +32,9 @@ type Service = {
 };
 
 type VenueBookingEnhancedProps = {
+  country: string;
+  lang: string;
+  city: string;
   customerName: string;
   customerEmailId: string;
   contactWhatsAppId: string | null;
@@ -44,6 +47,9 @@ type VenueBookingEnhancedProps = {
 
 // Add this new component before the main BookingSchedule component
 function MobileScheduleView({
+  country,
+  lang,
+  city,
   services,
   scheduleByService,
   allTimeSlots,
@@ -53,6 +59,9 @@ function MobileScheduleView({
   venueId,
   venueName,
 }: {
+  country: string;
+  lang: string;
+  city: string;
   services: Service[];
   scheduleByService: Record<string, Schedule[]>;
   allTimeSlots: { startTime: string; endTime: string; duration: number }[];
@@ -94,6 +103,9 @@ function MobileScheduleView({
                       <div className="text-sm font-medium">{slot.startTime}</div>
                       {schedule && (
                         <BookingDialog
+                          country={country}
+                          lang={lang}
+                          city={city}
                           type={schedule.bookingType}
                           customerName={customerName}
                           customerEmailId={customerEmailId}
@@ -128,7 +140,19 @@ function MobileScheduleView({
   );
 }
 
-export default function BookingSchedule({ customerName, customerEmailId, contactWhatsAppId, contactLineId, venueId, venueName, services, availableSchedule }: VenueBookingEnhancedProps) {
+export default function BookingSchedule({
+  country,
+  lang,
+  city,
+  customerName,
+  customerEmailId,
+  contactWhatsAppId,
+  contactLineId,
+  venueId,
+  venueName,
+  services,
+  availableSchedule,
+}: VenueBookingEnhancedProps) {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
 
@@ -333,6 +357,9 @@ export default function BookingSchedule({ customerName, customerEmailId, contact
                             <div className={`border flex flex-col items-center justify-center ${color} h-[60px]`}>
                               {status === "available" && schedule && (
                                 <BookingDialog
+                                  country={country}
+                                  lang={lang}
+                                  city={city}
                                   type={schedule.bookingType}
                                   customerName={customerName}
                                   customerEmailId={customerEmailId}
@@ -369,6 +396,9 @@ export default function BookingSchedule({ customerName, customerEmailId, contact
           {/* Mobile View */}
           <div className="md:hidden">
             <MobileScheduleView
+              country={country}
+              lang={lang}
+              city={city}
               services={filteredServices}
               scheduleByService={scheduleByService}
               allTimeSlots={allTimeSlots}

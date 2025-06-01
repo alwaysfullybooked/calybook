@@ -117,6 +117,9 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
             <TabsContent value="booking">
               <div className="mt-4">
                 <BookingSchedule
+                  country={country}
+                  lang={lang}
+                  city={city}
                   customerName={customerName}
                   customerEmailId={customerEmailId}
                   contactWhatsAppId={contactWhatsAppId}

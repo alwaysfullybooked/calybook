@@ -15,6 +15,10 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
+  country,
+  lang,
+  city,
+
   type,
   venueId,
   customerName,
@@ -35,6 +39,10 @@ export default function BookingDialog({
   showParticipants,
   participants,
 }: {
+  country: string;
+  lang: string;
+  city: string;
+
   type: "single" | "group";
   venueId: string;
   customerName: string;
@@ -121,6 +129,10 @@ export default function BookingDialog({
       setIsLoading(true);
       try {
         await createBooking({
+          country,
+          lang,
+          city,
+
           type,
           venueId,
           serviceId,

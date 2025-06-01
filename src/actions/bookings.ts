@@ -5,6 +5,10 @@ import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { revalidatePath } from "next/cache";
 
 export async function createBooking({
+  country,
+  lang,
+  city,
+
   type,
   venueId,
   serviceId,
@@ -23,6 +27,10 @@ export async function createBooking({
   customerEmailId,
   notes,
 }: {
+  country: string;
+  lang: string;
+  city: string;
+
   type: "single" | "group";
   venueId: string;
   serviceId: string;
@@ -65,7 +73,7 @@ export async function createBooking({
     customerEmailId,
   });
 
-  revalidatePath(`/venues/${venueId}`);
+  revalidatePath(`/${country}/${lang}/${city}/venues/${venueId}`);
 
   return result;
 }
