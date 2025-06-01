@@ -9,14 +9,17 @@ import { matchVenues } from "@/data/venues";
 import TennisRankings from "@/components/tennis/rankings";
 import TennisChallenge from "@/components/tennis/challenge";
 import BookingSchedule from "@/components/client/booking-schedule";
+import { getCitySlug } from "@/lib/locations";
 
-export default async function VenuePage({ params }: { params: Promise<{ country: string; lang: string; id: string }> }) {
-  const { country, lang, id } = await params;
+export default async function VenuePage({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string }> }) {
+  const { country, lang, city, id } = await params;
+
+  const cityCode = getCitySlug(country, city);
 
   const session = await auth();
 
   if (!session?.user?.email) {
-    redirect(`/login?callbackUrl=/${country}/${lang}/venues/${id}`);
+    redirect(`/login?callbackUrl=/${country}/${lang}/${cityCode}/venues/${id}`);
   }
 
   const customerName = session.user.name ?? session.user.email;
