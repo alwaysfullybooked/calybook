@@ -1,7 +1,6 @@
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { getTranslations } from "@/lib/translations";
 
-import HomeSearch from "@/components/client/home-search";
 import { matchVenues } from "@/data/venues";
 import { locations } from "@/lib/locations";
 import HomeResults from "@/components/server/home-results";

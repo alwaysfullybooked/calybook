@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <>
+    <div className="max-w-5xl container mx-auto px-3 sm:px-4">
       <Header country="" link="/" />
-      <main className="container mx-auto">{children}</main>
-    </>
+      <main>{children}</main>
+    </div>
   );
 }

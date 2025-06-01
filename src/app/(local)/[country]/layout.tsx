@@ -32,10 +32,10 @@ export default async function CountryLayout({
   const location = locations[code];
 
   return (
-    <>
+    <div className="max-w-5xl container mx-auto px-3 sm:px-4">
       <Header country={location?.name ?? ""} link={`/${code}/en`} />
       {children}
       <Footer country={location?.name ?? ""} />
-    </>
+    </div>
   );
 }

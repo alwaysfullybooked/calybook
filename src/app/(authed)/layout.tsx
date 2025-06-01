@@ -32,10 +32,12 @@ export default async function AuthedLayout({ children }: Readonly<{ children: Re
   }
 
   return (
-    <>
+    <div className="max-w-5xl container mx-auto px-3 sm:px-4">
       <Header country="Global" link="/" />
-      <SidebarProvider>
-        <Sidebar className="fixed top-16 h-[calc(100vh-4rem)] border-r bg-background">
+      <main>{children}</main>
+
+      {/* <SidebarProvider>
+        <Sidebar className="border-r bg-background">
           <SidebarHeader className="border-b px-4 py-3 md:hidden">
             <Link href="/" className="flex items-center space-x-2">
               <span className="text-3xl font-bold text-primary">CalyBook</span>
@@ -63,7 +65,7 @@ export default async function AuthedLayout({ children }: Readonly<{ children: Re
           </SidebarContent>
         </Sidebar>
         <main className="flex-1 px-4 py-6">{children}</main>
-      </SidebarProvider>
-    </>
+      </SidebarProvider> */}
+    </div>
   );
 }

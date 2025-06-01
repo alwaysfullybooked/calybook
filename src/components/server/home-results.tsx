@@ -19,10 +19,10 @@ export default function HomeResults({ country, lang, city, venues }: { country: 
           <h2 className="text-2xl font-bold tracking-tight mb-6">Featured Venues</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {venues.map((venue) => (
-              <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
+              <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
                 {venue.image && <img src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" />}
                 <CardHeader className="flex-1">
-                  <CardTitle className="text-xl">{venue.name}</CardTitle>
+                  <CardTitle className="text-lg">{venue.name}</CardTitle>
 
                   {venue.plusCode && (
                     <CardDescription className="text-sm">
@@ -81,10 +81,10 @@ export default function HomeResults({ country, lang, city, venues }: { country: 
             </p>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredMoreVenues.map((moreVenue) => (
-                <Card key={moreVenue.altName} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200">
+                <Card key={moreVenue.altName} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
                   {moreVenue.image && <img src={moreVenue.image} alt={moreVenue.altName} className="w-full h-48 object-cover rounded-t-xl" />}
                   <CardHeader className="flex-1">
-                    <CardTitle className="text-xl">{moreVenue.altName}</CardTitle>
+                    <CardTitle className="text-lg">{moreVenue.altName}</CardTitle>
                     <CardDescription className="text-sm">{moreVenue.altAddress}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">

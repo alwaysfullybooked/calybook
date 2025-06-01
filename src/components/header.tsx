@@ -11,8 +11,8 @@ export default async function Header({ country, link }: { country: string; link:
   const session = await auth();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background border-b">
-      <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
+    <header className="sticky top-0 z-50 w-full bg-background">
+      <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4 border-b">
         <Link href={link} className="flex items-center space-x-2">
           <span className="text-2xl sm:text-3xl font-bold text-primary">CalyBook</span>
           <span className="font-bold text-sm sm:text-base">{country && country !== "Global" ? country : ""}</span>
@@ -26,6 +26,7 @@ export default async function Header({ country, link }: { country: string; link:
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm">
+                      <Menu className="h-5 w-5" />
                       {session.user.email}
                     </Button>
                   </DropdownMenuTrigger>
@@ -95,10 +96,10 @@ export default async function Header({ country, link }: { country: string; link:
                       await signOut({ redirectTo: "/" });
                     }}
                   >
-                    <button type="submit" className="flex items-center gap-3 px-2 py-2 text-sm text-destructive rounded-md hover:bg-destructive/10 transition-colors w-full">
+                    <Button type="submit" className="flex items-center gap-3 px-2 py-2 text-sm text-destructive rounded-md hover:bg-destructive/10 transition-colors w-full">
                       <LogOut className="h-4 w-4" />
                       Sign out
-                    </button>
+                    </Button>
                   </form>
                 </SheetContent>
               </Sheet>
@@ -106,14 +107,15 @@ export default async function Header({ country, link }: { country: string; link:
           ) : (
             <>
               {/* Desktop Sign In */}
-              <div className="hidden sm:block">
+              <div className="hidden sm:flex">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm">
+                      <Menu className="h-5 w-5" />
                       Sign In
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent>
                     <DropdownMenuItem>
                       <form
                         action={async () => {
@@ -121,7 +123,7 @@ export default async function Header({ country, link }: { country: string; link:
                           await signIn("google");
                         }}
                       >
-                        <Button variant="outline" type="submit" className="flex items-center gap-2">
+                        <Button variant="outline" type="submit">
                           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" aria-label="Google">
                             <title>Google</title>
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -145,10 +147,10 @@ export default async function Header({ country, link }: { country: string; link:
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[280px] sm:w-[320px]">
+                <SheetContent side="right" className="w-[280px] sm:w-[320px] px-3">
                   <SheetHeader className="space-y-4">
                     <SheetTitle className="text-left">Sign In</SheetTitle>
-                    <SheetDescription className="text-left">Choose your preferred sign in method</SheetDescription>
+                    <SheetDescription className="text-left">Choose Google to sign in.</SheetDescription>
                   </SheetHeader>
 
                   <Separator className="my-4" />
@@ -159,7 +161,7 @@ export default async function Header({ country, link }: { country: string; link:
                       await signIn("google");
                     }}
                   >
-                    <button type="submit" className="flex items-center gap-3 px-4 py-2 text-sm rounded-md border hover:bg-muted transition-colors w-full">
+                    <Button type="submit" className="flex items-center px-4 py-2 text-sm rounded-md border bg-background text-foreground w-full">
                       <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" aria-label="Google">
                         <title>Google</title>
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -169,7 +171,7 @@ export default async function Header({ country, link }: { country: string; link:
                         <path d="M1 1h22v22H1z" fill="none" />
                       </svg>
                       Sign in with Google
-                    </button>
+                    </Button>
                   </form>
                 </SheetContent>
               </Sheet>

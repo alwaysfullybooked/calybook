@@ -25,7 +25,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Suspense>
             <ExternalBrowserRedirect />
           </Suspense>
-          <main className="container mx-auto">{children}</main>
+          <div>{children}</div>
         </PlausibleProvider>
       </body>
     </html>
