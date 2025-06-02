@@ -289,7 +289,7 @@ export default function BookingSchedule({
 
         <Select value={selectedDate} onValueChange={setSelectedDate}>
           <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue>{selectedDate === format(new Date(), "yyyy-MM-dd") ? "Today" : format(new Date(selectedDate), "MMM dd, yyyy")}</SelectValue>
+            <SelectValue>{selectedDate === format(new Date(), "yyyy-MM-dd") ? "Today" : format(new Date(selectedDate), "EEE, MMM dd, yyyy")}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={format(new Date(), "yyyy-MM-dd")}>Today</SelectItem>
