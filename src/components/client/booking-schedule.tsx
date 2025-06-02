@@ -6,9 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import BookingDialog from "@/components/client/booking-dialog";
 
 type Schedule = {
+  id: string;
   isAvailable: boolean;
   bookingType: "single" | "group";
-  id: string;
   serviceId: string;
   startDate: string;
   endDate: string;
@@ -17,7 +17,7 @@ type Schedule = {
   durationMinutes: number;
   price: string;
   currency: string;
-  paymentImage: string;
+  paymentImage: string | null;
   paymentType: string;
   inventoryType: "spot" | "recurring";
   capacityLeft: number;
@@ -122,7 +122,7 @@ function MobileScheduleView({
                           price={schedule.price}
                           currency={schedule.currency}
                           paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
-                          paymentImage={schedule.paymentImage ?? undefined}
+                          paymentImage={schedule.paymentImage}
                           capacityLeft={schedule.capacityLeft}
                           showParticipants={schedule.showParticipants}
                           participants={schedule.participants}
@@ -153,8 +153,10 @@ export default function BookingSchedule({
   services,
   availableSchedule,
 }: VenueBookingEnhancedProps) {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  // const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
+
+  const selectedCategory: string = "all";
 
   // Group by date
   const scheduleByDate = availableSchedule.reduce(
@@ -274,7 +276,7 @@ export default function BookingSchedule({
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4">
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+        {/* <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
@@ -283,7 +285,7 @@ export default function BookingSchedule({
             <SelectItem value="tennis">Tennis</SelectItem>
             <SelectItem value="pickleball">Pickleball</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
 
         <Select value={selectedDate} onValueChange={setSelectedDate}>
           <SelectTrigger className="w-full sm:w-[200px]">
@@ -376,7 +378,7 @@ export default function BookingSchedule({
                                   price={schedule.price}
                                   currency={schedule.currency}
                                   paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
-                                  paymentImage={schedule.paymentImage ?? undefined}
+                                  paymentImage={schedule.paymentImage}
                                   capacityLeft={schedule.capacityLeft}
                                   showParticipants={schedule.showParticipants}
                                   participants={schedule.participants}
