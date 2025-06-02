@@ -335,7 +335,11 @@ export default function BookingSchedule({
                   if (availableSlots.length === 0) {
                     return (
                       <tr key={service.id}>
-                        <td className="w-[50px] p-2 font-medium text-gray-700 border-b text-sm">{service.name}</td>
+                        <td className="w-[50px] p-2 font-medium text-gray-700 border-b text-sm">
+                          {service.name}
+                          <br />
+                          <span className="text-xs text-gray-500">{service.description}</span>
+                        </td>
                         <td colSpan={allTimeSlots.length} className="p-2 text-center text-gray-500 border-b text-sm">
                           Not available
                         </td>
@@ -345,7 +349,11 @@ export default function BookingSchedule({
 
                   return (
                     <tr key={service.id}>
-                      <td className="w-[50px] p-2 font-medium text-gray-700 border-b text-sm">{service.name}</td>
+                      <td className="w-[50px] p-2 font-medium text-gray-700 border-b text-sm">
+                        {service.name}
+                        <br />
+                        <span className="text-xs text-gray-500">{service.description}</span>
+                      </td>
                       {allTimeSlots.map((slot) => {
                         const { status, schedule } = getSlotStatus(slot, serviceSchedule);
                         let color = "";
