@@ -8,10 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, InfoIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { createBooking } from "@/actions/bookings";
 import { toast } from "sonner";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+
 type Step = "details" | "notes" | "payment" | "success";
 
 export default function BookingDialog({
@@ -36,8 +36,6 @@ export default function BookingDialog({
   paymentType,
   paymentImage,
   capacityLeft,
-  showParticipants,
-  participants,
 }: {
   country: string;
   lang: string;
@@ -61,8 +59,6 @@ export default function BookingDialog({
   paymentType: "manual_prepaid" | "reservation_only" | "stripe_prepaid";
   paymentImage: string | null;
   capacityLeft: number;
-  showParticipants: boolean;
-  participants: string | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -193,39 +189,8 @@ export default function BookingDialog({
         <Button variant="link">
           <div className="flex flex-col items-center justify-center">
             <div className="text-xs">BOOK</div>
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <div className="text-xs flex items-center gap-1">
-                  {durationMinutes} min <InfoIcon className="w-4 h-4" />
-                </div>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80">
-                <div className="flex justify-between space-x-4">
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">{serviceName}</h4>
-
-                    <div className="flex items-center pt-2 gap-2">
-                      <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />{" "}
-                      <span className="text-xs text-muted-foreground">
-                        {startDate} {startTime} - {durationMinutes} min
-                      </span>
-                    </div>
-                    {type === "group" && <span className="text-xs text-muted-foreground">{capacityLeft} spots available</span>}
-                    {showParticipants && <p className="text-sm">{participants}</p>}
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
           </div>
         </Button>
-
-        {/* <Button variant="link" onClick={() => setIsOpen(true)} size="sm" className="p-0">
-          <div className="flex flex-col items-center justify-center">
-            <div className="text-xs">BOOK</div>
-            <div className="text-xs">{durationMinutes} min</div>
-            
-          </div>
-        </Button> */}
       </DialogTrigger>
       <DialogPortal>
         <DialogOverlay className="bg-black" />

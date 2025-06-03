@@ -4,6 +4,8 @@ import { useState } from "react";
 import { format, addMinutes, isEqual, parse, isAfter, isBefore } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import BookingDialog from "@/components/client/booking-dialog";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { CalendarIcon, InfoIcon, Clock } from "lucide-react";
 
 type Schedule = {
   id: string;
@@ -102,31 +104,41 @@ function MobileScheduleView({
                     <div className="text-center">
                       <div className="text-sm font-medium">{slot.startTime}</div>
                       {schedule && (
-                        <BookingDialog
-                          country={country}
-                          lang={lang}
-                          city={city}
-                          type={schedule.bookingType}
-                          customerName={customerName}
-                          customerEmailId={customerEmailId}
-                          venueId={venueId}
-                          venueName={venueName}
-                          serviceId={schedule.serviceId}
-                          serviceName={service.name}
-                          serviceDescription={service.description ?? ""}
-                          startDate={schedule.startDate}
-                          endDate={schedule.endDate}
-                          startTime={schedule.startTime}
-                          endTime={schedule.endTime}
-                          durationMinutes={schedule.durationMinutes}
-                          price={schedule.price}
-                          currency={schedule.currency}
-                          paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
-                          paymentImage={schedule.paymentImage}
-                          capacityLeft={schedule.capacityLeft}
-                          showParticipants={schedule.showParticipants}
-                          participants={schedule.participants}
-                        />
+                        <>
+                          <BookingDialog
+                            country={country}
+                            lang={lang}
+                            city={city}
+                            type={schedule.bookingType}
+                            customerName={customerName}
+                            customerEmailId={customerEmailId}
+                            venueId={venueId}
+                            venueName={venueName}
+                            serviceId={schedule.serviceId}
+                            serviceName={service.name}
+                            serviceDescription={service.description ?? ""}
+                            startDate={schedule.startDate}
+                            endDate={schedule.endDate}
+                            startTime={schedule.startTime}
+                            endTime={schedule.endTime}
+                            durationMinutes={schedule.durationMinutes}
+                            price={schedule.price}
+                            currency={schedule.currency}
+                            paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
+                            paymentImage={schedule.paymentImage}
+                            capacityLeft={schedule.capacityLeft}
+                          />
+                          <ScheduleInfo
+                            serviceName={service.name}
+                            startDate={schedule.startDate}
+                            startTime={schedule.startTime}
+                            durationMinutes={schedule.durationMinutes}
+                            type={schedule.bookingType}
+                            capacityLeft={schedule.capacityLeft}
+                            showParticipants={schedule.showParticipants}
+                            participants={schedule.participants ?? ""}
+                          />
+                        </>
                       )}
                     </div>
                   </div>
@@ -366,31 +378,41 @@ export default function BookingSchedule({
                           <td key={`${service.id}-${slot.startTime}-${slot.endTime}`} className="w-[60px] border-b">
                             <div className={`border flex flex-col items-center justify-center ${color} h-[60px]`}>
                               {status === "available" && schedule && (
-                                <BookingDialog
-                                  country={country}
-                                  lang={lang}
-                                  city={city}
-                                  type={schedule.bookingType}
-                                  customerName={customerName}
-                                  customerEmailId={customerEmailId}
-                                  venueId={venueId}
-                                  venueName={venueName}
-                                  serviceId={schedule.serviceId}
-                                  serviceName={service.name}
-                                  serviceDescription={service.description ?? ""}
-                                  startDate={schedule.startDate}
-                                  endDate={schedule.endDate}
-                                  startTime={schedule.startTime}
-                                  endTime={schedule.endTime}
-                                  durationMinutes={schedule.durationMinutes}
-                                  price={schedule.price}
-                                  currency={schedule.currency}
-                                  paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
-                                  paymentImage={schedule.paymentImage}
-                                  capacityLeft={schedule.capacityLeft}
-                                  showParticipants={schedule.showParticipants}
-                                  participants={schedule.participants}
-                                />
+                                <>
+                                  <BookingDialog
+                                    country={country}
+                                    lang={lang}
+                                    city={city}
+                                    type={schedule.bookingType}
+                                    customerName={customerName}
+                                    customerEmailId={customerEmailId}
+                                    venueId={venueId}
+                                    venueName={venueName}
+                                    serviceId={schedule.serviceId}
+                                    serviceName={service.name}
+                                    serviceDescription={service.description ?? ""}
+                                    startDate={schedule.startDate}
+                                    endDate={schedule.endDate}
+                                    startTime={schedule.startTime}
+                                    endTime={schedule.endTime}
+                                    durationMinutes={schedule.durationMinutes}
+                                    price={schedule.price}
+                                    currency={schedule.currency}
+                                    paymentType={schedule.paymentType as "manual_prepaid" | "reservation_only" | "stripe_prepaid"}
+                                    paymentImage={schedule.paymentImage}
+                                    capacityLeft={schedule.capacityLeft}
+                                  />
+                                  <ScheduleInfo
+                                    serviceName={service.name}
+                                    startDate={schedule.startDate}
+                                    startTime={schedule.startTime}
+                                    durationMinutes={schedule.durationMinutes}
+                                    type={schedule.bookingType}
+                                    capacityLeft={schedule.capacityLeft}
+                                    showParticipants={schedule.showParticipants}
+                                    participants={schedule.participants ?? ""}
+                                  />
+                                </>
                               )}
                             </div>
                           </td>
@@ -423,6 +445,59 @@ export default function BookingSchedule({
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function ScheduleInfo({
+  serviceName,
+  startDate,
+  startTime,
+  durationMinutes,
+  type,
+  capacityLeft,
+  showParticipants,
+  participants,
+}: { serviceName: string; startDate: string; startTime: string; durationMinutes: number; type: string; capacityLeft: number; showParticipants: boolean; participants: string }) {
+  return (
+    <div className="text-xs flex items-center">
+      <span className="rounded-full">{durationMinutes} min</span>
+      <Sheet>
+        <SheetTrigger asChild>
+          <button type="button" className="p-1 rounded-full transition-colors">
+            <InfoIcon className="w-3.5 h-3.5" />
+          </button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="h-[400px] sm:h-[300px]">
+          <div className="flex items-center justify-center h-full">
+            <div className="space-y-4 w-full max-w-md">
+              <div className="flex flex-col items-center gap-2">
+                {type === "group" && <div className="bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-sm font-medium">{capacityLeft} spots left</div>}
+                <div className="space-y-2">
+                  <h4 className="text-lg font-semibold text-center">{serviceName}</h4>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CalendarIcon className="h-4 w-4" />
+                    <span>
+                      {format(new Date(startDate), "EEEE, MMMM d, yyyy")} at {startTime}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Clock className="h-4 w-4" />
+                    <span>{durationMinutes} minutes</span>
+                  </div>
+                </div>
+              </div>
+
+              {showParticipants && participants && (
+                <div className="flex flex-col items-center gap-2">
+                  <h5 className="text-lg font-semibold text-center">Participants</h5>
+                  <p className="text-sm">{participants}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
