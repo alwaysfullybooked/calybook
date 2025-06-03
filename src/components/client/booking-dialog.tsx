@@ -316,9 +316,9 @@ export default function BookingDialog({
                     <p>Time remaining: {timeLeft} seconds.</p>
                   </div>
                 ) : (
-                  <div className="text-center text-sm font-bold text-orange-600">Timeout. Go back and try again.</div>
+                  <div className="text-center text-sm font-bold text-orange-600">Timeout. If you didn&apos;t complete the payment, go back and try again.</div>
                 )}
-                <Label className="text-center text-sm font-bold text-orange-600">In the next step, you will be asked to submit proof of payment. Only press 'Next' when you have paid.</Label>
+                <Label className="text-center text-sm font-bold text-orange-600">If you paid, press 'Next' to go to final step to submit proof of payment. Only press 'Next' when you have paid.</Label>
               </div>
             )}
 
