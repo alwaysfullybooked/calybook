@@ -309,14 +309,14 @@ export default function BookingDialog({
 
             {currentStep === "payment" && paymentImage && (
               <div className="space-y-2">
-                <div className="rounded-lg">{timeLeft > 0 && <img src={paymentImage} alt="Payment QR Code" className="mx-auto" />}</div>
+                <div className="rounded-lg">
+                  <img src={paymentImage} alt="Payment QR Code" className="mx-auto" />
+                </div>
 
-                {timeLeft > 0 ? (
+                {timeLeft > 0 && (
                   <div className="text-center text-sm font-bold text-orange-600">
                     <p>Time remaining: {timeLeft} seconds.</p>
                   </div>
-                ) : (
-                  <div className="text-center text-sm font-bold text-orange-600">Timeout. If you didn&apos;t complete the payment, go back and try again.</div>
                 )}
                 <Label className="text-center text-sm font-bold text-orange-600">If you paid, press 'Next' to go to final step to submit proof of payment. Only press 'Next' when you have paid.</Label>
               </div>
