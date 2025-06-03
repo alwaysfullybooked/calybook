@@ -109,7 +109,7 @@ function MobileScheduleView({
                 const { schedule } = getSlotStatus(slot, serviceSchedule);
                 return (
                   <div key={`${service.id}-${slot.startTime}-${slot.endTime}`} className="border rounded-lg p-2 bg-green-100 text-green-800 border-green-300 hover:bg-green-200">
-                    <div className="text-center">
+                    <div className="flex flex-col items-center justify-center">
                       <div className="text-sm font-medium">{slot.startTime}</div>
                       {schedule && (
                         <>

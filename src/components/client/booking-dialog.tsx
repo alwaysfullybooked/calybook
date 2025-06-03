@@ -222,22 +222,51 @@ export default function BookingDialog({
                 {type === "group" && (
                   <div className="space-y-2">
                     <Label>Quantity ({capacityLeft} available)</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={capacityLeft}
-                      value={quantity}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        if (val > capacityLeft) {
-                          setQuantity(capacityLeft);
-                        } else if (val < 1) {
-                          setQuantity(1);
-                        } else {
-                          setQuantity(val);
-                        }
-                      }}
-                    />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          if (quantity > 1) {
+                            setQuantity(quantity - 1);
+                          }
+                        }}
+                        disabled={quantity <= 1}
+                      >
+                        -
+                      </Button>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={capacityLeft}
+                        value={quantity}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          if (val > capacityLeft) {
+                            setQuantity(capacityLeft);
+                          } else if (val < 1) {
+                            setQuantity(1);
+                          } else {
+                            setQuantity(val);
+                          }
+                        }}
+                        className="w-20 text-center"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          if (quantity < capacityLeft) {
+                            setQuantity(quantity + 1);
+                          }
+                        }}
+                        disabled={quantity >= capacityLeft}
+                      >
+                        +
+                      </Button>
+                    </div>
                   </div>
                 )}
                 {price && currency && (
