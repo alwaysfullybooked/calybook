@@ -239,12 +239,13 @@ export default function BookingDialog({
                       <Input
                         type="number"
                         min={1}
-                        max={capacityLeft}
+                        max={Math.min(capacityLeft, 2)}
                         value={quantity}
                         onChange={(e) => {
                           const val = Number(e.target.value);
-                          if (val > capacityLeft) {
-                            setQuantity(capacityLeft);
+                          const maxAllowed = Math.min(capacityLeft, 2);
+                          if (val > maxAllowed) {
+                            setQuantity(maxAllowed);
                           } else if (val < 1) {
                             setQuantity(1);
                           } else {
@@ -258,11 +259,12 @@ export default function BookingDialog({
                         variant="outline"
                         size="icon"
                         onClick={() => {
-                          if (quantity < capacityLeft) {
+                          const maxAllowed = Math.min(capacityLeft, 2);
+                          if (quantity < maxAllowed) {
                             setQuantity(quantity + 1);
                           }
                         }}
-                        disabled={quantity >= capacityLeft}
+                        disabled={quantity >= Math.min(capacityLeft, 2)}
                       >
                         +
                       </Button>
