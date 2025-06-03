@@ -87,7 +87,11 @@ function MobileScheduleView({
         if (availableSlots.length === 0) {
           return (
             <div key={service.id} className="space-y-2">
-              <h3 className="font-medium text-gray-700">{service.name}</h3>
+              <h3 className="font-medium text-gray-700">
+                {service.name}
+                <br />
+                <span className="text-xs text-gray-500">{service.description}</span>
+              </h3>
               <div className="text-center py-4 text-gray-500">Not available</div>
             </div>
           );
@@ -95,7 +99,11 @@ function MobileScheduleView({
 
         return (
           <div key={service.id} className="space-y-2">
-            <h3 className="font-medium text-gray-700">{service.name}</h3>
+            <h3 className="font-medium text-gray-700">
+              {service.name}
+              <br />
+              <span className="text-xs text-gray-500">{service.description}</span>
+            </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {availableSlots.map((slot) => {
                 const { schedule } = getSlotStatus(slot, serviceSchedule);
