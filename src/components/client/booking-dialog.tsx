@@ -259,12 +259,11 @@ export default function BookingDialog({
                         variant="outline"
                         size="icon"
                         onClick={() => {
-                          const maxAllowed = Math.min(capacityLeft, 2);
-                          if (quantity < maxAllowed) {
+                          if (quantity < capacityLeft) {
                             setQuantity(quantity + 1);
                           }
                         }}
-                        disabled={quantity >= Math.min(capacityLeft, 2)}
+                        disabled={quantity >= capacityLeft}
                       >
                         +
                       </Button>
