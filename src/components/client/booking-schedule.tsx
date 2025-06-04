@@ -29,6 +29,7 @@ type Schedule = {
 
 type Service = {
   id: string;
+  type: "service" | "event";
   name: string;
   description: string | null;
 };
@@ -84,7 +85,12 @@ function MobileScheduleView({
           return status === "available";
         });
 
-        if (availableSlots.length === 0) {
+        // Add this new condition to skip rendering events with no slots
+        if (service.type === "event" && availableSlots.length === 0) {
+          return null;
+        }
+
+        if (availableSlots.length === 0 && service.type === "service") {
           return (
             <div key={service.id} className="space-y-2">
               <h3 className="font-medium text-gray-700">
@@ -352,7 +358,12 @@ export default function BookingSchedule({
                     return status === "available";
                   });
 
-                  if (availableSlots.length === 0) {
+                  // Add this new condition to skip rendering events with no slots
+                  if (service.type === "event" && availableSlots.length === 0) {
+                    return null;
+                  }
+
+                  if (availableSlots.length === 0 && service.type === "service") {
                     return (
                       <tr key={service.id}>
                         <td className="w-[50px] p-2 font-medium text-gray-700 border-b text-sm">
