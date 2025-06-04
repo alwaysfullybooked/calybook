@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { format, addMinutes, isEqual, parse, isAfter, isBefore } from "date-fns";
+import { format, addMinutes, isEqual, parse, isAfter, isBefore, addDays } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import BookingDialog from "@/components/client/booking-dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -180,7 +180,7 @@ export default function BookingSchedule({
   availableSchedule,
 }: VenueBookingEnhancedProps) {
   // const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [selectedDate, setSelectedDate] = useState(format(addDays(new Date(), 1), "yyyy-MM-dd"));
 
   const selectedCategory: string = "all";
 
@@ -315,10 +315,9 @@ export default function BookingSchedule({
 
         <Select value={selectedDate} onValueChange={setSelectedDate}>
           <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue>{selectedDate === format(new Date(), "yyyy-MM-dd") ? "Today" : format(new Date(selectedDate), "EEE, MMM dd, yyyy")}</SelectValue>
+            <SelectValue>{format(new Date(selectedDate), "EEE, MMM dd, yyyy")}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={format(new Date(), "yyyy-MM-dd")}>Today</SelectItem>
             {allDates
               .filter((date) => date !== format(new Date(), "yyyy-MM-dd"))
               .map((date) => (
