@@ -12,7 +12,6 @@ export type Venue = {
   city: string | null;
   country: string | null;
   timezone: string | null;
-  emailForNotifications: string | null;
 
   courts: number | null;
   price: string | null;

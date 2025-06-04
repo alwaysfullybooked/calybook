@@ -19,7 +19,7 @@ export default function BookingDialog({
   lang,
   city,
 
-  type,
+  bookingType,
   venueId,
   customerName,
   customerEmailId,
@@ -41,7 +41,7 @@ export default function BookingDialog({
   lang: string;
   city: string;
 
-  type: "single" | "group";
+  bookingType: "single" | "group";
   venueId: string;
   customerName: string;
   customerEmailId: string;
@@ -129,7 +129,7 @@ export default function BookingDialog({
           lang,
           city,
 
-          type,
+          bookingType,
           venueId,
           serviceId,
           startDate,
@@ -219,7 +219,7 @@ export default function BookingDialog({
                   <Label>Date & Time</Label>
                   <Input value={`${startDate} ${startTime} - ${durationMinutes} minutes`} disabled />
                 </div>
-                {type === "group" && (
+                {bookingType === "group" && (
                   <div className="space-y-2">
                     <Label>Quantity ({capacityLeft} available)</Label>
                     <div className="flex items-center gap-2">

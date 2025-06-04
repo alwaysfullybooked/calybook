@@ -124,7 +124,7 @@ function BookingCard({ booking }: { booking: Booking }) {
             <span>
               {booking.startTime} - {booking.endTime}
             </span>
-            {booking.type === "group" && <Badge variant="outline">Group</Badge>}
+            {booking.bookingType === "group" && <Badge variant="outline">Group</Badge>}
             {booking.status === "pending" && (
               <Badge variant="outline" className="border-orange-200 bg-orange-50 text-orange-700">
                 Pending

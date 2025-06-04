@@ -9,7 +9,7 @@ export async function createBooking({
   lang,
   city,
 
-  type,
+  bookingType,
   venueId,
   serviceId,
   startDate,
@@ -31,7 +31,7 @@ export async function createBooking({
   lang: string;
   city: string;
 
-  type: "single" | "group";
+  bookingType: "single" | "group";
   venueId: string;
   serviceId: string;
   startDate: string;
@@ -55,7 +55,7 @@ export async function createBooking({
     throw new Error("Unauthorized");
   }
   const result = await alwaysbookbooked.bookings.create({
-    type,
+    bookingType,
     serviceId,
     startDate,
     endDate,

@@ -18,5 +18,5 @@ export type Booking = {
   price: string;
   currency: string;
   notes: string | null;
-  type: string;
+  bookingType: string;
 };

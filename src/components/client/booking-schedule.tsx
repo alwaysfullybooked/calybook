@@ -123,7 +123,7 @@ function MobileScheduleView({
                             country={country}
                             lang={lang}
                             city={city}
-                            type={schedule.bookingType}
+                            bookingType={schedule.bookingType}
                             customerName={customerName}
                             customerEmailId={customerEmailId}
                             venueId={venueId}
@@ -401,7 +401,7 @@ export default function BookingSchedule({
                                     country={country}
                                     lang={lang}
                                     city={city}
-                                    type={schedule.bookingType}
+                                    bookingType={schedule.bookingType}
                                     customerName={customerName}
                                     customerEmailId={customerEmailId}
                                     venueId={venueId}
