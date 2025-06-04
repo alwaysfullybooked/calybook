@@ -6,11 +6,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { locations, getCountry } from "@/lib/locations";
+import { locations, getCountryLabel } from "@/lib/locations";
 import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 
-import type { Venue } from "@/types/venue";
+import type { Venue } from "@/lib/alwaysbookbooked";
 import { ExternalLink, MapPin } from "lucide-react";
 
 export default function HomeSearch({ country, venues, lang }: { country: keyof typeof locations; venues: Venue[]; lang: string }) {
@@ -20,7 +20,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
   const [city, setCity] = useState<string>(locations[country]?.cities[0]?.value ?? "");
   const citySlug = locations[country]?.cities.find((c) => c.value === city)?.slug ?? "";
 
-  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === city && venue.country === getCountry(country));
+  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === city && venue.country === getCountryLabel(country));
 
   useEffect(() => {
     const params = new URLSearchParams();

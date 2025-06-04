@@ -11,13 +11,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { updateUser } from "@/actions/user";
 
-const contactMethodSchema = z.object({
+const contactPreferencesSchema = z.object({
   preferredMethod: z.enum(["email", "line", "whatsapp"]),
   contactWhatsAppId: z.string().min(1, "WhatsApp ID is required"),
   contactLineId: z.string().min(1, "LINE ID is required"),
 });
 
-type ContactMethodForm = z.infer<typeof contactMethodSchema>;
+type ContactMethodForm = z.infer<typeof contactPreferencesSchema>;
 
 interface ContactPreferencesFormProps {
   email: string;
@@ -30,7 +30,7 @@ export function ContactPreferencesForm({ email, contactMethod, contactWhatsAppId
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<ContactMethodForm>({
-    resolver: zodResolver(contactMethodSchema),
+    resolver: zodResolver(contactPreferencesSchema),
     defaultValues: {
       preferredMethod: contactMethod as "email" | "line" | "whatsapp",
       contactWhatsAppId: contactWhatsAppId,
@@ -56,8 +56,10 @@ export function ContactPreferencesForm({ email, contactMethod, contactWhatsAppId
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contact Preferences</CardTitle>
-        <CardDescription>For bookings and updates.</CardDescription>
+        <CardTitle>
+          <h2 className="text-2xl font-bold">Contact Preferences</h2>
+        </CardTitle>
+        <CardDescription>For notifications, bookings and updates.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

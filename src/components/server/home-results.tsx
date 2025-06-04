@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { getCountry, locations } from "@/lib/locations";
+import { getCountryLabel, locations } from "@/lib/locations";
 import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 
-import type { Venue } from "@/types/venue";
+import type { Venue } from "@/lib/alwaysbookbooked";
 import { ExternalLink, MapPin } from "lucide-react";
 
 export default function HomeResults({ country, lang, city, venues }: { country: keyof typeof locations; lang: string; city: string; venues: Venue[] }) {
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
-  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === cityLabel && venue.country === getCountry(country));
+  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === cityLabel && venue.country === getCountryLabel(country));
 
   return (
     <>

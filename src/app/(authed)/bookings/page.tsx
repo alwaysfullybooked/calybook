@@ -7,8 +7,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
-import { getCitySlug, getCountryCode } from "@/lib/locations";
-import type { Booking } from "@/types/booking";
+import { getCitySlug, getCountrySlug } from "@/lib/locations";
+import type { Booking } from "@/lib/alwaysbookbooked";
 
 export default async function BookingsPage() {
   const session = await auth();
@@ -92,7 +92,7 @@ function BookingCard({ booking }: { booking: Booking }) {
             <CardTitle className="text-base sm:text-xl">
               {booking.service.venue.country && booking.service.venue.city ? (
                 <Link
-                  href={`${getCountryCode(booking.service.venue.country)}/en/${getCitySlug(booking.service.venue.country, booking.service.venue.city)}/venues/${booking.service.venueId}`}
+                  href={`${getCountrySlug(booking.service.venue.country)}/en/${getCitySlug(booking.service.venue.country, booking.service.venue.city)}/venues/${booking.service.venueId}`}
                   className="hover:underline"
                 >
                   {booking.service.venue.name}

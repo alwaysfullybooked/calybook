@@ -80,3 +80,13 @@ export const verificationTokens = createTable(
   }),
   (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
 );
+
+export const tennisPreferences = createTable("tennis_preferences", (d) => ({
+  id: d
+    .varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: d.varchar({ length: 255 }).notNull().unique(),
+  universalTennisRating: d.varchar({ length: 5 }).notNull(),
+}));

@@ -9,7 +9,35 @@ import { matchVenues } from "@/data/venues";
 import TennisRankings from "@/components/tennis/rankings";
 import TennisChallenge from "@/components/tennis/challenge";
 import BookingSchedule from "@/components/client/booking-schedule";
-import { locations } from "@/lib/locations";
+import { getCitySlug, getCountryLabel, getCountrySlug, locations } from "@/lib/locations";
+
+export async function generateStaticParams() {
+  const countries = ["th"];
+
+  const venues = await Promise.all(
+    countries.map(async (country) => {
+      const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
+      const cities = locations[country as keyof typeof locations]?.cities ?? [];
+
+      const venues = await Promise.all(
+        cities.map(async (city) => {
+          const venues = await alwaysbookbooked.venues.publicSearch(countryLabel, city.label);
+
+          return venues.map((v) => ({
+            country,
+            lang: "en",
+            city: city.slug,
+            id: v.id,
+          }));
+        }),
+      );
+
+      return venues.flat();
+    }),
+  );
+
+  return venues.flat();
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string }> }) {
   const { country, lang, city, id } = await params;

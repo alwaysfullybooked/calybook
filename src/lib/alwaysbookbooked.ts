@@ -16,3 +16,7 @@ export const alwaysbookbooked = new AlwaysFullyBooked({
   apiKey,
   baseUrl,
 });
+
+export type Booking = Awaited<ReturnType<typeof alwaysbookbooked.bookings.searchCustomerBookings>>[number];
+
+export type Venue = Awaited<ReturnType<typeof alwaysbookbooked.venues.search>>[number] & { courts: number | null; price: string | null; amenities: string[] | null };

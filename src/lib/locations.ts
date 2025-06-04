@@ -53,7 +53,7 @@ export const locations: Record<string, Location> = {
   },
 } as const;
 
-export function getCountryCode(country: string | null) {
+export function getCountrySlug(country: string | null) {
   if (!country) return "";
 
   const countryLower = country.toLowerCase();
@@ -64,11 +64,15 @@ export function getCountryCode(country: string | null) {
   return code;
 }
 
-export function getCountry(code: string) {
+export function getCountryLabel(code: string | null) {
+  if (!code) return "";
+
   return locations[code]?.name;
 }
 
-export function getCitySlug(country: string, city: string) {
-  const countryCode = getCountryCode(country);
+export function getCitySlug(country: string | null, city: string | null) {
+  if (!country || !city) return "";
+
+  const countryCode = getCountrySlug(country);
   return locations[countryCode]?.cities.find((c) => c.value.toLowerCase() === city.toLowerCase())?.slug;
 }

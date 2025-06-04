@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/bookings/*", "/settings/*"],
+      disallow: ["/bookings/*", "/profile/*", "/settings/*"],
     },
     sitemap: "https://www.calybook.com/sitemap.xml",
   };
