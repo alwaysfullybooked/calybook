@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormDescription, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/client/submit-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { createTennisPreferences } from "@/actions/preferences/tennis";
 import { toast } from "sonner";
+import { convertUTRtoNTRP } from "@/lib/utils";
 
 const TennisPreferencesSchema = z.object({
   universalTennisRating: z
@@ -18,29 +18,53 @@ const TennisPreferencesSchema = z.object({
     .min(1, "UTR is required")
     .max(16.5, "UTR must be less than 16.50")
     .regex(/^\d+(\.\d{1,2})?$/, "UTR must be a number between 1 and 16.50"), // From 1 to 16.50
+  nationalTennisRatingProgram: z
+    .string()
+    .min(1.5, "NTRP is required")
+    .max(7.0, "NTRP must be less than 7.0")
+    .regex(/^\d+(\.\d{1,2})?$/, "NTRP must be a number between 1.5 and 7.0"), // From 1.5 to 7.0,
 });
 
 type ContactMethodForm = z.infer<typeof TennisPreferencesSchema>;
 
 interface TennisPreferencesFormProps {
-  universalTennisRating: string;
+  tennisPreferences:
+    | {
+        id: string;
+        userId: string;
+        universalTennisRating: string;
+        nationalTennisRatingProgram: string;
+      }
+    | undefined;
 }
 
-export function TennisPreferencesForm({ universalTennisRating }: TennisPreferencesFormProps) {
+export function TennisPreferencesForm({ tennisPreferences }: TennisPreferencesFormProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<ContactMethodForm>({
     resolver: zodResolver(TennisPreferencesSchema),
     defaultValues: {
-      universalTennisRating,
+      universalTennisRating: tennisPreferences?.universalTennisRating ?? "",
+      nationalTennisRatingProgram: tennisPreferences?.nationalTennisRatingProgram ?? "",
     },
   });
+
+  // Add handler for UTR input changes
+  const handleUTRChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const utr = e.target.value;
+    if (utr) {
+      form.setValue("nationalTennisRatingProgram", convertUTRtoNTRP(utr));
+    } else {
+      form.setValue("nationalTennisRatingProgram", "");
+    }
+  };
 
   const onSubmit = async (data: ContactMethodForm) => {
     setIsLoading(true);
     try {
       await createTennisPreferences({
         universalTennisRating: data.universalTennisRating,
+        nationalTennisRatingProgram: data.nationalTennisRatingProgram,
       });
       toast.success("UTR updated successfully");
     } catch (error) {
@@ -65,13 +89,20 @@ export function TennisPreferencesForm({ universalTennisRating }: TennisPreferenc
             <FormItem>
               <FormLabel>Universal Tennis Rating (UTR) 1.00 - 16.50</FormLabel>
               <FormControl>
-                <Input {...form.register("universalTennisRating")} />
+                <Input
+                  {...form.register("universalTennisRating")}
+                  onChange={(e) => {
+                    form.register("universalTennisRating").onChange(e);
+                    handleUTRChange(e);
+                  }}
+                />
               </FormControl>
+              {form.watch("universalTennisRating") && <FormDescription>Estimated NTRP Rating: {convertUTRtoNTRP(form.watch("universalTennisRating"))}</FormDescription>}
             </FormItem>
 
-            <Button type="submit" disabled={isLoading}>
+            <SubmitButton type="submit" disabled={isLoading}>
               {isLoading ? "Saving..." : "Save Changes"}
-            </Button>
+            </SubmitButton>
           </form>
         </Form>
       </CardContent>

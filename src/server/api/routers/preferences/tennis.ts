@@ -1,12 +1,21 @@
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";
 import { tennisPreferences } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
 
 export const tennisPreferencesRouter = {
-  update: protectedProcedure
+  find: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db.query.tennisPreferences.findFirst({
+      where: eq(tennisPreferences.userId, ctx.session.user.id),
+    });
+    return result;
+  }),
+
+  upsert: protectedProcedure
     .input(
       z.object({
         universalTennisRating: z.string(),
+        nationalTennisRatingProgram: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -14,9 +23,15 @@ export const tennisPreferencesRouter = {
         .insert(tennisPreferences)
         .values({
           universalTennisRating: input.universalTennisRating,
+          nationalTennisRatingProgram: input.nationalTennisRatingProgram,
           userId: ctx.session.user.id,
         })
-        .onDuplicateKeyUpdate({ set: { universalTennisRating: input.universalTennisRating } });
+        .onDuplicateKeyUpdate({
+          set: {
+            universalTennisRating: input.universalTennisRating,
+            nationalTennisRatingProgram: input.nationalTennisRatingProgram,
+          },
+        });
 
       return result;
     }),

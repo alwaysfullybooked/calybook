@@ -7,16 +7,19 @@ import { revalidatePath } from "next/cache";
 
 export async function createTennisPreferences({
   universalTennisRating,
+  nationalTennisRatingProgram,
 }: {
   universalTennisRating: string;
+  nationalTennisRatingProgram: string;
 }) {
   const session = await auth();
 
   if (!session?.user?.id || !session.user?.email) {
     throw new Error("Unauthorized");
   }
-  const result = await api.tennisPreferences.update({
+  const result = await api.tennisPreferences.upsert({
     universalTennisRating,
+    nationalTennisRatingProgram,
   });
   revalidatePath("/profile");
 

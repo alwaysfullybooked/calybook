@@ -89,4 +89,5 @@ export const tennisPreferences = createTable("tennis_preferences", (d) => ({
     .$defaultFn(() => crypto.randomUUID()),
   userId: d.varchar({ length: 255 }).notNull().unique(),
   universalTennisRating: d.varchar({ length: 5 }).notNull(),
+  nationalTennisRatingProgram: d.varchar({ length: 3 }).notNull(),
 }));
