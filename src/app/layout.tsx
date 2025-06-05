@@ -9,6 +9,7 @@ import "@/styles/globals.css";
 import ExternalBrowserRedirect from "@/components/client/external-browser";
 import PlausibleProvider from "next-plausible";
 import { Suspense } from "react";
+import Consent from "@/components/client/consent";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Suspense>
             <ExternalBrowserRedirect />
           </Suspense>
+          <Consent />
           <div>{children}</div>
         </PlausibleProvider>
       </body>

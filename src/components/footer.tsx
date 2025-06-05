@@ -42,12 +42,17 @@ export default function Footer({ country }: { country: string }) {
                   FAQ
                 </Link>
               </li>
-              {/* 
+
               <li>
-                <Link href="#" className="hover:text-gray-900">
-                  Contact
+                <Link href="/terms" className="hover:text-gray-900">
+                  Terms of Service
                 </Link>
-              </li> */}
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-gray-900">
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
