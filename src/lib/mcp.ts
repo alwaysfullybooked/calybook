@@ -5,6 +5,9 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { tool, type Tool, jsonSchema, streamText, type Message } from "ai";
 // import { randomUUID } from "node:crypto";
 
+const model = groq("llama3-8b-8192");
+// const model = groq("llama-3.3-70b-versatile");
+
 // Helper to create a new MCP client and connect
 async function createMCPClient(sessionId: string) {
   const client = new Client({
@@ -26,7 +29,6 @@ export async function getTools(sessionId: string) {
 
 // Usage with Groq
 export async function createGroqWithMCPTools(sessionId: string) {
-  const model = groq("llama-3.3-70b-versatile");
   const tools = await getAISdkTools(sessionId);
   return { model, tools };
 }
@@ -89,7 +91,6 @@ export async function streamWithMCP({
   sessionId: string;
   messages: Message[];
 }) {
-  const model = groq("llama-3.3-70b-versatile");
   const tools = await getAISdkTools(sessionId);
 
   const result = streamText({
@@ -101,7 +102,7 @@ export async function streamWithMCP({
     tools,
     toolChoice: "auto",
     toolCallStreaming: true,
-    maxSteps: 3,
+    maxSteps: 5,
   });
 
   return result.toDataStreamResponse();

@@ -1,5 +1,6 @@
 import FAQTabs from "@/components/client/faq/FAQTabs";
 import type { FAQCategory } from "@/components/client/faq/FAQTabs";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "FAQ - CalyBook",
@@ -27,7 +28,8 @@ const faqCategories: FAQCategory[] = [
       },
       {
         question: "Do I need to create an account to book?",
-        answer: "Yes, you need to create an account to make bookings. This helps us manage your reservations and provide better service. You can create an account using your email address.",
+        answer:
+          "Yes, you need to create an account to make bookings. This helps us manage your reservations and provide better service. You can create an account using your Google Gmail email address.",
       },
     ],
   },
@@ -138,9 +140,9 @@ export default function FAQPage() {
           <h2 className="mb-2 text-lg font-semibold sm:text-xl">Still have questions?</h2>
           <p className="mb-4 text-sm text-gray-600 sm:mb-6 sm:text-base">We're here to help! Contact our support team and we'll get back to you as soon as possible.</p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
-            {/* <Button asChild className="bg-green-600 hover:bg-green-700">
-              <a href="mailto:support@justbookit.com">Email Support</a>
-            </Button> */}
+            <Button asChild className="bg-green-600 hover:bg-green-700">
+              <a href="mailto:contact@alwaysfullybooked.com">Email Support</a>
+            </Button>
             {/* <Button variant="outline" asChild>
               <a href="/contact">Contact Us</a>
             </Button> */}
