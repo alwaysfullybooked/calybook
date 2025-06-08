@@ -113,43 +113,45 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
               )}
               <div className="flex-1">
                 <CardHeader className="space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <div className="flex justify-end">
+                      {rankings.length === 0 && venue.allowRankings && <JoinVenueButton country={country} lang={lang} city={city} venueId={venue.id} venueName={venue.name} />}
+
+                      {rankings.length > 0 && venue.allowRankings && (
+                        <NavigationMenu>
+                          <NavigationMenuList>
+                            <NavigationMenuItem>
+                              <NavigationMenuTrigger className="gap-2 bg-primary">
+                                <Trophy className="h-4 w-4" />
+                                Go to Rankings
+                              </NavigationMenuTrigger>
+                              <NavigationMenuContent>
+                                <ul className="grid w-[200px]">
+                                  {categories.map((cat) => (
+                                    <li key={cat}>
+                                      <NavigationMenuLink asChild>
+                                        <Link
+                                          href={`/${country}/${lang}/${city}/venues/${venue.id}/${cat.toLowerCase()}`}
+                                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                        >
+                                          <div className="text-sm font-medium leading-none capitalize">{cat}</div>
+                                        </Link>
+                                      </NavigationMenuLink>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </NavigationMenuContent>
+                            </NavigationMenuItem>
+                          </NavigationMenuList>
+                        </NavigationMenu>
+                      )}
+                    </div>
                     <div>
                       <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{mergedVenue.name}</CardTitle>
                       <CardDescription className="text-base sm:text-lg">
                         {mergedVenue.city}, {mergedVenue.country}
                       </CardDescription>
                     </div>
-                    {rankings.length === 0 && venue.allowRankings && <JoinVenueButton country={country} lang={lang} city={city} venueId={venue.id} venueName={venue.name} />}
-
-                    {rankings.length > 0 && venue.allowRankings && (
-                      <NavigationMenu>
-                        <NavigationMenuList>
-                          <NavigationMenuItem>
-                            <NavigationMenuTrigger className="gap-2 bg-primary">
-                              <Trophy className="h-4 w-4" />
-                              Go to Rankings
-                            </NavigationMenuTrigger>
-                            <NavigationMenuContent>
-                              <ul className="grid w-[200px]">
-                                {categories.map((cat) => (
-                                  <li key={cat}>
-                                    <NavigationMenuLink asChild>
-                                      <Link
-                                        href={`/${country}/${lang}/${city}/venues/${venue.id}/${cat.toLowerCase()}`}
-                                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                      >
-                                        <div className="text-sm font-medium leading-none capitalize">{cat}</div>
-                                      </Link>
-                                    </NavigationMenuLink>
-                                  </li>
-                                ))}
-                              </ul>
-                            </NavigationMenuContent>
-                          </NavigationMenuItem>
-                        </NavigationMenuList>
-                      </NavigationMenu>
-                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
