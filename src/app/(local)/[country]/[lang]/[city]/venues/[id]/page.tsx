@@ -120,9 +120,9 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                         {mergedVenue.city}, {mergedVenue.country}
                       </CardDescription>
                     </div>
-                    {rankings.length === 0 && <JoinVenueButton country={country} lang={lang} city={city} venueId={venue.id} venueName={venue.name} />}
+                    {rankings.length === 0 && venue.allowRankings && <JoinVenueButton country={country} lang={lang} city={city} venueId={venue.id} venueName={venue.name} />}
 
-                    {rankings.length > 0 && (
+                    {rankings.length > 0 && venue.allowRankings && (
                       <NavigationMenu>
                         <NavigationMenuList>
                           <NavigationMenuItem>
