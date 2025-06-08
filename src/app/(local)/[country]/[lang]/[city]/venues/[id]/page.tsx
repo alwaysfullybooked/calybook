@@ -114,7 +114,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
               <div className="flex-1">
                 <CardHeader className="space-y-2">
                   <div className="flex flex-col">
-                    <div className="flex justify-end">
+                    <div className="flex justify-end p-2">
                       {rankings.length === 0 && venue.allowRankings && <JoinVenueButton country={country} lang={lang} city={city} venueId={venue.id} venueName={venue.name} />}
 
                       {rankings.length > 0 && venue.allowRankings && (
