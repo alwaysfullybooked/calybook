@@ -119,7 +119,13 @@ export function AddTennisGame({ venues }: { venues: Venue[] }) {
                   <FormItem>
                     <FormLabel>Winner</FormLabel>
                     <FormControl>
-                      <Input {...field} value={form.watch("winnerName")} />
+                      <Input
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          form.setValue("winnerName", e.target.value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,7 +138,13 @@ export function AddTennisGame({ venues }: { venues: Venue[] }) {
                   <FormItem>
                     <FormLabel>Player</FormLabel>
                     <FormControl>
-                      <Input {...field} value={form.watch("playerName")} />
+                      <Input
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          form.setValue("playerName", e.target.value);
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

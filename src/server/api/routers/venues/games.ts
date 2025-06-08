@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { protectedProcedure } from "../../trpc";
 import { Categories, venueGames } from "@/server/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, or } from "drizzle-orm";
 
 export const venueGamesRouter = {
   // Get match details
@@ -17,9 +17,23 @@ export const venueGamesRouter = {
   }),
 
   // Get all matches for the current user
-  search: protectedProcedure.input(z.object({ venueId: z.string() })).query(async ({ ctx, input }) => {
+  search: protectedProcedure.input(z.object({ venueId: z.string().optional(), category: z.nativeEnum(Categories).optional(), userId: z.boolean().default(false) })).query(async ({ ctx, input }) => {
+    const conditions = [];
+
+    if (input.venueId) {
+      conditions.push(eq(venueGames.venueId, input.venueId));
+    }
+
+    if (input.category) {
+      conditions.push(eq(venueGames.category, input.category));
+    }
+
+    if (input.userId) {
+      conditions.push(or(eq(venueGames.winnerId, ctx.session.user.id), eq(venueGames.playerId, ctx.session.user.id)));
+    }
+
     const result = await ctx.db.query.venueGames.findMany({
-      where: eq(venueGames.venueId, input.venueId),
+      where: and(...conditions),
       with: {
         player: true,
         winner: true,
