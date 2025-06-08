@@ -3,7 +3,10 @@ import { getTranslations } from "@/lib/translations";
 
 import { matchVenues } from "@/data/venues";
 import { locations } from "@/lib/locations";
-import HomeResults from "@/components/server/home-results";
+import { HomeResults } from "@/components/server/home-results";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import type { MatchVenues } from "@/lib/alwaysbookbooked";
 
 export async function generateStaticParams() {
   return [
@@ -51,7 +54,7 @@ export default async function CountryLangPage({ params }: { params: Promise<{ co
       price: info?.courts?.tennis?.price ?? null,
       amenities: info?.amenities ?? null,
     };
-  });
+  }) as MatchVenues[];
 
   const t = await getTranslations(lang);
 
@@ -62,6 +65,13 @@ export default async function CountryLangPage({ params }: { params: Promise<{ co
         <h2 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">{cityLabel}</h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t?.get("homeSearch_description")}</p>
       </div>
+
+      {/* <div className="flex flex-col justify-center my-8 text-center max-w-md mx-auto border p-4 rounded-lg">
+        <p className="text-sm sm:text-base mb-4">Ever tried to book? It's a pain, right? Try our Booking AI Assistant to book your court in seconds.</p>
+        <Button variant="default" className="my-4" asChild>
+          <Link href={`/${country}/${lang}/chat`}>Chat to book now</Link>
+        </Button>
+      </div> */}
 
       <div className="my-8">
         <HomeResults country={country as keyof typeof locations} lang={lang} city={city} venues={mergedVenues} />

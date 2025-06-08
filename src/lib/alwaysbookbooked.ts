@@ -19,4 +19,22 @@ export const alwaysbookbooked = new AlwaysFullyBooked({
 
 export type Booking = Awaited<ReturnType<typeof alwaysbookbooked.bookings.searchCustomerBookings>>[number];
 
-export type Venue = Awaited<ReturnType<typeof alwaysbookbooked.venues.search>>[number] & { courts: number | null; price: string | null; amenities: string[] | null };
+export type Service = Awaited<ReturnType<typeof alwaysbookbooked.services.search>>[number];
+
+export type Venue = Awaited<ReturnType<typeof alwaysbookbooked.venues.publicSearch>>[number];
+
+export type MatchVenues = Venue & {
+  courts: number;
+  price: string;
+  amenities: string[];
+};
+
+export type MoreVenues = {
+  altName: string;
+  altAddress: string;
+  courts: { tennis: { count: number; price: number } };
+  amenities: string[];
+  image: string;
+  city: string;
+  country: string;
+};

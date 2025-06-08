@@ -18,6 +18,7 @@ export async function createTennisPreferences({
     throw new Error("Unauthorized");
   }
   const result = await api.tennisPreferences.upsert({
+    category: "tennis",
     universalTennisRating,
     nationalTennisRatingProgram,
   });

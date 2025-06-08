@@ -5,12 +5,12 @@ import { getCountryLabel, locations } from "@/lib/locations";
 import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 
-import type { Venue } from "@/lib/alwaysbookbooked";
+import type { MatchVenues, MoreVenues } from "@/lib/alwaysbookbooked";
 import { ExternalLink, MapPin } from "lucide-react";
 
-export default function HomeResults({ country, lang, city, venues }: { country: keyof typeof locations; lang: string; city: string; venues: Venue[] }) {
+export function HomeResults({ country, lang, city, venues }: { country: keyof typeof locations; lang: string; city: string; venues: MatchVenues[] }) {
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
-  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === cityLabel && venue.country === getCountryLabel(country));
+  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === cityLabel && venue.country === getCountryLabel(country)) as unknown as MoreVenues[];
 
   return (
     <>

@@ -4,6 +4,7 @@ import { getTranslations } from "@/lib/translations";
 import HomeSearch from "@/components/client/home-search";
 import { matchVenues } from "@/data/venues";
 import { locations } from "@/lib/locations";
+import type { MatchVenues } from "@/lib/alwaysbookbooked";
 
 export async function generateStaticParams() {
   return [
@@ -46,7 +47,7 @@ export default async function CountryLangPage({ params, searchParams }: { params
       price: info?.courts?.tennis?.price ?? null,
       amenities: info?.amenities ?? null,
     };
-  });
+  }) as unknown as MatchVenues[];
 
   const t = await getTranslations(lang);
 

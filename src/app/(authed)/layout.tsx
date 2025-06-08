@@ -17,11 +17,11 @@ export const metadata: Metadata = {
     url: "https://calybook.com",
     siteName: "CalyBook",
   },
-  twitter: {
-    card: "summary_large_image",
-    site: "@digitalcentral",
-    creator: "@digitalcentral",
-  },
+  // twitter: {
+  //   card: "summary_large_image",
+  //   site: "@digitalcentral",
+  //   creator: "@digitalcentral",
+  // },
 };
 
 export default async function AuthedLayout({ children }: Readonly<{ children: React.ReactNode }>) {

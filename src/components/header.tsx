@@ -37,6 +37,9 @@ export default async function Header({ country, link }: { country: string; link:
                     <DropdownMenuItem asChild>
                       <Link href="/profile">My Profile</Link>
                     </DropdownMenuItem>
+                    {/* <DropdownMenuItem asChild>
+                      <Link href="/games">My Games</Link>
+                    </DropdownMenuItem> */}
                     <DropdownMenuItem>
                       <form
                         action={async () => {
