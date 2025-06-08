@@ -23,7 +23,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
     return <div>Venue not found</div>;
   }
 
-  const rankings = await api.venueRankings.search();
+  const rankings = await api.venueRankings.search({ venueId: id });
   const matches = await api.venueGames.search({ venueId: id });
 
   // Filter rankings for this venue and category

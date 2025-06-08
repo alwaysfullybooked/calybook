@@ -13,9 +13,19 @@ export const venueRankingsRouter = {
   }),
 
   // Get all venue rankings for the current user
-  search: protectedProcedure.query(async ({ ctx }) => {
+  search: protectedProcedure.input(z.object({ venueId: z.string().optional(), category: z.nativeEnum(Categories).optional(), userId: z.boolean().default(false) })).query(async ({ ctx, input }) => {
+    const conditions = [];
+
+    if (input.venueId) {
+      conditions.push(eq(venueRankings.venueId, input.venueId));
+    }
+
+    if (input.category) {
+      conditions.push(eq(venueRankings.category, input.category));
+    }
+
     const result = await ctx.db.query.venueRankings.findMany({
-      where: eq(venueRankings.userId, ctx.session.user.id),
+      where: and(...conditions),
       orderBy: (venueRankings, { desc }) => [desc(venueRankings.lastMatchDate)],
     });
     return result;
