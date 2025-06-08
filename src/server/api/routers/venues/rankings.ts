@@ -5,9 +5,9 @@ import { eq, and, or } from "drizzle-orm";
 
 export const venueRankingsRouter = {
   // Get venue ranking details
-  find: protectedProcedure.input(z.object({ userId: z.string(), venueId: z.string() })).query(async ({ ctx, input }) => {
+  find: protectedProcedure.input(z.object({ venueId: z.string() })).query(async ({ ctx, input }) => {
     const result = await ctx.db.query.venueRankings.findFirst({
-      where: and(eq(venueRankings.userId, input.userId), eq(venueRankings.venueId, input.venueId)),
+      where: and(eq(venueRankings.userId, ctx.session.user.id), eq(venueRankings.venueId, input.venueId)),
     });
     return result;
   }),
