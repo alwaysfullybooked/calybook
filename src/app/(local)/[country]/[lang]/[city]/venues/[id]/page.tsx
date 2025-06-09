@@ -2,7 +2,7 @@ import Link from "next/link";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExternalLink, MapPin, Phone, Trophy } from "lucide-react";
+import { ExternalLink, MapPin, Phone } from "lucide-react";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 import { matchVenues } from "@/data/venues";
@@ -12,8 +12,7 @@ import BookingSchedule from "@/components/client/booking-schedule";
 import { locations } from "@/lib/locations";
 import { JoinVenueButton } from "@/components/client/venue/rankings";
 import { api } from "@/trpc/server";
-import { Categories, type Category } from "@/server/db/schema";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
+import { ViewRankings } from "@/components/server/view-rankings";
 
 export async function generateStaticParams() {
   const countries = ["th"];
@@ -98,8 +97,6 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
 
   const services = venue?.services;
 
-  const categories = Object.values(Categories) as unknown as Category[];
-
   return (
     <main className="container mx-auto px-4 py-4 sm:py-6 md:py-8">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8">
@@ -117,34 +114,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                     <div className="flex justify-end p-2">
                       {!ranking && venue.allowRankings && <JoinVenueButton country={country} lang={lang} city={city} venueId={venue.id} venueName={venue.name} />}
 
-                      {ranking && venue.allowRankings && (
-                        <NavigationMenu>
-                          <NavigationMenuList>
-                            <NavigationMenuItem>
-                              <NavigationMenuTrigger className="gap-2 bg-primary">
-                                <Trophy className="h-4 w-4" />
-                                Go to Rankings
-                              </NavigationMenuTrigger>
-                              <NavigationMenuContent>
-                                <ul className="grid w-[200px]">
-                                  {categories.map((cat) => (
-                                    <li key={cat}>
-                                      <NavigationMenuLink asChild>
-                                        <Link
-                                          href={`/${country}/${lang}/${city}/venues/${venue.id}/${cat.toLowerCase()}`}
-                                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                        >
-                                          <div className="text-sm font-medium leading-none capitalize">{cat}</div>
-                                        </Link>
-                                      </NavigationMenuLink>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </NavigationMenuContent>
-                            </NavigationMenuItem>
-                          </NavigationMenuList>
-                        </NavigationMenu>
-                      )}
+                      {venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venue.id} />}
                     </div>
                     <div>
                       <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{mergedVenue.name}</CardTitle>

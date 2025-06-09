@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 
 import type { MatchVenues, MoreVenues } from "@/lib/alwaysbookbooked";
 import { ExternalLink, MapPin } from "lucide-react";
+import { ViewRankings } from "./view-rankings";
 
 export function HomeResults({ country, lang, city, venues }: { country: keyof typeof locations; lang: string; city: string; venues: MatchVenues[] }) {
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
@@ -61,6 +62,8 @@ export function HomeResults({ country, lang, city, venues }: { country: keyof ty
                   <Button className="w-full mt-4" asChild>
                     <Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>Book Now</Link>
                   </Button>
+
+                  {venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venue.id} />}
                 </CardContent>
               </Card>
             ))}

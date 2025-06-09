@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 
 import type { MatchVenues, MoreVenues } from "@/lib/alwaysbookbooked";
 import { ExternalLink, MapPin } from "lucide-react";
+import { ViewRankings } from "../server/view-rankings";
 
 export default function HomeSearch({ country, venues, lang }: { country: keyof typeof locations; venues: MatchVenues[]; lang: string }) {
   const router = useRouter();
@@ -150,6 +151,8 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
                   <Button className="w-full mt-4" asChild>
                     <Link href={`/${country}/${lang}/${citySlug}/venues/${venue.id}`}>Book Now</Link>
                   </Button>
+
+                  {venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venue.id} />}
                 </CardContent>
               </Card>
             ))}

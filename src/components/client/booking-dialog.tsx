@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogPortal, DialogOverlay, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -65,31 +65,7 @@ export default function BookingDialog({
   const [currentStep, setCurrentStep] = useState<Step>("details");
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
-  const [timeLeft, setTimeLeft] = useState(30);
   const formRef = useRef<HTMLFormElement>(null);
-
-  useEffect(() => {
-    let timerId: NodeJS.Timeout;
-
-    if (currentStep === "payment") {
-      setTimeLeft(30); // Reset timer when entering payment step
-      timerId = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(timerId);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-
-    return () => {
-      if (timerId) {
-        clearInterval(timerId);
-      }
-    };
-  }, [currentStep]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -311,11 +287,6 @@ export default function BookingDialog({
                   <img src={paymentImage} alt="Payment QR Code" className="mx-auto" />
                 </div>
 
-                {timeLeft > 0 && (
-                  <div className="text-center text-sm font-bold text-orange-600">
-                    <p>Time remaining: {timeLeft} seconds.</p>
-                  </div>
-                )}
                 <Label className="text-center text-sm font-bold text-orange-600">If you paid, press 'Next' to go to final step to submit proof of payment. Only press 'Next' when you have paid.</Label>
               </div>
             )}
@@ -362,8 +333,8 @@ export default function BookingDialog({
                   <Button type="button" variant="outline" onClick={() => setCurrentStep("details")}>
                     Back
                   </Button>
-                  <Button type="button" variant="outline" onClick={() => setCurrentStep("success")} disabled={timeLeft > 0}>
-                    {timeLeft > 0 ? "Waiting for payment" : "Next"}
+                  <Button type="button" variant="outline" onClick={() => setCurrentStep("success")}>
+                    Next
                   </Button>
                 </>
               )}

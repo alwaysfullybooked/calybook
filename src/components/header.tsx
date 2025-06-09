@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Menu, User, Settings, LogOut, Calendar } from "lucide-react";
+import { Menu, User, Settings, LogOut, Calendar, Gamepad2 } from "lucide-react";
 
 import { auth, signIn, signOut } from "@/server/auth";
 import { Button } from "@/components/ui/button";
@@ -80,14 +80,18 @@ export default async function Header({ country, link }: { country: string; link:
 
                   <Separator className="my-4" />
 
-                  <nav className="flex flex-col gap-2">
+                  <nav className="flex flex-col gap-2 px-3">
                     <Link href="/bookings" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
                       <Calendar className="h-4 w-4" />
                       My Bookings
                     </Link>
-                    <Link href="/settings" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
+                    {/* <Link href="/games" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
+                      <Gamepad2 className="h-4 w-4" />
+                      My Games
+                    </Link> */}
+                    <Link href="/profile" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
                       <Settings className="h-4 w-4" />
-                      Settings
+                      My Profile
                     </Link>
                   </nav>
 
@@ -98,8 +102,9 @@ export default async function Header({ country, link }: { country: string; link:
                       "use server";
                       await signOut({ redirectTo: "/" });
                     }}
+                    className="px-3"
                   >
-                    <Button type="submit" className="flex items-center gap-3 px-2 py-2 text-sm text-destructive rounded-md hover:bg-destructive/10 transition-colors w-full">
+                    <Button type="submit" className="flex items-center gap-3 text-sm rounded-md w-full">
                       <LogOut className="h-4 w-4" />
                       Sign out
                     </Button>
