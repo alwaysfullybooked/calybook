@@ -17,7 +17,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
   const router = useRouter();
   const pathname = usePathname();
 
-  const [city, setCity] = useState<string>(locations[country]?.cities[0]?.value ?? "");
+  const [city, setCity] = useState<string>("*");
   const citySlug = locations[country]?.cities.find((c) => c.value === city)?.slug ?? "";
 
   const filteredMoreVenues = moreVenues.filter((venue) => venue.city === city && venue.country === getCountryLabel(country)) as unknown as MoreVenues[];
@@ -26,6 +26,11 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
     const params = new URLSearchParams();
 
     city && params.set("city", city);
+
+    if (city === "*") {
+      params.delete("city");
+    }
+
     // if (category !== "*") params.set("category", category);
     // if (search) params.set("search", search);
     router.push(`${pathname}?${params.toString()}`);
@@ -44,6 +49,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
               <SelectValue placeholder="Select Location" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="*">All Locations</SelectItem>
               {locations[country]?.cities.map(({ value, label }) => (
                 <SelectItem key={value} value={value}>
                   {label}
