@@ -12,7 +12,6 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: z.string(),
     AFB_API_KEY: z.string(),
     AFB_API_URL: z.string(),
-    AFB_BLOB_READ_WRITE_TOKEN: z.string(),
     AFB_MCP_URL: z.string(),
     GROQ_API_KEY: z.string(),
     DATABASE_URL: z
@@ -41,7 +40,6 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     AFB_API_KEY: process.env.AFB_API_KEY,
     AFB_API_URL: process.env.AFB_API_URL,
-    AFB_BLOB_READ_WRITE_TOKEN: process.env.AFB_BLOB_READ_WRITE_TOKEN,
     AFB_MCP_URL: process.env.AFB_MCP_URL,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
