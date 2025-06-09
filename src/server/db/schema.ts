@@ -12,18 +12,18 @@ export const createTable = mysqlTableCreator((name) => `justbookit_${name}`);
 
 export const Categories = {
   TENNIS: "tennis",
-  BADMINTON: "badminton",
-  BASKETBALL: "basketball",
-  VOLLEYBALL: "volleyball",
-  FOOTBALL: "football",
+  // BADMINTON: "badminton",
+  // BASKETBALL: "basketball",
+  // VOLLEYBALL: "volleyball",
+  // FOOTBALL: "football",
 } as const;
 
 export const Preferences = {
   TENNIS: "tennis",
-  BADMINTON: "badminton",
-  BASKETBALL: "basketball",
-  VOLLEYBALL: "volleyball",
-  FOOTBALL: "football",
+  // BADMINTON: "badminton",
+  // BASKETBALL: "basketball",
+  // VOLLEYBALL: "volleyball",
+  // FOOTBALL: "football",
   CONTACT: "contact",
 } as const;
 
