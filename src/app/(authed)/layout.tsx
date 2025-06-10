@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "CalyBook",
     description: "Book all your activities.",
-    url: "https://calybook.com",
+    url: "https://www.calybook.com",
     siteName: "CalyBook",
   },
   // twitter: {

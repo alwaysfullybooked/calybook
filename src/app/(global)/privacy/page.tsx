@@ -12,8 +12,8 @@ export default function PrivacyPage() {
 
       <div className="space-y-8">
         <p className="mb-8">
-          Your privacy is important to us. It is Calybook's policy to respect your privacy regarding any information we may collect from you across our website, https://calybook.com, and other sites
-          we own and operate.
+          Your privacy is important to us. It is Calybook's policy to respect your privacy regarding any information we may collect from you across our website, https://www.calybook.com, and other
+          sites we own and operate.
         </p>
 
         <section>

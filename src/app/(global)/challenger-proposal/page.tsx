@@ -1,5 +1,5 @@
-import ChallengerProposal from "@/components/tennis/challenge";
+import { redirect } from "next/navigation";
 
 export default function TennisChallenge() {
-  return <ChallengerProposal />;
+  redirect("/challenger-proposal/v2");
 }
