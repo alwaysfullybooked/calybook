@@ -94,7 +94,7 @@ export function AddTennisGame({ venueId, venueName, rankings }: { venueId: strin
                     <SelectContent>
                       {rankings.map((ranking) => (
                         <SelectItem key={ranking.id} value={ranking.id}>
-                          {ranking.playerName} - {ranking.playerEmailId}
+                          {ranking.playerName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -125,7 +125,7 @@ export function AddTennisGame({ venueId, venueName, rankings }: { venueId: strin
                     <SelectContent>
                       {rankings.map((ranking) => (
                         <SelectItem key={ranking.id} value={ranking.id}>
-                          {ranking.playerName} - {ranking.playerEmailId}
+                          {ranking.playerName}
                         </SelectItem>
                       ))}
                     </SelectContent>
