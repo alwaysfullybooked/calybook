@@ -93,7 +93,7 @@ export function AddTennisGame({ venueId, venueName, rankings }: { venueId: strin
                     </FormControl>
                     <SelectContent>
                       {rankings.map((ranking) => (
-                        <SelectItem key={ranking.id} value={ranking.id}>
+                        <SelectItem key={ranking.playerId} value={ranking.playerId}>
                           {ranking.playerName}
                         </SelectItem>
                       ))}
@@ -124,7 +124,7 @@ export function AddTennisGame({ venueId, venueName, rankings }: { venueId: strin
                     </FormControl>
                     <SelectContent>
                       {rankings.map((ranking) => (
-                        <SelectItem key={ranking.id} value={ranking.id}>
+                        <SelectItem key={ranking.playerId} value={ranking.playerId}>
                           {ranking.playerName}
                         </SelectItem>
                       ))}
