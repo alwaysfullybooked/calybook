@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
 
   return {
-    title: `${countryLabel} - ${cityLabel} - ${lang.toUpperCase()} - Calybook`,
+    title: `${countryLabel} - ${cityLabel} - ${lang.toUpperCase()} - CalyBook`,
     alternates: {
       canonical: `https://www.calybook.com/${country}/${lang}/${city}`,
     },

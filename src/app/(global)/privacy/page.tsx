@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - Calybook",
-  description: "Privacy policy for Calybook",
+  title: "Privacy Policy - CalyBook",
+  description: "Privacy policy for CalyBook",
 };
 
 export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8">Privacy Policy - Calybook</h1>
+      <h1 className="text-4xl font-bold mb-8">Privacy Policy - CalyBook</h1>
 
       <div className="space-y-8">
         <p className="mb-8">
-          Your privacy is important to us. It is Calybook's policy to respect your privacy regarding any information we may collect from you across our website, https://www.calybook.com, and other
+          Your privacy is important to us. It is CalyBook's policy to respect your privacy regarding any information we may collect from you across our website, https://www.calybook.com, and other
           sites we own and operate.
         </p>
 
         <section>
           <h2 className="text-2xl font-semibold mb-4">GDPR Compliance</h2>
           <p>
-            Calybook strictly implements the GDPR regulation, which aims at protecting user data and providing a right to modify and delete such data, as well as to consent to data collection. This
+            CalyBook strictly implements the GDPR regulation, which aims at protecting user data and providing a right to modify and delete such data, as well as to consent to data collection. This
             policy applies to all our users, regardless of their location worldwide.
           </p>
         </section>
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-2xl font-semibold mb-4">Booking Information</h2>
-          <p>When you make a booking through Calybook, we collect and process the following information:</p>
+          <p>When you make a booking through CalyBook, we collect and process the following information:</p>
           <ul className="list-disc pl-6 space-y-2 mt-4">
             <li>Your booking details (date, time, venue, service)</li>
             <li>Contact information for communication about your booking</li>

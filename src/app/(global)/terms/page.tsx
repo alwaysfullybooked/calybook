@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service - Calybook",
-  description: "Terms of service for Calybook",
+  title: "Terms of Service - CalyBook",
+  description: "Terms of service for CalyBook",
 };
 
 export default function TermsPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8">Terms of Service - Calybook</h1>
+      <h1 className="text-4xl font-bold mb-8">Terms of Service - CalyBook</h1>
 
       <div className="space-y-8">
         <p className="mb-8">
-          Welcome to Calybook! These Terms of Service ("Terms") govern your access to and use of the Calybook website (the "Website"), applications, and services (collectively, the "Service") provided
+          Welcome to CalyBook! These Terms of Service ("Terms") govern your access to and use of the CalyBook website (the "Website"), applications, and services (collectively, the "Service") provided
           by Fanscope Limited ("Fanscope," "we," "us," or "our"), a company incorporated in Hong Kong.
         </p>
 
@@ -35,7 +35,7 @@ export default function TermsPage() {
               By using Google Authentication to sign up or log in to our Service, you authorize us to access and use certain account information from Google, including your name, email address, and
               profile picture, as permitted by Google and your privacy settings with them.
             </li>
-            <li>You are responsible for maintaining the confidentiality of your account credentials, whether they are directly with Calybook or through Google Authentication.</li>
+            <li>You are responsible for maintaining the confidentiality of your account credentials, whether they are directly with CalyBook or through Google Authentication.</li>
             <li>
               You agree to notify us immediately of any unauthorized use of your account or any other breach of security. Fanscope Limited will not be liable for any loss or damage arising from your
               failure to comply with this section.
@@ -71,7 +71,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-2xl font-semibold mb-4">4. Booking and Reservations</h2>
-          <p className="mb-4">When using Calybook to make bookings and reservations:</p>
+          <p className="mb-4">When using CalyBook to make bookings and reservations:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>You must provide accurate and complete information for all bookings</li>
             <li>You are responsible for reviewing and complying with each venue's specific terms and conditions</li>

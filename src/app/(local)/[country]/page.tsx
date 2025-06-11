@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
 
   return {
-    title: `${countryLabel} - Calybook`,
+    title: `${countryLabel} - CalyBook`,
     alternates: {
       canonical: `https://www.calybook.com/${country}`,
     },

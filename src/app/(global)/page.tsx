@@ -45,7 +45,7 @@ export default function Home() {
     <div className="bg-background py-4 sm:py-6 md:py-8 px-3 sm:px-4">
       <div className="w-full bg-card text-card-foreground rounded-xl p-3 sm:p-6 md:p-8">
         <div className="max-w-2xl mx-auto mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-2">Welcome to Calybook</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-2">Welcome to CalyBook</h1>
           <p className="text-center text-muted-foreground text-base sm:text-lg">Booking has never been easier.</p>
         </div>
 

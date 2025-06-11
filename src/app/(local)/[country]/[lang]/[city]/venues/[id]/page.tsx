@@ -52,12 +52,12 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
 
   if (!venue) {
     return {
-      title: `${countryLabel} - ${cityLabel} - Venue not found - ${lang.toUpperCase()} - Calybook`,
+      title: `${countryLabel} - ${cityLabel} - Venue not found - ${lang.toUpperCase()} - CalyBook`,
     };
   }
 
   return {
-    title: `${countryLabel} - ${cityLabel} - ${venue.name} - ${lang.toUpperCase()} - Calybook`,
+    title: `${countryLabel} - ${cityLabel} - ${venue.name} - ${lang.toUpperCase()} - CalyBook`,
     alternates: {
       canonical: `https://www.calybook.com/${country}/${lang}/${city}/venues/${id}`,
     },
