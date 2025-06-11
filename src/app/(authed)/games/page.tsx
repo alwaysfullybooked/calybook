@@ -41,6 +41,7 @@ export default async function GamesPage() {
                       <span className="font-medium">{game.winnerName}</span>
                     </div>
                     <div className="flex flex-col items-center gap-2">
+                      <span className="text-xl font-medium">{game.venueName}</span>
                       <span className="text-xl font-medium">{game.score}</span>
                       <span className="text-sm text-muted-foreground">{game.playedDate}</span>
                     </div>
