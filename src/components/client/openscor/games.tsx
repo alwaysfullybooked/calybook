@@ -80,7 +80,7 @@ export function AddTennisGame({ venueId, venueName, rankings }: { venueId: strin
                   <FormLabel>Winner</FormLabel>
                   <Select
                     onValueChange={(value) => {
-                      const selectedWinner = rankings.find((ranking) => ranking.id === value);
+                      const selectedWinner = rankings.find((ranking) => ranking.playerId === value);
                       field.onChange(value);
                       form.setValue("winnerName", selectedWinner?.playerName ?? "");
                     }}
@@ -111,7 +111,7 @@ export function AddTennisGame({ venueId, venueName, rankings }: { venueId: strin
                   <FormLabel>Player</FormLabel>
                   <Select
                     onValueChange={(value) => {
-                      const selectedPlayer = rankings.find((ranking) => ranking.id === value);
+                      const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
                       field.onChange(value);
                       form.setValue("playerName", selectedPlayer?.playerName ?? "");
                     }}
@@ -166,7 +166,7 @@ export function AddTennisGame({ venueId, venueName, rankings }: { venueId: strin
                 )}
               />
             </div>
-            <SubmitButton type="submit">Submit</SubmitButton>
+            <SubmitButton type="submit">{form.formState.isSubmitting ? "Submitting..." : "Submit"}</SubmitButton>
           </form>
         </Form>
       </DialogContent>
