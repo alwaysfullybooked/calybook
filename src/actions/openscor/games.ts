@@ -36,3 +36,16 @@ export async function createOpenScorGame({ venueId, venueName, category, winnerI
     isCloseMatch: false,
   });
 }
+
+export async function approveOpenScorGame({ gameId, approvedBy }: { gameId: string; approvedBy: string }) {
+  const session = await auth();
+
+  if (!session?.user?.id || !session.user?.email) {
+    throw new Error("Unauthorized");
+  }
+
+  return openscor.games.approve({
+    gameId,
+    approvedBy,
+  });
+}

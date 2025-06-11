@@ -44,6 +44,12 @@ export default async function GamesPage() {
                       <span className="text-xl font-medium">{game.venueName}</span>
                       <span className="text-xl font-medium">{game.score}</span>
                       <span className="text-sm text-muted-foreground">{game.playedDate}</span>
+
+                      {game.playerApproved && game.winnerApproved && (
+                        <Badge variant="outline" className="text-xs bg-primary">
+                          Approved
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{game.playerName}</span>
