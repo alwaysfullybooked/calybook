@@ -1,11 +1,13 @@
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
-import { api } from "@/trpc/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Medal, TrendingUp, Calendar } from "lucide-react";
+import { Trophy, TrendingUp, Calendar } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { openscor } from "@/lib/openscor";
+import { AddTennisGame } from "@/components/client/openscor/games";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 
 export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string; category: string }> }) {
@@ -14,7 +16,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   const session = await auth();
 
   if (!session?.user?.email) {
-    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${id}/${category}`);
+    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${id}/rankings/${category}`);
   }
 
   const venue = await alwaysbookbooked.venues.publicFind(id);
@@ -23,20 +25,17 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
     return <div>Venue not found</div>;
   }
 
-  const rankings = await api.venueRankings.search({ venueId: id });
-  const matches = await api.venueGames.search({ venueId: id });
-
-  // Filter rankings for this venue and category
-  const venueRankings = rankings.filter((r) => r.venueId === id && r.category === category).sort((a, b) => b.currentPoints - a.currentPoints);
-
-  // Filter matches for this venue and category
-  const venueMatches = matches.filter((m) => m.venueId === id && m.category === category);
+  const rankings = await openscor.rankings.search({ venueId: id, category: "tennis" });
+  const games = await openscor.games.search({ venueId: id, category: "tennis" });
 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{venue.name}</h1>
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">{category} Rankings</h2>
+      </div>
+      <div className="text-center space-y-2 mb-6 sm:mb-12">
+        <AddTennisGame venueId={id} venueName={venue.name} rankings={rankings} />
       </div>
 
       <main className="container mx-auto px-2 py-4 sm:px-4 sm:py-8">
@@ -46,7 +45,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
               <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
               Rankings
             </TabsTrigger>
-            <TabsTrigger value="matches" className="flex items-center gap-1 sm:gap-2 text-sm sm:text-base">
+            <TabsTrigger value="games" className="flex items-center gap-1 sm:gap-2 text-sm sm:text-base">
               <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
               Recent Matches
             </TabsTrigger>
@@ -62,7 +61,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
               </CardHeader>
               <CardContent className="px-3 sm:px-6">
                 <div className="space-y-3 sm:space-y-4">
-                  {venueRankings.map((ranking) => (
+                  {rankings.map((ranking) => (
                     <div key={ranking.id} className="flex items-center justify-center gap-4 rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
                       {/* <div className="flex items-center justify-between gap-4"> */}
                       {/* <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-muted">
@@ -81,7 +80,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                         <AvatarFallback>{ranking.userId.slice(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium text-sm sm:text-base">***** ********</p>
+                        <p className="font-medium text-sm sm:text-base">{ranking.playerName}</p>
                         <Badge variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm">
                           <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
                           {ranking.currentPoints} pts
@@ -96,42 +95,43 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
             </Card>
           </TabsContent>
 
-          <TabsContent value="matches">
+          <TabsContent value="games">
             <Card>
               <CardHeader className="px-3 py-4 sm:px-6 sm:py-6">
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                   <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
-                  Recent Matches
+                  Recent Games
                 </CardTitle>
               </CardHeader>
               <CardContent className="px-3 sm:px-6">
                 <div className="space-y-3 sm:space-y-4">
-                  {venueMatches.map((match) => (
-                    <div key={match.id} className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
+                  {games.map((game) => (
+                    <div key={game.id} className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex items-center gap-2 justify-center">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={`https://avatar.vercel.sh/${match.winnerId}`} />
-                            <AvatarFallback>{match.winnerId.slice(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarImage src={`https://avatar.vercel.sh/${game.winnerId}`} />
+                            <AvatarFallback>{game.winnerId.slice(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
-                          <span className="font-medium text-sm sm:text-base">***** ********</span>
+                          <span className="font-medium text-sm sm:text-base">{game.winnerName}</span>
                         </div>
                         <div className="flex flex-col items-center">
                           <Badge variant="secondary" className="text-xl">
-                            {match.score}
+                            {game.score}
                           </Badge>
-                          <span className="text-xs sm:text-sm text-muted-foreground">{match.playedDate}</span>
+                          <span className="text-xs sm:text-sm text-muted-foreground mt-3">{game.playedDate}</span>
+                          <span className="text-xs sm:text-sm text-muted-foreground">{game.status}</span>
                         </div>
                         <div className="flex items-center gap-2 justify-center">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={`https://avatar.vercel.sh/${match.playerId}`} />
-                            <AvatarFallback>{match.playerId.slice(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarImage src={`https://avatar.vercel.sh/${game.playerId}`} />
+                            <AvatarFallback>{game.playerId.slice(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
-                          <span className="font-medium text-sm sm:text-base">***** ********</span>
+                          <span className="font-medium text-sm sm:text-base">{game.playerName}</span>
                         </div>
                       </div>
                       <div className="mt-2 flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                        {match.isCloseMatch && (
+                        {game.isCloseMatch && (
                           <Badge variant="outline" className="text-xs">
                             Close Match
                           </Badge>

@@ -3,7 +3,7 @@ import { protectedProcedure } from "../trpc";
 import { Preferences, preferences } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
-export const tennisPreferencesRouter = {
+export const preferencesRouter = {
   find: protectedProcedure.query(async ({ ctx }) => {
     const result = await ctx.db.query.preferences.findFirst({
       where: eq(preferences.userId, ctx.session.user.id),

@@ -37,9 +37,9 @@ export default async function Header({ country, link }: { country: string; link:
                     <DropdownMenuItem asChild>
                       <Link href="/profile">My Profile</Link>
                     </DropdownMenuItem>
-                    {/* <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild>
                       <Link href="/games">My Games</Link>
-                    </DropdownMenuItem> */}
+                    </DropdownMenuItem>
                     <DropdownMenuItem>
                       <form
                         action={async () => {
@@ -85,10 +85,10 @@ export default async function Header({ country, link }: { country: string; link:
                       <Calendar className="h-4 w-4" />
                       My Bookings
                     </Link>
-                    {/* <Link href="/games" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
+                    <Link href="/games" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
                       <Gamepad2 className="h-4 w-4" />
                       My Games
-                    </Link> */}
+                    </Link>
                     <Link href="/profile" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
                       <Settings className="h-4 w-4" />
                       My Profile

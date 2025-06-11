@@ -154,7 +154,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
                       <Link href={`/${country}/${lang}/${citySlug}/venues/${venue.id}`}>Book Now</Link>
                     </Button>
 
-                    {venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venue.id} />}
+                    {venue.allowRankings && <ViewRankings country={country} lang={lang} city={citySlug} venueId={venue.id} />}
                   </CardContent>
                 </Card>
               );

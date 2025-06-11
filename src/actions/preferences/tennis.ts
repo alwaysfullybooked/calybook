@@ -17,7 +17,7 @@ export async function createTennisPreferences({
   if (!session?.user?.id || !session.user?.email) {
     throw new Error("Unauthorized");
   }
-  const result = await api.tennisPreferences.upsert({
+  const result = await api.preferences.upsert({
     category: "tennis",
     universalTennisRating,
     nationalTennisRatingProgram,

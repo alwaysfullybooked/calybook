@@ -55,8 +55,6 @@ export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   preferences: many(preferences),
-  venueGames: many(venueGames),
-  venueRankings: many(venueRankings),
 }));
 
 export const accounts = createTable(
@@ -127,79 +125,4 @@ export const preferences = createTable(
 
 export const preferencesRelations = relations(preferences, ({ one }) => ({
   user: one(users, { fields: [preferences.userId], references: [users.id] }),
-}));
-
-export const venueGames = createTable(
-  "venue_games",
-  (d) => ({
-    id: d
-      .varchar({ length: 255 })
-      .notNull()
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
-    venueId: d.varchar({ length: 255 }).notNull(),
-    venueName: d.varchar({ length: 256 }).notNull(),
-    category: d.mysqlEnum(["tennis", "badminton", "basketball", "volleyball", "football"]).notNull(),
-
-    winnerId: d.varchar({ length: 255 }).notNull(),
-    winnerName: d.varchar({ length: 256 }).notNull(),
-    playerId: d.varchar({ length: 255 }).notNull(),
-    playerName: d.varchar({ length: 256 }).notNull(),
-    score: d.varchar({ length: 255 }).notNull(),
-    isCloseMatch: d.boolean().notNull().default(false),
-
-    winnerApproved: d.boolean().notNull().default(false),
-    playerApproved: d.boolean().notNull().default(false),
-    playedDate: d.varchar({ length: 10 }).notNull(),
-
-    createdById: d.varchar({ length: 255 }).notNull(),
-    createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updatedAt: d.timestamp().onUpdateNow(),
-  }),
-  (matchResult) => [
-    index("match_results_winnerId_idx").on(matchResult.winnerId),
-    index("match_results_playerId_idx").on(matchResult.playerId),
-    index("match_results_played_date_idx").on(matchResult.playedDate),
-  ],
-);
-
-export const matchResultsRelations = relations(venueGames, ({ one }) => ({
-  winner: one(users, { fields: [venueGames.winnerId], references: [users.id] }),
-  player: one(users, { fields: [venueGames.playerId], references: [users.id] }),
-}));
-
-export const venueRankings = createTable(
-  "venue_rankings",
-  (d) => ({
-    id: d
-      .varchar({ length: 255 })
-      .notNull()
-      .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
-    userId: d.varchar({ length: 255 }).notNull(),
-    venueId: d.varchar({ length: 255 }).notNull(),
-    venueName: d.varchar({ length: 256 }).notNull(),
-    category: d.mysqlEnum(["tennis", "badminton", "basketball", "volleyball", "football"]).notNull(),
-
-    currentPoints: d.int().notNull().default(1000), // Starting with 1000 CP
-    // rank: d.int().notNull(),
-    lastMatchDate: d.varchar({ length: 10 }),
-    status: d.varchar({ length: 10 }).notNull().default("ACTIVE"), // Using varchar instead of enum
-    joinedDate: d.varchar({ length: 10 }).notNull(),
-
-    createdById: d.varchar({ length: 255 }).notNull(),
-    createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updatedAt: d.timestamp().onUpdateNow(),
-  }),
-  (member) => [
-    index("tennis_club_members_user_id_idx").on(member.userId),
-    index("tennis_club_members_venue_id_idx").on(member.venueId),
-    // index("tennis_club_members_rank_idx").on(member.rank),
-    index("tennis_club_members_points_idx").on(member.currentPoints),
-    index("tennis_club_members_status_idx").on(member.status),
-  ],
-);
-
-export const venueRankingsRelations = relations(venueRankings, ({ one }) => ({
-  user: one(users, { fields: [venueRankings.userId], references: [users.id] }),
 }));

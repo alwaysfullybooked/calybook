@@ -7,7 +7,7 @@ import { Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { joinVenueRankings } from "@/actions/venue/rankings";
+import { joinVenueRankings } from "@/actions/openscor/rankings";
 import { Categories, type Category } from "@/server/db/schema";
 
 interface JoinVenueButtonProps {
@@ -16,9 +16,14 @@ interface JoinVenueButtonProps {
   city: string;
   venueId: string;
   venueName: string;
+  playerId: string;
+  playerName: string;
+  playerContactMethod: string;
+  playerContactId: string;
+  playerEmailId: string;
 }
 
-export function JoinVenueButton({ country, lang, city, venueId, venueName }: JoinVenueButtonProps) {
+export function JoinRankingsButton({ country, lang, city, venueId, venueName, playerId, playerName, playerContactMethod, playerContactId, playerEmailId }: JoinVenueButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState<Category | "">("");
@@ -33,7 +38,7 @@ export function JoinVenueButton({ country, lang, city, venueId, venueName }: Joi
 
     try {
       setIsLoading(true);
-      await joinVenueRankings({ country, lang, city, venueId, venueName, category });
+      await joinVenueRankings({ country, lang, city, venueId, venueName, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId });
       setIsOpen(false);
       router.refresh();
     } catch (error) {

@@ -10,7 +10,7 @@ export default async function SettingsPage() {
   const contactMethod = session?.user?.contactMethod;
   const contactWhatsAppId = session?.user?.contactWhatsAppId;
   const contactLineId = session?.user?.contactLineId;
-  const tennisPreferences = await api.tennisPreferences.find();
+  const tennisPreferences = await api.preferences.find();
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">

@@ -1,8 +1,6 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { userRouter } from "@/server/api/routers/user";
-import { tennisPreferencesRouter } from "@/server/api/routers/preferences";
-import { venueGamesRouter } from "@/server/api/routers/venues/games";
-import { venueRankingsRouter } from "@/server/api/routers/venues/rankings";
+import { preferencesRouter } from "@/server/api/routers/preferences";
 
 /**
  * This is the primary router for your server.
@@ -11,11 +9,7 @@ import { venueRankingsRouter } from "@/server/api/routers/venues/rankings";
  */
 export const appRouter = createTRPCRouter({
   user: userRouter,
-
-  tennisPreferences: tennisPreferencesRouter,
-
-  venueGames: venueGamesRouter,
-  venueRankings: venueRankingsRouter,
+  preferences: preferencesRouter,
 });
 
 // export type definition of API

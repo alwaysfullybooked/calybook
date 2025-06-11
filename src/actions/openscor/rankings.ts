@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/server/auth";
-import { api } from "@/trpc/server";
+import { openscor } from "@/lib/openscor";
 import { revalidatePath } from "next/cache";
 import type { Category } from "@/server/db/schema";
 
@@ -12,19 +12,29 @@ interface JoinVenueRankingsProps {
   venueId: string;
   venueName: string;
   category: Category;
+  playerId: string;
+  playerName: string;
+  playerContactMethod: string;
+  playerContactId: string;
+  playerEmailId: string;
 }
 
-export async function joinVenueRankings({ country, lang, city, venueId, venueName, category }: JoinVenueRankingsProps) {
+export async function joinVenueRankings({ country, lang, city, venueId, venueName, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId }: JoinVenueRankingsProps) {
   const session = await auth();
 
   if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
 
-  const result = api.venueRankings.create({
+  const result = openscor.rankings.create({
     venueId,
     venueName,
     category,
+    playerId,
+    playerName,
+    playerContactMethod,
+    playerContactId,
+    playerEmailId,
   });
 
   revalidatePath(`/${country}/${lang}/${city}/venues/${venueId}`);

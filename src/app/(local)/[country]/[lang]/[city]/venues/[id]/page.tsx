@@ -10,9 +10,10 @@ import TennisRankings from "@/components/tennis/rankings";
 import TennisChallenge from "@/components/tennis/challenge";
 import BookingSchedule from "@/components/client/booking-schedule";
 import { locations } from "@/lib/locations";
-import { JoinVenueButton } from "@/components/client/venue/rankings";
+import { JoinRankingsButton } from "@/components/client/openscor/rankings";
 import { api } from "@/trpc/server";
 import { ViewRankings } from "@/components/server/view-rankings";
+import { openscor } from "@/lib/openscor";
 
 export async function generateStaticParams() {
   const countries = ["th"];
@@ -85,7 +86,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
     return <div>Venue not found</div>;
   }
 
-  const ranking = await api.venueRankings.find({ venueId: venue.id });
+  const ranking = await openscor.rankings.find({ venueId: venue.id, category: "tennis", playerId: session.user.id });
 
   const info = matchVenues.find((v) => v.id === venue.id);
 
@@ -112,9 +113,22 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                 <CardHeader className="space-y-2">
                   <div className="flex flex-col">
                     <div className="flex justify-end p-2">
-                      {!ranking && venue.allowRankings && <JoinVenueButton country={country} lang={lang} city={city} venueId={venue.id} venueName={venue.name} />}
+                      {!ranking && venue.allowRankings && (
+                        <JoinRankingsButton
+                          country={country}
+                          lang={lang}
+                          city={city}
+                          venueId={venue.id}
+                          venueName={venue.name}
+                          playerId={session.user.id}
+                          playerName={customerName}
+                          playerContactMethod="email"
+                          playerContactId={customerEmailId}
+                          playerEmailId={customerEmailId}
+                        />
+                      )}
 
-                      {venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venue.id} />}
+                      {ranking && venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venue.id} />}
                     </div>
                     <div>
                       <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{mergedVenue.name}</CardTitle>

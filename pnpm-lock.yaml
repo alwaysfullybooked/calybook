@@ -26,6 +26,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.12.1
         version: 1.12.1
+      '@openscor-com/sdk-node':
+        specifier: ^0.1.6
+        version: 0.1.6(@trpc/server@11.2.0(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
       '@planetscale/database':
         specifier: ^1.19.0
         version: 1.19.0
@@ -891,6 +894,9 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
+
+  '@openscor-com/sdk-node@0.1.6':
+    resolution: {integrity: sha512-eQBni/jFLCEsugz4sOJXmLtvAE7676Mwguz1aS+7ykMK/cyZh6cHlPXXkGynp0tNiYnjv3KGkq7f7+4P65OZpg==, tarball: https://npm.pkg.github.com/download/@openscor-com/sdk-node/0.1.6/d35d131cf1d22e4ae33a5678dd96f4ee16bbc4ce}
 
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
@@ -3304,6 +3310,15 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@15.3.3':
     optional: true
+
+  '@openscor-com/sdk-node@0.1.6(@trpc/server@11.2.0(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
+    dependencies:
+      '@tanstack/react-query': 5.79.2(react@19.1.0)
+      '@trpc/client': 11.2.0(@trpc/server@11.2.0(typescript@5.8.3))(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@trpc/server'
+      - react
+      - typescript
 
   '@opentelemetry/api@1.9.0': {}
 
