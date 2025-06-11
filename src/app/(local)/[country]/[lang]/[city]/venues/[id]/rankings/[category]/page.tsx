@@ -30,6 +30,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   const games = await openscor.games.search({ venueId: id, category: "tennis" });
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
+  const approvedGames = games.filter((game) => game.status === "approved" && [game.winnerId, game.playerId].includes(session.user.id));
 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
@@ -187,7 +188,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
               </CardHeader>
               <CardContent className="px-3 sm:px-6">
                 <div className="space-y-3 sm:space-y-4">
-                  {games.map((game) => (
+                  {approvedGames.map((game) => (
                     <div key={game.id} className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex items-center gap-2 justify-center">
