@@ -20,10 +20,8 @@
     "vercel-remove": "vercel remove -s -y calybook"
   },
   "dependencies": {
-    "@ai-sdk/groq": "^1.2.9",
-    "@ai-sdk/openai": "^1.3.22",
     "@ai-sdk/react": "^1.2.12",
-    "@alwaysfullybooked/sdk-node": "^0.1.46",
+    "@alwaysfullybooked/sdk-node": "^0.1.47",
     "@auth/drizzle-adapter": "^1.9.1",
     "@hookform/resolvers": "^5.1.1",
     "@modelcontextprotocol/sdk": "^1.12.1",

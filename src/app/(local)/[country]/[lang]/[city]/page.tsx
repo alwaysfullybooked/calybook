@@ -13,7 +13,7 @@ export async function generateStaticParams() {
     { country: "th", lang: "en", city: "bangkok" },
     { country: "th", lang: "en", city: "chiang-mai" },
     { country: "th", lang: "en", city: "phuket" },
-    { country: "hk", lang: "en", city: "hong-kong" },
+    { country: "hk", lang: "en", city: "hong-kong-island" },
     { country: "hk", lang: "en", city: "kowloon" },
     { country: "hk", lang: "en", city: "new-territories" },
     { country: "sc", lang: "en", city: "mahe" },
@@ -43,7 +43,7 @@ export default async function CountryLangPage({ params }: { params: Promise<{ co
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
 
-  const venues = await alwaysbookbooked.venues.publicSearch(countryLabel, cityLabel);
+  const venues = await alwaysbookbooked.venues.publicSearch({ country: countryLabel, city: cityLabel });
 
   const mergedVenues = venues.map((venue) => {
     const info = matchVenues.find((v) => v.id === venue.id);

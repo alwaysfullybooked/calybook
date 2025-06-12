@@ -25,7 +25,7 @@ export async function generateStaticParams() {
 
       const venues = await Promise.all(
         cities.map(async (city) => {
-          const venues = await alwaysbookbooked.venues.publicSearch(countryLabel, city.label);
+          const venues = await alwaysbookbooked.venues.publicSearch({ country: countryLabel, city: city.label });
 
           return venues.map((v) => ({
             country,
@@ -43,12 +43,12 @@ export async function generateStaticParams() {
   return venues.flat();
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string }> }) {
-  const { country, lang, city, id } = await params;
+export async function generateMetadata({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string }> }) {
+  const { country, lang, city, venueId } = await params;
 
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
-  const venue = await alwaysbookbooked.venues.publicFind(id);
+  const venue = await alwaysbookbooked.venues.publicFind({ venueId });
 
   if (!venue) {
     return {
@@ -59,17 +59,17 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   return {
     title: `${countryLabel} - ${cityLabel} - ${venue.name} - ${lang.toUpperCase()} - CalyBook`,
     alternates: {
-      canonical: `https://www.calybook.com/${country}/${lang}/${city}/venues/${id}`,
+      canonical: `https://www.calybook.com/${country}/${lang}/${city}/venues/${venueId}`,
     },
   };
 }
-export default async function VenuePage({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string }> }) {
-  const { country, lang, city, id } = await params;
+export default async function VenuePage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string }> }) {
+  const { country, lang, city, venueId } = await params;
 
   const session = await auth();
 
   if (!session?.user?.email) {
-    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${id}`);
+    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${venueId}`);
   }
 
   const customerName = session.user.name ?? session.user.email;
@@ -78,8 +78,8 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
   const contactWhatsAppId = session.user.contactWhatsAppId;
   const contactLineId = session.user.contactLineId;
 
-  const venue = await alwaysbookbooked.venues.publicFind(id);
-  const availableSchedule = await alwaysbookbooked.venues.publicAvailability(id);
+  const venue = await alwaysbookbooked.venues.publicFind({ venueId });
+  const availableSchedule = await alwaysbookbooked.venues.publicAvailability({ venueId });
   const availableScheduleFiltered = availableSchedule.filter((f) => f.paymentType !== "manual_prepaid" || (f.paymentType === "manual_prepaid" && f.paymentImage));
 
   if (!venue) {

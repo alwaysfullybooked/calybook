@@ -15,7 +15,7 @@ export const env = createEnv({
     AFB_MCP_URL: z.string(),
     OS_API_KEY: z.string(),
     OS_API_URL: z.string(),
-    GROQ_API_KEY: z.string(),
+    OPENROUTER_API_KEY: z.string(),
     DATABASE_URL: z
       .string()
       .url()
@@ -45,7 +45,7 @@ export const env = createEnv({
     AFB_MCP_URL: process.env.AFB_MCP_URL,
     OS_API_KEY: process.env.OS_API_KEY,
     OS_API_URL: process.env.OS_API_URL,
-    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
   },

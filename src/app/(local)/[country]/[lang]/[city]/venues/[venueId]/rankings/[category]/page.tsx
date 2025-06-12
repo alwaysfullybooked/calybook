@@ -11,23 +11,23 @@ import { AddTennisGame } from "@/components/client/openscor/games";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { ApproveGameButton } from "@/components/client/openscor/approve";
 
-export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; id: string; category: string }> }) {
-  const { country, lang, city, id, category } = await params;
+export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; category: string }> }) {
+  const { country, lang, city, venueId, category } = await params;
 
   const session = await auth();
 
   if (!session?.user?.email) {
-    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${id}/rankings/${category}`);
+    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${venueId}/rankings/${category}`);
   }
 
-  const venue = await alwaysbookbooked.venues.publicFind(id);
+  const venue = await alwaysbookbooked.venues.publicFind({ venueId });
 
   if (!venue) {
     return <div>Venue not found</div>;
   }
 
-  const rankings = await openscor.rankings.search({ venueId: id, category: "tennis" });
-  const games = await openscor.games.search({ venueId: id, category: "tennis" });
+  const rankings = await openscor.rankings.search({ venueId, category: "tennis" });
+  const games = await openscor.games.search({ venueId, category: "tennis" });
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
   const approvedGames = games.filter((game) => game.status === "approved" && [game.winnerId, game.playerId].includes(session.user.id));
@@ -40,7 +40,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
       </div>
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
-        <AddTennisGame venueId={id} venueName={venue.name} rankings={rankings} />
+        <AddTennisGame venueId={venueId} venueName={venue.name} rankings={rankings} />
       </div>
 
       {pendingGames.length > 0 && (

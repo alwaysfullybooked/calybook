@@ -1,19 +1,16 @@
 import { env } from "@/env";
-import { groq } from "@ai-sdk/groq";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 // import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { tool, type Tool, jsonSchema, streamText, type Message } from "ai";
 
-const model = groq("llama3-8b-8192");
-// const model = groq("llama-3.3-70b-versatile");
-
-// const openrouter = createOpenRouter({
-//   apiKey: env.OPENAI_API_KEY,
-// });
+const openrouter = createOpenRouter({
+  apiKey: env.OPENROUTER_API_KEY,
+});
 
 // const model = openrouter.chat("meta-llama/llama-3.3-70b-instruct:free");
-// const model = openrouter.chat("meta-llama/llama-3.3-8b-instruct:free");
+const model = openrouter.chat("meta-llama/llama-3.3-8b-instruct:free");
 
 // Client and tools caching
 const clientCache = new Map<string, Client>();
