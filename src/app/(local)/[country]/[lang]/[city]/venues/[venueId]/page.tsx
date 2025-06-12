@@ -31,7 +31,7 @@ export async function generateStaticParams() {
             country,
             lang: "en",
             city: city.slug,
-            id: v.id,
+            venueId: v.id,
           }));
         }),
       );
