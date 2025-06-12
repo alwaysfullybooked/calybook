@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { locations } from "@/lib/locations";
+import { Loader2 } from "lucide-react";
 
-export default function ChatInterface({ sessionId, country }: { sessionId: string; country: string }) {
+export default function ChatInterface({ sessionId, country, email }: { sessionId: string; country: string; email: string }) {
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
 
   const { messages, input, handleInputChange, handleSubmit, status } = useChat({
@@ -15,11 +16,15 @@ export default function ChatInterface({ sessionId, country }: { sessionId: strin
     headers: {
       "mcp-session-id": sessionId,
     },
+    body: {
+      country,
+      email,
+    },
     initialMessages: [
       {
         id: "welcome",
         role: "assistant",
-        content: `"Hello! I'm your CalyBook ${countryLabel} Assistant. I can help you search for venues, services, and make bookings. How can I assist you today?`,
+        content: `"Hello! I'm your CalyBook ${countryLabel} Booking Assistant. I can help you search for venues, services, and make bookings. How can I assist you today?`,
       },
     ],
   });
@@ -41,7 +46,11 @@ export default function ChatInterface({ sessionId, country }: { sessionId: strin
                   ? message.parts.map((part, index) => {
                       switch (part.type) {
                         case "text":
-                          return <span key={`${message.id}-${part.type}-${index}`}>{part.text}</span>;
+                          return (
+                            <span key={`${message.id}-${part.type}-${index}`} className="whitespace-pre-wrap">
+                              {part.text}
+                            </span>
+                          );
                         // Add more cases for images, tool calls, etc. as needed
                         default:
                           return null;
@@ -51,11 +60,17 @@ export default function ChatInterface({ sessionId, country }: { sessionId: strin
               </Card>
             </div>
           ))}
+
+          {status !== "ready" && (
+            <div className="flex justify-center items-center h-full">
+              <Loader2 className="w-4 h-4 animate-spin" />
+            </div>
+          )}
         </ScrollArea>
         <form onSubmit={handleSubmit} className="flex gap-2 border-t bg-card p-4">
           <Input value={input} placeholder="Type your message..." onChange={handleInputChange} disabled={status !== "ready"} className="flex-1" />
-          <Button type="submit" disabled={status !== "ready"}>
-            Send
+          <Button type="submit" disabled={status !== "ready"} className="min-w-[80px]">
+            {status === "streaming" ? "Sending..." : "Send"}
           </Button>
         </form>
       </div>

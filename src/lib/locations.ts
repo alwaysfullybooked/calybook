@@ -21,7 +21,7 @@ export const locations: Record<string, Location> = {
     name: "Hong Kong",
     languages: [{ code: "en", label: "English" }],
     cities: [
-      { value: "Hong Kong", label: "Hong Kong", slug: "hong-kong" },
+      { value: "Hong Kong Island", label: "Hong Kong Island", slug: "hong-kong-island" },
       { value: "Kowloon", label: "Kowloon", slug: "kowloon" },
       { value: "New Territories", label: "New Territories", slug: "new-territories" },
     ],

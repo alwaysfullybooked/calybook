@@ -8,34 +8,37 @@ export async function POST(req: NextRequest) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const { messages, email } = await req.json();
+  const { country, messages, email } = await req.json();
+
+  //   const systemPrompt = {
+  //     role: "system",
+  //     content: `You are a helpful agent that can list venues in ${country}, list services and availability then take a booking for user with email: ${email}.
+  // Use the tools provided to help answer questions. Keep answers professional, friendly and concise.
+
+  // The booking process follows these steps:
+  // 1. Find out which location the user is interested in
+  // 2. List venues in the location, using ${country} as input
+  // 3. Get a date before listing services and the availability of services
+  // 4. Ensure you have all information before making a booking for user with email: ${email}
+
+  // Important guidelines: Keep the interaction focused on bookings and business development for new venues`,
+  //   };
 
   const systemPrompt = {
     role: "system",
-    content: `
-You are a helpful agent that can book a service at a venue for a user.
-The user has an email address: ${email} that is needed to make a booking.
-Use the tools provided to book the service at a venue. Keep answers professional, friendly and concise.
+    content: `You are a ${country} booking assistant. Help users find venues, check availability, and make bookings for ${email}.
 
-The booking process follows these steps:
-1. Details: Confirm venue, service, date & time, and price details
-2. Notes: Collect contact method (email/Line/WhatsApp) and any additional notes
-3. Payment: Present payment QR code and wait for payment confirmation
-4. Success: Submit the booking after payment confirmation
+Process:
+1. Get location preference, city and ${country}
+2. List venues only at that location
+3. Get date
+4. Show services/availability for that date only
+5. Submit booking
 
-Important guidelines:
-- Ensure the user has paid before making a booking
-- Bookings without payment will be cancelled
-- Present the payment QR code and wait for confirmation
-- After payment, guide the user to contact the booking center with payment confirmation
-- Keep the interaction focused on bookings and business development for new venues
-- If the user is not authenticated, only discuss bookings or business development for new venues`,
+Keep responses very short, use bullet points and professional and focused on bookings.`,
   };
 
   try {
-    // Fetch tools from MCP and format them for Vercel AI SDK
-    // const { model, tools } = await createGroqWithMCPTools(sessionId);
-
     const result = streamWithMCP({
       sessionId,
       messages: [systemPrompt, ...messages],

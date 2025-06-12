@@ -11,5 +11,5 @@ export default async function ChatPage({ params }: { params: Promise<{ country: 
     redirect(`/login?callbackUrl=/${country}/${lang}/chat`);
   }
 
-  return <ChatInterface sessionId={session.user.id} country={country} />;
+  return <ChatInterface sessionId={session.user.id} country={country} email={session.user.email} />;
 }

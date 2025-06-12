@@ -1,15 +1,34 @@
 import { env } from "@/env";
 import { groq } from "@ai-sdk/groq";
+// import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { tool, type Tool, jsonSchema, streamText, type Message } from "ai";
-// import { randomUUID } from "node:crypto";
 
 const model = groq("llama3-8b-8192");
 // const model = groq("llama-3.3-70b-versatile");
 
+// const openrouter = createOpenRouter({
+//   apiKey: env.OPENAI_API_KEY,
+// });
+
+// const model = openrouter.chat("meta-llama/llama-3.3-70b-instruct:free");
+// const model = openrouter.chat("meta-llama/llama-3.3-8b-instruct:free");
+
+// Client and tools caching
+const clientCache = new Map<string, Client>();
+const toolsCache = new Map<string, Record<string, Tool>>();
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
 // Helper to create a new MCP client and connect
 async function createMCPClient(sessionId: string) {
+  // Check if client exists in cache
+  const cachedClient = clientCache.get(sessionId);
+  if (cachedClient) {
+    return cachedClient;
+  }
+
+  // Create new client if not in cache
   const client = new Client({
     name: "alwaysfullybooked-mcp-client",
     version: "0.1.0",
@@ -17,27 +36,28 @@ async function createMCPClient(sessionId: string) {
   });
   const transport = new StreamableHTTPClientTransport(new URL(env.AFB_MCP_URL));
   await client.connect(transport);
+
+  // Store in cache with expiration
+  clientCache.set(sessionId, client);
+  setTimeout(() => {
+    clientCache.delete(sessionId);
+    toolsCache.delete(sessionId);
+  }, CACHE_TTL);
+
   return client;
-}
-
-export async function getTools(sessionId: string) {
-  const client = await createMCPClient(sessionId);
-  const tools = await client.listTools();
-  await client.close();
-  return tools;
-}
-
-// Usage with Groq
-export async function createGroqWithMCPTools(sessionId: string) {
-  const tools = await getAISdkTools(sessionId);
-  return { model, tools };
 }
 
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function getAISdkTools(sessionId: string) {
+async function getAISdkTools(sessionId: string) {
+  // Check if tools exist in cache
+  const cachedTools = toolsCache.get(sessionId);
+  if (cachedTools) {
+    return cachedTools;
+  }
+
   const client = await createMCPClient(sessionId);
   const toolsResponse = await client.listTools();
 
@@ -73,14 +93,22 @@ export async function getAISdkTools(sessionId: string) {
               console.error(`Error calling MCP tool ${mcpTool.name} after ${MAX_RETRIES} attempts:`, error);
               throw error;
             }
-            console.warn(`Tool execution attempt ${retries} failed, retrying in ${RETRY_DELAY}ms...`);
             await sleep(RETRY_DELAY);
           }
         }
       },
     });
   }
+
+  // Store tools in cache
+  toolsCache.set(sessionId, aiSdkTools);
   return aiSdkTools;
+}
+
+// Cleanup function to remove clients from cache
+export function cleanupClient(sessionId: string) {
+  clientCache.delete(sessionId);
+  toolsCache.delete(sessionId);
 }
 
 // New function to handle streaming with MCP
@@ -93,7 +121,7 @@ export async function streamWithMCP({
 }) {
   const tools = await getAISdkTools(sessionId);
 
-  const result = streamText({
+  return streamText({
     headers: {
       "mcp-session-id": sessionId,
     },
@@ -102,8 +130,6 @@ export async function streamWithMCP({
     tools,
     toolChoice: "auto",
     toolCallStreaming: true,
-    maxSteps: 5,
-  });
-
-  return result.toDataStreamResponse();
+    maxSteps: 3,
+  }).toDataStreamResponse();
 }
