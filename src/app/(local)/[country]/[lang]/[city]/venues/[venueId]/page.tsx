@@ -86,7 +86,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
     return <div>Venue not found</div>;
   }
 
-  const ranking = await openscor.rankings.find({ venueId: venue.id, category: "tennis", playerId: session.user.id });
+  const ranking = await openscor.rankings.find({ venueId, category: "tennis", playerId: session.user.id });
 
   const info = matchVenues.find((v) => v.id === venue.id);
 
@@ -118,7 +118,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                           country={country}
                           lang={lang}
                           city={city}
-                          venueId={venue.id}
+                          venueId={venueId}
                           venueName={venue.name}
                           playerId={session.user.id}
                           playerName={customerName}
@@ -128,7 +128,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                         />
                       )}
 
-                      {ranking && venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venue.id} />}
+                      {ranking && venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venueId} />}
                     </div>
                     <div>
                       <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{mergedVenue.name}</CardTitle>
@@ -201,7 +201,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                   customerEmailId={customerEmailId}
                   contactWhatsAppId={contactWhatsAppId}
                   contactLineId={contactLineId}
-                  venueId={venue.id}
+                  venueId={venueId}
                   venueName={venue.name}
                   services={services}
                   availableSchedule={availableScheduleFiltered}

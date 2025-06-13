@@ -59,9 +59,12 @@ export function HomeResults({ country, lang, city, venues }: { country: keyof ty
                       ))}
                     </div>
                   )}
-                  <Button className="w-full mt-4" asChild>
-                    <Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>Book Now</Link>
-                  </Button>
+
+                  {venue.bookable && (
+                    <Button className="w-full mt-4" asChild>
+                      <Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>Book Now</Link>
+                    </Button>
+                  )}
 
                   {venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venue.id} />}
                 </CardContent>

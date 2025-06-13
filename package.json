@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@ai-sdk/react": "^1.2.12",
-    "@alwaysfullybooked/sdk-node": "^0.1.47",
+    "@alwaysfullybooked/sdk-node": "^0.1.48",
     "@auth/drizzle-adapter": "^1.9.1",
     "@hookform/resolvers": "^5.1.1",
     "@modelcontextprotocol/sdk": "^1.12.1",

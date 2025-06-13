@@ -150,9 +150,12 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
                         ))}
                       </div>
                     )}
-                    <Button className="w-full mt-4" asChild>
-                      <Link href={`/${country}/${lang}/${citySlug}/venues/${venue.id}`}>Book Now</Link>
-                    </Button>
+
+                    {venue.bookable && (
+                      <Button className="w-full mt-4" asChild>
+                        <Link href={`/${country}/${lang}/${citySlug}/venues/${venue.id}`}>Book Now</Link>
+                      </Button>
+                    )}
 
                     {venue.allowRankings && <ViewRankings country={country} lang={lang} city={citySlug} venueId={venue.id} />}
                   </CardContent>

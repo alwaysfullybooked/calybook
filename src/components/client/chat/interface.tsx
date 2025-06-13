@@ -24,7 +24,7 @@ export default function ChatInterface({ sessionId, country, email }: { sessionId
       {
         id: "welcome",
         role: "assistant",
-        content: `"Hello! I'm your CalyBook ${countryLabel} Booking Assistant. I can help you search for venues, services, and make bookings. How can I assist you today?`,
+        content: `"Hello! I'm your CalyBook ${countryLabel} Booking Assistant. I can help you search for venues, services and make bookings. How can I assist you today?`,
       },
     ],
   });
@@ -57,15 +57,11 @@ export default function ChatInterface({ sessionId, country, email }: { sessionId
                       }
                     })
                   : message.content}
+
+                {message.role === "assistant" && status === "streaming" && <Loader2 className="w-4 h-4 animate-spin" />}
               </Card>
             </div>
           ))}
-
-          {status !== "ready" && (
-            <div className="flex justify-center items-center h-full">
-              <Loader2 className="w-4 h-4 animate-spin" />
-            </div>
-          )}
         </ScrollArea>
         <form onSubmit={handleSubmit} className="flex gap-2 border-t bg-card p-4">
           <Input value={input} placeholder="Type your message..." onChange={handleInputChange} disabled={status !== "ready"} className="flex-1" />

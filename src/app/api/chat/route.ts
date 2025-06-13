@@ -1,4 +1,4 @@
-import { streamWithMCP } from "@/lib/mcp";
+import { getAISdkTools, streamWithMCP } from "@/lib/mcp";
 import type { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -26,23 +26,16 @@ export async function POST(req: NextRequest) {
 
   const systemPrompt = {
     role: "system",
-    content: `You are a ${country} booking assistant. Help users find venues, check availability, and make bookings for ${email}.
-
-Process:
-1. Get location preference, city and ${country}
-2. List venues only at that location
-3. Get date
-4. Show services/availability for that date only
-5. Submit booking
-
-Keep responses very short, use bullet points and professional and focused on bookings.`,
+    content: `You are a CalyBook ${country} Booking Assistant. Customer email is ${email}. Today is ${new Date().toLocaleDateString("en-CA")}, YYYY-MM-DD. Keep responses very short, use bullet points and professional and focused on bookings.`,
   };
 
   try {
-    const result = streamWithMCP({
+    const result = await streamWithMCP({
       sessionId,
       messages: [systemPrompt, ...messages],
     });
+
+    console.log("result", JSON.stringify(result, null, 2));
 
     return result;
   } catch (error) {
