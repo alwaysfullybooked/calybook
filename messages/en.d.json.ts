@@ -2,9 +2,9 @@
 // See: https://next-intl.dev/docs/workflows/typescript#messages-arguments
 
 declare const messages: {
-  welcome: "Welcome to CalyBook";
+  "welcome": "Welcome to CalyBook",
 
-  homeSearch_title: "Find and Book Venues";
-  homeSearch_description: "Select your location and category to find available venues";
+  "homeSearch_title": "Find and Book Venues",
+  "homeSearch_description": "Select your location and category to find available venues"
 };
 export default messages;

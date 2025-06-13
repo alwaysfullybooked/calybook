@@ -11,7 +11,6 @@ import TennisChallenge from "@/components/tennis/challenge";
 import BookingSchedule from "@/components/client/booking-schedule";
 import { locations } from "@/lib/locations";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
-import { api } from "@/trpc/server";
 import { ViewRankings } from "@/components/server/view-rankings";
 import { openscor } from "@/lib/openscor";
 

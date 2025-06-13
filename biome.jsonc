@@ -14,7 +14,7 @@
     "lineWidth": 200,
     "indentStyle": "space",
     "indentWidth": 2,
-    "ignore": ["node_modules/*"]
+    "ignore": ["node_modules/*", "messages/*"]
   },
   "organizeImports": {
     "enabled": true

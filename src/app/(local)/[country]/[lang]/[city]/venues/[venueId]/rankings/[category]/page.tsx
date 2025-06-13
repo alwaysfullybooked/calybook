@@ -10,6 +10,7 @@ import { openscor } from "@/lib/openscor";
 import { AddTennisGame } from "@/components/client/openscor/games";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { ApproveGameButton } from "@/components/client/openscor/approve";
+import { JoinRankingsButton } from "@/components/client/openscor/rankings";
 
 export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; category: string }> }) {
   const { country, lang, city, venueId, category } = await params;
@@ -26,6 +27,10 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
     return <div>Venue not found</div>;
   }
 
+  const customerName = session.user.name ?? session.user.email;
+  const customerEmailId = session.user.email;
+
+  const ranking = await openscor.rankings.find({ venueId, category: "tennis", playerId: session.user.id });
   const rankings = await openscor.rankings.search({ venueId, category: "tennis" });
   const games = await openscor.games.search({ venueId, category: "tennis" });
 
@@ -37,6 +42,23 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{venue.name}</h1>
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">{category} Rankings</h2>
+      </div>
+
+      <div className="text-center space-y-2 mb-6 sm:mb-12">
+        {!ranking && venue.allowRankings && (
+          <JoinRankingsButton
+            country={country}
+            lang={lang}
+            city={city}
+            venueId={venueId}
+            venueName={venue.name}
+            playerId={session.user.id}
+            playerName={customerName}
+            playerContactMethod="email"
+            playerContactId={customerEmailId}
+            playerEmailId={customerEmailId}
+          />
+        )}
       </div>
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
