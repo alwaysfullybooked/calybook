@@ -33,7 +33,6 @@ export async function createOpenScorGame({ venueId, venueName, category, winnerI
     playerName,
     score,
     playedDate,
-    isCloseMatch: false,
   });
 }
 

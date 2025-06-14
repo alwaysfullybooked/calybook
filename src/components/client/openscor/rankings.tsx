@@ -14,6 +14,7 @@ interface JoinVenueButtonProps {
   country: string;
   lang: string;
   city: string;
+  leagueId: string;
   venueId: string;
   venueName: string;
   playerId: string;
@@ -23,7 +24,7 @@ interface JoinVenueButtonProps {
   playerEmailId: string;
 }
 
-export function JoinRankingsButton({ country, lang, city, venueId, venueName, playerId, playerName, playerContactMethod, playerContactId, playerEmailId }: JoinVenueButtonProps) {
+export function JoinRankingsButton({ country, lang, city, leagueId, venueId, venueName, playerId, playerName, playerContactMethod, playerContactId, playerEmailId }: JoinVenueButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState<Category | "">("");
@@ -38,7 +39,7 @@ export function JoinRankingsButton({ country, lang, city, venueId, venueName, pl
 
     try {
       setIsLoading(true);
-      await joinVenueRankings({ country, lang, city, venueId, venueName, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId });
+      await joinVenueRankings({ country, lang, city, leagueId, venueId, venueName, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId });
       setIsOpen(false);
       router.refresh();
     } catch (error) {

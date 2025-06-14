@@ -11,8 +11,9 @@ import { AddTennisGame } from "@/components/client/openscor/games";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { ApproveGameButton } from "@/components/client/openscor/approve";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
+import type { Category } from "@/lib/openscor";
 
-export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; category: string }> }) {
+export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; category: Category }> }) {
   const { country, lang, city, venueId, category } = await params;
 
   const session = await auth();
@@ -30,12 +31,16 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   const customerName = session.user.name ?? session.user.email;
   const customerEmailId = session.user.email;
 
-  const ranking = await openscor.rankings.find({ venueId, category: "tennis", playerId: session.user.id });
-  const rankings = await openscor.rankings.search({ venueId, category: "tennis" });
-  const games = await openscor.games.search({ venueId, category: "tennis" });
+  const leagueId = venue?.leagues?.[category as keyof typeof venue.leagues] ?? "";
+
+  const [ranking, rankings, games] = await Promise.all([
+    openscor.rankings.find({ leagueId, venueId, category, playerId: session.user.id }),
+    openscor.rankings.search({ leagueId, venueId, category }),
+    openscor.games.search({ venueId, category }),
+  ]);
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
-  const approvedGames = games.filter((game) => game.status === "approved" && [game.winnerId, game.playerId].includes(session.user.id));
+  const approvedGames = games.filter((game) => game.status === "approved");
 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
@@ -50,6 +55,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
             country={country}
             lang={lang}
             city={city}
+            leagueId={leagueId}
             venueId={venueId}
             venueName={venue.name}
             playerId={session.user.id}
@@ -128,13 +134,6 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                         )}
                       </div>
                     </div>
-                    <div className="mt-2 flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                      {game.isCloseMatch && (
-                        <Badge variant="outline" className="text-xs">
-                          Close Match
-                        </Badge>
-                      )}
-                    </div>
                   </div>
                 ))}
               </div>
@@ -166,34 +165,26 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
               </CardHeader>
               <CardContent className="px-3 sm:px-6">
                 <div className="space-y-3 sm:space-y-4">
-                  {rankings.map((ranking) => (
-                    <div key={ranking.id} className="flex items-center justify-center gap-4 rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
-                      {/* <div className="flex items-center justify-between gap-4"> */}
-                      {/* <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-muted">
-                          {index === 0 ? (
-                            <Medal className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
-                          ) : index === 1 ? (
-                            <Medal className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
-                          ) : index === 2 ? (
-                            <Medal className="h-4 w-4 sm:h-5 sm:w-5 text-amber-700" />
-                          ) : (
-                            <span className="text-xs sm:text-sm font-medium">{index + 1}</span>
-                          )}
-                        </div> */}
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={`https://avatar.vercel.sh/${ranking.userId}`} />
-                        <AvatarFallback>{ranking.userId.slice(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium text-sm sm:text-base">{ranking.playerName}</p>
-                        <Badge variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm">
-                          <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                          {ranking.currentPoints} pts
-                        </Badge>
-                        {/* <p className="text-xs sm:text-sm text-muted-foreground mt-3">Joined {ranking.joinedDate}</p> */}
-                      </div>
-                      {/* </div> */}
-                    </div>
+                  {rankings.map((ranking, index) => (
+                    <Card key={ranking.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
+                              <span className="font-bold">{index + 1}</span>
+                            </div>
+                            <div>
+                              <p className="font-medium">{ranking.playerName}</p>
+                              <p className="text-sm text-muted-foreground">{ranking.venueName}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-lg">{ranking.currentRanking}</p>
+                            <p className="text-sm text-muted-foreground">Ranking</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               </CardContent>
@@ -212,40 +203,38 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                 <div className="space-y-3 sm:space-y-4">
                   {approvedGames.map((game) => (
                     <div key={game.id} className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div className="flex items-center gap-2 justify-center">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={`https://avatar.vercel.sh/${game.winnerId}`} />
-                            <AvatarFallback>{game.winnerId.slice(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium text-sm sm:text-base">{game.winnerName}</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <Badge variant="secondary" className="text-xl">
-                            {game.score}
-                          </Badge>
-                          <span className="text-xs sm:text-sm text-muted-foreground mt-3">{game.playedDate}</span>
-                          {game.playerApproved && game.winnerApproved && (
-                            <Badge variant="outline" className="text-xs bg-primary">
-                              Approved
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 justify-center">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={`https://avatar.vercel.sh/${game.playerId}`} />
-                            <AvatarFallback>{game.playerId.slice(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium text-sm sm:text-base">{game.playerName}</span>
-                        </div>
-                      </div>
-                      <div className="mt-2 flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                        {game.isCloseMatch && (
-                          <Badge variant="outline" className="text-xs">
-                            Close Match
-                          </Badge>
-                        )}
-                      </div>
+                      <Card key={game.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <p className="font-medium text-lg">{game.venueName}</p>
+                            <div className="flex items-center gap-4">
+                              <div className="text-center">
+                                <p className="font-medium">{game.winnerName}</p>
+                                <p
+                                  className={`text-xs ${(game.winnerRankingVariation ?? 0) > 0 ? "text-green-500" : (game.winnerRankingVariation ?? 0) < 0 ? "text-red-500" : "text-muted-foreground"}`}
+                                >
+                                  {(game.winnerRankingVariation ?? 0) > 0 ? "+" : ""}
+                                  {game.winnerRankingVariation ?? 0}
+                                </p>
+                              </div>
+                              <div className="text-2xl font-bold">vs</div>
+                              <div className="text-center">
+                                <p className="font-medium">{game.playerName}</p>
+                                <p
+                                  className={`text-xs ${(game.playerRankingVariation ?? 0) > 0 ? "text-green-500" : (game.playerRankingVariation ?? 0) < 0 ? "text-red-500" : "text-muted-foreground"}`}
+                                >
+                                  {(game.playerRankingVariation ?? 0) > 0 ? "+" : ""}
+                                  {game.playerRankingVariation ?? 0}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold text-lg">{game.score}</p>
+                              <p className="text-sm text-muted-foreground">{game.playedDate}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     </div>
                   ))}
                 </div>

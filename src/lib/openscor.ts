@@ -20,3 +20,5 @@ export const openscor = new OpenScor({
 export type Ranking = Awaited<ReturnType<typeof openscor.rankings.search>>[number];
 
 export type Game = Awaited<ReturnType<typeof openscor.games.search>>[number];
+
+export type { Category } from "@openscor-com/sdk-node";

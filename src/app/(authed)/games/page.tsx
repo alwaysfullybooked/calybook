@@ -60,13 +60,6 @@ export default async function GamesPage() {
                       <span className="font-medium text-sm sm:text-base">{game.playerName}</span>
                     </div>
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
-                    {game.isCloseMatch && (
-                      <Badge variant="outline" className="text-xs">
-                        Close Match
-                      </Badge>
-                    )}
-                  </div>
                 </div>
               ))}
             </div>
