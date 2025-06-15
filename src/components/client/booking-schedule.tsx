@@ -479,7 +479,7 @@ function ScheduleInfo({
 }: { serviceName: string; startDate: string; startTime: string; durationMinutes: number; type: string; capacityLeft: number; showParticipants: boolean; participants: string }) {
   return (
     <div className="text-xs flex items-center">
-      <span className="rounded-full">{durationMinutes} min</span>
+      <span className="rounded-full">{durationMinutes > 120 ? `${Math.floor(durationMinutes / 60)} hr` : `${durationMinutes} min`}</span>
       <Sheet>
         <SheetTrigger asChild>
           <button type="button" className="p-1 rounded-full transition-colors">
