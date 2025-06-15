@@ -39,7 +39,7 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function AddTennisGame({ venueId, venueName, rankings, userAddingId }: { venueId: string; venueName: string; rankings: Ranking[]; userAddingId: string }) {
+export function AddGame({ venueId, venueName, rankings, userAddingId }: { venueId: string; venueName: string; rankings: Ranking[]; userAddingId: string }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 

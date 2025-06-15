@@ -1,13 +1,13 @@
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, TrendingUp, Calendar } from "lucide-react";
+import { Trophy, Calendar, ExternalLink } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { openscor } from "@/lib/openscor";
-import { AddTennisGame } from "@/components/client/openscor/games";
+import { AddGame } from "@/components/client/openscor/games";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { ApproveGameButton } from "@/components/client/openscor/approve";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
@@ -33,7 +33,8 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
   const leagueId = venue?.leagues?.[category as keyof typeof venue.leagues] ?? "";
 
-  const [ranking, rankings, games] = await Promise.all([
+  const [league, ranking, rankings, games] = await Promise.all([
+    openscor.leagues.find({ leagueId }),
     openscor.rankings.find({ leagueId, venueId, category, playerId: session.user.id }),
     openscor.rankings.search({ leagueId, venueId, category }),
     openscor.games.search({ venueId, category }),
@@ -48,8 +49,8 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
       <div className="text-center space-y-2 mb-6 sm:mb-12">
-        <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{venue.name}</h1>
-        <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">{category} Rankings</h2>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">{venue.name}</h1>
+        <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl capitalize">{category} Rankings</h2>
       </div>
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
@@ -68,10 +69,17 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
             playerEmailId={customerEmailId}
           />
         )}
+        <h2 className="font-bold tracking-tight capitalize text-lg">
+          <a href={`https://www.openscor.com/leagues/${league?.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+            Open <span className="underline">{league?.name}</span>
+            <ExternalLink className="h-5 w-5" />
+          </a>
+        </h2>
       </div>
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
-        <AddTennisGame venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
+        <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
+        <AddGame venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
       </div>
 
       {pendingGames.length > 0 && (
