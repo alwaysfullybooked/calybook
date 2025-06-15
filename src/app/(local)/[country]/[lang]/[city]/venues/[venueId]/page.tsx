@@ -13,7 +13,6 @@ import { locations } from "@/lib/locations";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
 import { ViewRankings } from "@/components/server/view-rankings";
 import { openscor } from "@/lib/openscor";
-import type { Category } from "@/lib/openscor";
 
 export async function generateStaticParams() {
   const countries = ["th"];
@@ -63,6 +62,7 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
     },
   };
 }
+
 export default async function VenuePage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string }> }) {
   const { country, lang, city, venueId } = await params;
 
