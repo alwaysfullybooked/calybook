@@ -154,37 +154,33 @@ export function AddTennisGame({ venueId, venueName, rankings, userAddingId }: { 
               )}
             />
 
-            <div className="grid grid-cols-2 gap-2 items-center">
-              <FormField
-                control={form.control}
-                name="score"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Score (No commas for score, format X-X with spaces)</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="e.g., 6-4 6-3" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="score"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Score (No commas for score, format X-X with spaces)</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g., 6-4 6-3" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="grid grid-cols-2 gap-2 items-center">
-              <FormField
-                control={form.control}
-                name="playedDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Played Date</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="playedDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Played Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <SubmitButton type="submit">{form.formState.isSubmitting ? "Submitting..." : "Submit"}</SubmitButton>
           </form>
         </Form>
