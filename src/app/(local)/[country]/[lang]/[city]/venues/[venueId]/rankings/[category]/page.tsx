@@ -71,7 +71,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
       </div>
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
-        <AddTennisGame venueId={venueId} venueName={venue.name} rankings={rankings} />
+        <AddTennisGame venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
       </div>
 
       {pendingGames.length > 0 && (
@@ -159,77 +159,79 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
           </TabsList>
 
           <TabsContent value="rankings">
-            {playedRankings.length > 0 && (
-              <Card>
-                <CardHeader className="px-3 py-4 sm:px-6 sm:py-6">
-                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                    <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
-                    Rankings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-3 sm:px-6">
-                  <div className="space-y-3 sm:space-y-4">
-                    {playedRankings.map((ranking, index) => (
-                      <Card key={ranking.id} className="hover:shadow-md transition-shadow">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                              <div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
-                                <span className="font-bold">{index + 1}</span>
+            <div className="space-y-5">
+              {playedRankings.length > 0 && (
+                <Card>
+                  <CardHeader className="px-3 py-4 sm:px-6 sm:py-6">
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                      <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
+                      Rankings
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-3 sm:px-6">
+                    <div className="space-y-3 sm:space-y-4">
+                      {playedRankings.map((ranking, index) => (
+                        <Card key={ranking.id} className="hover:shadow-md transition-shadow">
+                          <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4">
+                                <div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
+                                  <span className="font-bold">{index + 1}</span>
+                                </div>
+                                <div>
+                                  <p className="font-medium">{ranking.playerName}</p>
+                                  <p className="text-sm text-muted-foreground">{ranking.venueName}</p>
+                                </div>
                               </div>
-                              <div>
-                                <p className="font-medium">{ranking.playerName}</p>
-                                <p className="text-sm text-muted-foreground">{ranking.venueName}</p>
+                              <div className="text-right">
+                                <p className="font-bold text-lg">{ranking.currentRanking}</p>
+                                <p className="text-sm text-muted-foreground">Ranking</p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className="font-bold text-lg">{ranking.currentRanking}</p>
-                              <p className="text-sm text-muted-foreground">Ranking</p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-            {unplayedRankings.length > 0 && (
-              <Card>
-                <CardHeader className="px-3 py-4 sm:px-6 sm:py-6">
-                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                    <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
-                    Not Played Yet
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-3 sm:px-6">
-                  <div className="space-y-3 sm:space-y-4">
-                    {unplayedRankings.map((ranking, index) => (
-                      <Card key={ranking.id} className="hover:shadow-md transition-shadow">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                              <div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
-                                <span className="font-bold">{index + 1}</span>
+              {unplayedRankings.length > 0 && (
+                <Card>
+                  <CardHeader className="px-3 py-4 sm:px-6 sm:py-6">
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                      <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
+                      Not Played Yet
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="px-3 sm:px-6">
+                    <div className="space-y-3 sm:space-y-4">
+                      {unplayedRankings.map((ranking, index) => (
+                        <Card key={ranking.id} className="hover:shadow-md transition-shadow">
+                          <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4">
+                                <div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
+                                  <span className="font-bold">{index + 1}</span>
+                                </div>
+                                <div>
+                                  <p className="font-medium">{ranking.playerName}</p>
+                                  <p className="text-sm text-muted-foreground">{ranking.venueName}</p>
+                                </div>
                               </div>
-                              <div>
-                                <p className="font-medium">{ranking.playerName}</p>
-                                <p className="text-sm text-muted-foreground">{ranking.venueName}</p>
+                              <div className="text-right">
+                                <p className="font-bold text-lg">{ranking.currentRanking}</p>
+                                <p className="text-sm text-muted-foreground">Ranking</p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className="font-bold text-lg">{ranking.currentRanking}</p>
-                              <p className="text-sm text-muted-foreground">Ranking</p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </TabsContent>
 
           <TabsContent value="games">
