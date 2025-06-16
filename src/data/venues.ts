@@ -31,6 +31,16 @@ export const matchVenues = [
     amenities: ["Pool", "Coffee Shop", "Showers"],
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1744695875/bf8b99_05fd70a3884b4f8599575b112bc6779d_mv2_oh2gcg.webp",
   },
+  {
+    id: "b8f42120-7e0e-40d4-8b3f-e7fbfde40ec0",
+    altName: "Triple Ace",
+    altAddress: "Nong Phueng, Saraphi",
+    courts: { tennis: { count: 4, price: "฿400" } },
+    amenities: ["Coffee Shop", "Showers"],
+    image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1746773952/Triple_Ace_gwrg4u.jpg",
+    city: "Chiang Mai",
+    country: "Thailand",
+  },
 ];
 
 export const moreVenues = [
@@ -76,15 +86,6 @@ export const moreVenues = [
     courts: { tennis: { count: 2, price: "฿80" } },
     amenities: [],
     image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1745655852/Nut_Tennis_Court_uf8qwi.jpg",
-    city: "Chiang Mai",
-    country: "Thailand",
-  },
-  {
-    altName: "Triple Ace",
-    altAddress: "Nong Phueng, Saraphi",
-    courts: { tennis: { count: 4, price: "฿400" } },
-    amenities: ["Coffee Shop", "Showers"],
-    image: "https://res.cloudinary.com/djqlhds0h/image/upload/v1746773952/Triple_Ace_gwrg4u.jpg",
     city: "Chiang Mai",
     country: "Thailand",
   },
