@@ -53,29 +53,31 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
         <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl capitalize">{category} Rankings</h2>
       </div>
 
-      <div className="text-center space-y-2 mb-6 sm:mb-12">
-        {!ranking && venue.allowRankings && (
-          <JoinRankingsButton
-            country={country}
-            lang={lang}
-            city={city}
-            leagueId={leagueId}
-            venueId={venueId}
-            venueName={venue.name}
-            playerId={session.user.id}
-            playerName={customerName}
-            playerContactMethod="email"
-            playerContactId={customerEmailId}
-            playerEmailId={customerEmailId}
-          />
-        )}
-        <h2 className="font-bold tracking-tight capitalize text-lg">
-          <a href={`https://www.openscor.com/leagues/${league?.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
-            Open <span className="underline">{league?.name}</span>
-            <ExternalLink className="h-5 w-5" />
-          </a>
-        </h2>
-      </div>
+      {leagueId && (
+        <div className="text-center space-y-2 mb-6 sm:mb-12">
+          {!ranking && venue.allowRankings && (
+            <JoinRankingsButton
+              country={country}
+              lang={lang}
+              city={city}
+              leagueId={leagueId}
+              venueId={venueId}
+              venueName={venue.name}
+              playerId={session.user.id}
+              playerName={customerName}
+              playerContactMethod="email"
+              playerContactId={customerEmailId}
+              playerEmailId={customerEmailId}
+            />
+          )}
+          <h2 className="font-bold tracking-tight capitalize text-lg">
+            <a href={`https://www.openscor.com/leagues/${league?.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+              Open <span className="underline">{league?.name}</span>
+              <ExternalLink className="h-5 w-5" />
+            </a>
+          </h2>
+        </div>
+      )}
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
