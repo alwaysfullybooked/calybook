@@ -14,7 +14,8 @@ import { createOpenScorGame } from "@/actions/openscor/games";
 import { useRouter } from "next/navigation";
 import type { users } from "@/server/db/schema";
 import { SubmitButton } from "@/components/client/submit-button";
-import { Categories, MatchTypes, type MatchType, type Ranking, type Category } from "@/lib/openscor";
+import type { Ranking } from "@/lib/openscor";
+import { Categories, MatchTypes, type Category, type MatchType } from "@/server/db/schema";
 
 export type User = typeof users.$inferSelect;
 

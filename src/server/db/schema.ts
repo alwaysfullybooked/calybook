@@ -18,6 +18,12 @@ export const Categories = {
   // FOOTBALL: "football",
 } as const;
 
+export const MatchTypes = {
+  SINGLES: "singles",
+  DOUBLES: "doubles",
+  TEAM: "team",
+} as const;
+
 export const Preferences = {
   TENNIS: "tennis",
   // BADMINTON: "badminton",
@@ -28,7 +34,7 @@ export const Preferences = {
 } as const;
 
 export type Category = (typeof Categories)[keyof typeof Categories];
-
+export type MatchType = (typeof MatchTypes)[keyof typeof MatchTypes];
 export type Preference = (typeof Preferences)[keyof typeof Preferences];
 
 export const users = createTable("user", (d) => ({

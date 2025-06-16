@@ -11,7 +11,7 @@ import { AddGame } from "@/components/client/openscor/games";
 import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
 import { ApproveGameButton } from "@/components/client/openscor/approve";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
-import type { Category } from "@/lib/openscor";
+import type { Category, MatchType } from "@/server/db/schema";
 
 export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; category: Category }> }) {
   const { country, lang, city, venueId, category } = await params;
@@ -82,7 +82,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
         {league?.matchType && (
-          <AddGame leagueId={leagueId} category={category} matchType={league.matchType} venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
+          <AddGame leagueId={leagueId} category={category} matchType={league.matchType as MatchType} venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
         )}
       </div>
 
