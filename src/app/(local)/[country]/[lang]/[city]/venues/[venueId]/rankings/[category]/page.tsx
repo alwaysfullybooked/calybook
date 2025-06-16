@@ -183,19 +183,17 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                       {playedRankings.map((ranking, index) => (
                         <Card key={ranking.id} className="hover:shadow-md transition-shadow">
                           <CardContent className="p-6">
-                            <div className="flex items-center justify-between">
+                            <div className="grid grid-cols-2 items-center justify-center gap-6">
                               <div className="flex items-center gap-4">
                                 <div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
                                   <span className="font-bold">{index + 1}</span>
                                 </div>
                                 <div>
                                   <p className="font-medium">{ranking.playerName}</p>
-                                  <p className="text-sm text-muted-foreground">{ranking.venueName}</p>
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-lg">{ranking.currentRanking}</p>
-                                <p className="text-sm text-muted-foreground">Ranking</p>
+                                <p className="font-bold text-lg">{ranking.currentRanking.toFixed(2)}</p>
                               </div>
                             </div>
                           </CardContent>
@@ -256,38 +254,26 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                 <div className="space-y-3 sm:space-y-4">
                   {approvedGames.map((game) => (
                     <div key={game.id} className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
-                      <Card key={game.id} className="hover:shadow-md transition-shadow">
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
-                            <p className="font-medium text-lg">{game.venueName}</p>
-                            <div className="flex items-center gap-4">
-                              <div className="text-center">
-                                <p className="font-medium">{game.winnerName}</p>
-                                <p
-                                  className={`text-xs ${(game.winnerRankingVariation ?? 0) > 0 ? "text-green-500" : (game.winnerRankingVariation ?? 0) < 0 ? "text-red-500" : "text-muted-foreground"}`}
-                                >
-                                  {(game.winnerRankingVariation ?? 0) > 0 ? "+" : ""}
-                                  {game.winnerRankingVariation ?? 0}
-                                </p>
-                              </div>
-                              <div className="text-2xl font-bold">vs</div>
-                              <div className="text-center">
-                                <p className="font-medium">{game.playerName}</p>
-                                <p
-                                  className={`text-xs ${(game.playerRankingVariation ?? 0) > 0 ? "text-green-500" : (game.playerRankingVariation ?? 0) < 0 ? "text-red-500" : "text-muted-foreground"}`}
-                                >
-                                  {(game.playerRankingVariation ?? 0) > 0 ? "+" : ""}
-                                  {game.playerRankingVariation ?? 0}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-bold text-lg">{game.score}</p>
-                              <p className="text-sm text-muted-foreground">{game.playedDate}</p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                        <div className="text-center">
+                          <span className="font-medium text-sm sm:text-base">
+                            {game.winnerName} vs {game.playerName}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <Badge variant="secondary" className="text-xl">
+                            {game.score}
+                          </Badge>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <span className="text-xs sm:text-sm text-muted-foreground mt-3">{game.playedDate}</span>
+                          {game.playerApproved && game.winnerApproved && (
+                            <Badge variant="outline" className="text-xs bg-primary">
+                              Approved
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>

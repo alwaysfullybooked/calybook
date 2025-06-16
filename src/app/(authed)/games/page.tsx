@@ -32,14 +32,14 @@ export default async function GamesPage() {
             <div className="space-y-3 sm:space-y-4">
               {games.map((game) => (
                 <div key={game.id} className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <span className="font-medium text-sm sm:text-base">{game.venueName}</span>
-                    <div className="flex items-center gap-2 justify-center">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={`https://avatar.vercel.sh/${game.winnerId}`} />
-                        <AvatarFallback>{game.winnerId.slice(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium text-sm sm:text-base">{game.winnerName}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                    <div className="text-center sm:text-left">
+                      <span className="font-medium text-sm sm:text-base">{game.venueName}</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="font-medium text-sm sm:text-base">
+                        {game.winnerName} vs {game.playerName}
+                      </span>
                     </div>
                     <div className="flex flex-col items-center">
                       <Badge variant="secondary" className="text-xl">
@@ -51,13 +51,6 @@ export default async function GamesPage() {
                           Approved
                         </Badge>
                       )}
-                    </div>
-                    <div className="flex items-center gap-2 justify-center">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={`https://avatar.vercel.sh/${game.playerId}`} />
-                        <AvatarFallback>{game.playerId.slice(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium text-sm sm:text-base">{game.playerName}</span>
                     </div>
                   </div>
                 </div>
