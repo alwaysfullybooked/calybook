@@ -12,16 +12,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createOpenScorGame } from "@/actions/openscor/games";
 import { useRouter } from "next/navigation";
-import { type users, type Category, Categories } from "@/server/db/schema";
+import type { users } from "@/server/db/schema";
 import { SubmitButton } from "@/components/client/submit-button";
-import type { Ranking } from "@/lib/openscor";
+import { Categories, MatchTypes, type MatchType, type Ranking, type Category } from "@/lib/openscor";
+
 export type User = typeof users.$inferSelect;
 
 import type { Resolver } from "react-hook-form";
 
 const formSchema = z
   .object({
+    leagueId: z.string().min(1, "League is required"),
     category: z.nativeEnum(Categories),
+    matchType: z.nativeEnum(MatchTypes),
     winnerId: z.string().min(1, "Winner is required"),
     winnerName: z.string().min(1, "Winner name is required"),
     playerId: z.string().min(1, "Player is required"),
@@ -39,16 +42,26 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function AddGame({ venueId, venueName, rankings, userAddingId }: { venueId: string; venueName: string; rankings: Ranking[]; userAddingId: string }) {
+export function AddGame({
+  leagueId,
+  category,
+  matchType,
+  venueId,
+  venueName,
+  rankings,
+  userAddingId,
+}: { leagueId: string; matchType: MatchType; category: Category; venueId: string; venueName: string; rankings: Ranking[]; userAddingId: string }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema) as Resolver<FormValues>,
     defaultValues: {
-      category: "tennis" as Category,
+      leagueId,
+      category,
+      matchType,
       winnerId: userAddingId,
-      winnerName: rankings.find((r) => r.playerId === userAddingId)?.playerName ?? "",
+      winnerName: rankings.find((r) => r.playerId === userAddingId)?.playerName ?? "UNKNOWN",
       playerId: "",
       playerName: "",
       score: "",
@@ -65,15 +78,17 @@ export function AddGame({ venueId, venueName, rankings, userAddingId }: { venueI
       }
 
       await createOpenScorGame({
+        leagueId: data.leagueId as string,
         venueId,
         venueName,
         category: data.category,
-        winnerId: data.winnerId,
-        winnerName: data.winnerName,
-        playerId: data.playerId,
-        playerName: data.playerName,
-        score: data.score,
-        playedDate: data.playedDate,
+        matchType: data.matchType,
+        winnerId: data.winnerId as string,
+        winnerName: data.winnerName as string,
+        playerId: data.playerId as string,
+        playerName: data.playerName as string,
+        score: data.score as string,
+        playedDate: data.playedDate as string,
       });
       toast.success("Tennis game created successfully");
       setOpen(false);
@@ -130,7 +145,7 @@ export function AddGame({ venueId, venueName, rankings, userAddingId }: { venueI
                     onValueChange={(value) => {
                       const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
                       field.onChange(value);
-                      form.setValue("playerName", selectedPlayer?.playerName ?? "");
+                      form.setValue("playerName", selectedPlayer?.playerName ?? "UNKNOWN");
                     }}
                     defaultValue={field.value}
                   >

@@ -1,13 +1,15 @@
 "use server";
 
-import type { Category } from "@/server/db/schema";
 import { auth } from "@/server/auth";
 import { openscor } from "@/lib/openscor";
+import type { Category, MatchType } from "@openscor-com/sdk-node";
 
-interface CreateVenueGameProps {
+interface CreateGameProps {
+  leagueId: string;
   venueId: string;
   venueName: string;
   category: Category;
+  matchType: MatchType;
   winnerId: string;
   winnerName: string;
   playerId: string;
@@ -16,7 +18,7 @@ interface CreateVenueGameProps {
   playedDate: string;
 }
 
-export async function createOpenScorGame({ venueId, venueName, category, winnerId, winnerName, playerId, playerName, score, playedDate }: CreateVenueGameProps) {
+export async function createOpenScorGame({ leagueId, venueId, venueName, category, matchType, winnerId, winnerName, playerId, playerName, score, playedDate }: CreateGameProps) {
   const session = await auth();
 
   if (!session?.user?.id || !session.user?.email) {
@@ -24,9 +26,11 @@ export async function createOpenScorGame({ venueId, venueName, category, winnerI
   }
 
   return openscor.games.create({
+    leagueId,
     venueId,
     venueName,
     category,
+    matchType,
     winnerId,
     winnerName,
     playerId,

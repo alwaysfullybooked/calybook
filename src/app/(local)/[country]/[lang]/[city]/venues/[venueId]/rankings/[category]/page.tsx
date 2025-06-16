@@ -81,7 +81,9 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
-        <AddGame venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
+        {league?.matchType && (
+          <AddGame leagueId={leagueId} category={category} matchType={league.matchType} venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
+        )}
       </div>
 
       {pendingGames.length > 0 && (

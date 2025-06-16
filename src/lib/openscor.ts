@@ -21,4 +21,4 @@ export type Ranking = Awaited<ReturnType<typeof openscor.rankings.search>>[numbe
 
 export type Game = Awaited<ReturnType<typeof openscor.games.search>>[number];
 
-export type { Category } from "@openscor-com/sdk-node";
+export { Categories, MatchTypes, type Category, type MatchType } from "@openscor-com/sdk-node";
