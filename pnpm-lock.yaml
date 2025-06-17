@@ -27,8 +27,8 @@ importers:
         specifier: ^0.7.1
         version: 0.7.2(ai@4.3.16(react@19.1.0)(zod@3.25.64))(zod@3.25.64)
       '@openscor-com/sdk-node':
-        specifier: ^0.1.13
-        version: 0.1.13(@trpc/server@11.4.1(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
+        specifier: ^0.1.20
+        version: 0.1.20(@trpc/server@11.4.1(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
       '@planetscale/database':
         specifier: ^1.19.0
         version: 1.19.0
@@ -911,8 +911,8 @@ packages:
       ai: ^4.3.16
       zod: ^3.25.34
 
-  '@openscor-com/sdk-node@0.1.13':
-    resolution: {integrity: sha512-u8JQ43ReGPv/0inAavmh9OtlQZLkuA20JTPwUgmITBMwEUrOjRm3YY1mTLqXc6ouLaihDN7syqgLUvFKOmwUPg==, tarball: https://npm.pkg.github.com/download/@openscor-com/sdk-node/0.1.13/81a9df8d04091b29db20d7a41840f4aefdab3c0b}
+  '@openscor-com/sdk-node@0.1.20':
+    resolution: {integrity: sha512-lNcYmNbUcFcW50xK/lFVea8wADrkacHktQDfxoGUf7WjbGgjhr4bDlNchnI1/QSgPfNI2XFmGS68/oxt9SaLqg==, tarball: https://npm.pkg.github.com/download/@openscor-com/sdk-node/0.1.20/0106831ed67f015d4869bd4df372088d605c8574}
 
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
@@ -3325,7 +3325,7 @@ snapshots:
       ai: 4.3.16(react@19.1.0)(zod@3.25.64)
       zod: 3.25.64
 
-  '@openscor-com/sdk-node@0.1.13(@trpc/server@11.4.1(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
+  '@openscor-com/sdk-node@0.1.20(@trpc/server@11.4.1(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
     dependencies:
       '@tanstack/react-query': 5.80.7(react@19.1.0)
       '@trpc/client': 11.4.1(@trpc/server@11.4.1(typescript@5.8.3))(typescript@5.8.3)

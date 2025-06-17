@@ -33,18 +33,20 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
   const leagueId = venue?.leagues?.[category as keyof typeof venue.leagues] ?? "";
 
-  const [league, ranking, rankings, games] = await Promise.all([
+  const [league, ranking, playerRankings, games] = await Promise.all([
     openscor.leagues.find({ leagueId }),
-    openscor.rankings.find({ leagueId, venueId, category, playerId: session.user.id }),
-    openscor.rankings.search({ leagueId, venueId, category }),
+    openscor.rankings.find({ leagueId, category, playerId: session.user.id }),
+    openscor.venuePlayers.search({ venueId }),
     openscor.games.search({ venueId, category }),
   ]);
+
+  const playerRanking = playerRankings.find((pr) => pr?.playerId === session.user.id);
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
   const approvedGames = games.filter((game) => game.status === "approved");
 
-  const playedRankings = rankings.filter((ranking) => ranking.matchCount > 0);
-  const unplayedRankings = rankings.filter((ranking) => ranking.matchCount === 0);
+  const playedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount > 0);
+  const unplayedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount === 0);
 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
@@ -55,19 +57,19 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
       {leagueId && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
-          {!ranking && venue.allowRankings && (
+          {!playerRanking && venue.allowRankings && (
             <JoinRankingsButton
               country={country}
               lang={lang}
               city={city}
               leagueId={leagueId}
               venueId={venueId}
-              venueName={venue.name}
               playerId={session.user.id}
               playerName={customerName}
               playerContactMethod="email"
               playerContactId={customerEmailId}
               playerEmailId={customerEmailId}
+              ranking={!!ranking}
             />
           )}
           <h2 className="font-bold tracking-tight capitalize text-lg">
@@ -81,9 +83,17 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
-        {league?.matchType && (
-          <AddGame leagueId={leagueId} category={category} matchType={league.matchType as MatchType} venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
-        )}
+        {/* {league?.matchType && (
+          <AddGame
+            leagueId={leagueId}
+            category={category}
+            matchType={league.matchType as MatchType}
+            venueId={venueId}
+            venueName={venue.name}
+            rankings={playerRankings}
+            userAddingId={session.user.id}
+          />
+        )} */}
       </div>
 
       {pendingGames.length > 0 && (
@@ -182,8 +192,8 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                   </CardHeader>
                   <CardContent className="px-3 sm:px-6">
                     <div className="space-y-3 sm:space-y-4">
-                      {playedRankings.map((ranking, index) => (
-                        <Card key={ranking.id} className="hover:shadow-md transition-shadow">
+                      {playedRankings.map((pr, index) => (
+                        <Card key={pr.id} className="hover:shadow-md transition-shadow">
                           <CardContent className="p-6">
                             <div className="grid grid-cols-2 items-center justify-center gap-6">
                               <div className="flex items-center gap-4">
@@ -191,11 +201,11 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                                   <span className="font-bold">{index + 1}</span>
                                 </div>
                                 <div>
-                                  <p className="font-medium">{ranking.playerName}</p>
+                                  <p className="font-medium">{pr.playerName}</p>
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-lg">{ranking.currentRanking.toFixed(2)}</p>
+                                <p className="font-bold text-lg">{pr?.ranking?.currentRanking?.toFixed(2)}</p>
                               </div>
                             </div>
                           </CardContent>
@@ -216,8 +226,8 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                   </CardHeader>
                   <CardContent className="px-3 sm:px-6">
                     <div className="space-y-3 sm:space-y-4">
-                      {unplayedRankings.map((ranking, index) => (
-                        <Card key={ranking.id} className="hover:shadow-md transition-shadow">
+                      {unplayedRankings.map((pr, index) => (
+                        <Card key={pr.id} className="hover:shadow-md transition-shadow">
                           <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-4">
@@ -225,13 +235,12 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                                   <span className="font-bold">{index + 1}</span>
                                 </div>
                                 <div>
-                                  <p className="font-medium">{ranking.playerName}</p>
-                                  <p className="text-sm text-muted-foreground">{ranking.venueName}</p>
+                                  <p className="font-medium">{pr.playerName}</p>
+                                  {/* <p className="text-sm text-muted-foreground">{ranking.venueName}</p> */}
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-lg">{ranking.currentRanking}</p>
-                                <p className="text-sm text-muted-foreground">Ranking</p>
+                                <p className="font-bold text-lg">{pr?.ranking?.currentRanking?.toFixed(2)}</p>
                               </div>
                             </div>
                           </CardContent>

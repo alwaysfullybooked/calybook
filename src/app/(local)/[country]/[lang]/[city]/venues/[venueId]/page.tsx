@@ -10,7 +10,6 @@ import TennisRankings from "@/components/tennis/rankings";
 import TennisChallenge from "@/components/tennis/challenge";
 import BookingSchedule from "@/components/client/booking-schedule";
 import { locations } from "@/lib/locations";
-import { JoinRankingsButton } from "@/components/client/openscor/rankings";
 import { ViewRankings } from "@/components/server/view-rankings";
 import { openscor } from "@/lib/openscor";
 
@@ -86,10 +85,6 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
     return <div>Venue not found</div>;
   }
 
-  const leagueId = venue?.leagues?.["tennis" as keyof typeof venue.leagues] ?? "";
-
-  const ranking = await openscor.rankings.find({ leagueId, venueId, category: "tennis", playerId: session.user.id });
-
   const info = matchVenues.find((v) => v.id === venue.id);
 
   const mergedVenue = {
@@ -114,25 +109,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
               <div className="flex-1">
                 <CardHeader className="space-y-2">
                   <div className="flex flex-col">
-                    <div className="flex justify-end p-2">
-                      {!ranking && venue.allowRankings && (
-                        <JoinRankingsButton
-                          country={country}
-                          lang={lang}
-                          city={city}
-                          leagueId={leagueId}
-                          venueId={venueId}
-                          venueName={venue.name}
-                          playerId={session.user.id}
-                          playerName={customerName}
-                          playerContactMethod="email"
-                          playerContactId={customerEmailId}
-                          playerEmailId={customerEmailId}
-                        />
-                      )}
-
-                      {ranking && venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venueId} />}
-                    </div>
+                    <div className="flex justify-end p-2">{venue.allowRankings && <ViewRankings country={country} lang={lang} city={city} venueId={venueId} />}</div>
                     <div>
                       <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{mergedVenue.name}</CardTitle>
                       <CardDescription className="text-base sm:text-lg">

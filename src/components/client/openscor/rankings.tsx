@@ -16,15 +16,15 @@ interface JoinVenueButtonProps {
   city: string;
   leagueId: string;
   venueId: string;
-  venueName: string;
   playerId: string;
   playerName: string;
   playerContactMethod: string;
   playerContactId: string;
   playerEmailId: string;
+  ranking: boolean;
 }
 
-export function JoinRankingsButton({ country, lang, city, leagueId, venueId, venueName, playerId, playerName, playerContactMethod, playerContactId, playerEmailId }: JoinVenueButtonProps) {
+export function JoinRankingsButton({ country, lang, city, leagueId, venueId, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking }: JoinVenueButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState<Category | "">("");
@@ -39,7 +39,7 @@ export function JoinRankingsButton({ country, lang, city, leagueId, venueId, ven
 
     try {
       setIsLoading(true);
-      await joinVenueRankings({ country, lang, city, leagueId, venueId, venueName, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId });
+      await joinVenueRankings({ country, lang, city, leagueId, venueId, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking });
       setIsOpen(false);
       router.refresh();
     } catch (error) {

@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { index, mysqlTableCreator, primaryKey } from "drizzle-orm/mysql-core";
+import { index, mysqlTableCreator, primaryKey, uniqueIndex } from "drizzle-orm/mysql-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
 /**
