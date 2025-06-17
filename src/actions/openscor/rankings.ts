@@ -49,6 +49,7 @@ export async function joinVenueRankings({ country, lang, city, venueId, leagueId
   const result = await openscor.venuePlayers.create({
     venueId,
     venueName: venue.name,
+    venueCountry: venue.country,
     playerId,
     playerName,
     playerContactMethod,

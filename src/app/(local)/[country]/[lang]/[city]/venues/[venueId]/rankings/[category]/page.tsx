@@ -41,13 +41,13 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   ]);
 
   const playerRanking = playerRankings.find((pr) => pr?.playerId === session.user.id);
-  const rankings = playerRankings.map((pr) => pr?.ranking);
+  const rankings = playerRankings.map((pr) => pr?.ranking).filter((r) => r !== null);
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
   const approvedGames = games.filter((game) => game.status === "approved");
 
-  const playedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount > 0);
-  const unplayedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount === 0);
+  const playedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount && pr.ranking.matchCount > 0);
+  const unplayedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount && pr.ranking.matchCount === 0);
 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
@@ -85,7 +85,16 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
         {league?.matchType && (
-          <AddGame leagueId={leagueId} category={category} matchType={league.matchType as MatchType} venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
+          <AddGame
+            leagueId={leagueId}
+            category={category}
+            matchType={league.matchType as MatchType}
+            venueId={venueId}
+            venueName={venue.name}
+            venueCountry={venue.country}
+            rankings={rankings}
+            userAddingId={session.user.id}
+          />
         )}
       </div>
 

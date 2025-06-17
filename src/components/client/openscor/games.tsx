@@ -49,9 +49,10 @@ export function AddGame({
   matchType,
   venueId,
   venueName,
+  venueCountry,
   rankings,
   userAddingId,
-}: { leagueId: string; matchType: MatchType; category: Category; venueId: string; venueName: string; rankings: Ranking[]; userAddingId: string }) {
+}: { leagueId: string; matchType: MatchType; category: Category; venueId: string; venueName: string; venueCountry: string; rankings: Ranking[]; userAddingId: string }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -82,6 +83,7 @@ export function AddGame({
         leagueId: data.leagueId as string,
         venueId,
         venueName,
+        venueCountry,
         category: data.category,
         matchType: data.matchType,
         winnerId: data.winnerId as string,

@@ -8,6 +8,7 @@ interface CreateGameProps {
   leagueId: string;
   venueId: string;
   venueName: string;
+  venueCountry: string;
   category: Category;
   matchType: MatchType;
   winnerId: string;
@@ -18,7 +19,7 @@ interface CreateGameProps {
   playedDate: string;
 }
 
-export async function createOpenScorGame({ leagueId, venueId, venueName, category, matchType, winnerId, winnerName, playerId, playerName, score, playedDate }: CreateGameProps) {
+export async function createOpenScorGame({ leagueId, venueId, venueName, venueCountry, category, matchType, winnerId, winnerName, playerId, playerName, score, playedDate }: CreateGameProps) {
   const session = await auth();
 
   if (!session?.user?.id || !session.user?.email) {
@@ -29,6 +30,7 @@ export async function createOpenScorGame({ leagueId, venueId, venueName, categor
     leagueId,
     venueId,
     venueName,
+    venueCountry,
     category,
     matchType,
     winnerId,
