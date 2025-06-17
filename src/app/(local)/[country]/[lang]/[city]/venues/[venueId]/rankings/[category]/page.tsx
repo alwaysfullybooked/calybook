@@ -41,6 +41,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   ]);
 
   const playerRanking = playerRankings.find((pr) => pr?.playerId === session.user.id);
+  const rankings = playerRankings.map((pr) => pr?.ranking);
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
   const approvedGames = games.filter((game) => game.status === "approved");
@@ -83,17 +84,9 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
-        {/* {league?.matchType && (
-          <AddGame
-            leagueId={leagueId}
-            category={category}
-            matchType={league.matchType as MatchType}
-            venueId={venueId}
-            venueName={venue.name}
-            rankings={playerRankings}
-            userAddingId={session.user.id}
-          />
-        )} */}
+        {league?.matchType && (
+          <AddGame leagueId={leagueId} category={category} matchType={league.matchType as MatchType} venueId={venueId} venueName={venue.name} rankings={rankings} userAddingId={session.user.id} />
+        )}
       </div>
 
       {pendingGames.length > 0 && (
