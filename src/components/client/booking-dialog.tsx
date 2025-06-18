@@ -215,7 +215,8 @@ export default function BookingDialog({
                       <Input
                         type="number"
                         min={1}
-                        max={capacityLeft}
+                        // max={capacityLeft}
+                        max={2}
                         value={quantity}
                         onChange={(e) => {
                           const val = Number(e.target.value);
@@ -234,7 +235,7 @@ export default function BookingDialog({
                         variant="outline"
                         size="icon"
                         onClick={() => {
-                          if (quantity < capacityLeft) {
+                          if (quantity < 2) {
                             setQuantity(quantity + 1);
                           }
                         }}
