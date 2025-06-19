@@ -39,13 +39,9 @@ export function HomeResults({ country, lang, city, venues }: { country: keyof ty
                   {venue.courts && venue.price ? (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>{venue.courts ? `${venue.courts} Courts` : ""}</span>
-                      <span>•</span>
-                      <span>{venue.price ? `${venue.price}/hour` : ""}</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>-</span>
-                      <span>-</span>
                       <span>-</span>
                     </div>
                   )}
@@ -96,8 +92,6 @@ export function HomeResults({ country, lang, city, venues }: { country: keyof ty
                   <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>{moreVenue.courts.tennis.count ? `${moreVenue.courts.tennis.count} Courts` : ""}</span>
-                      <span>•</span>
-                      <span>{moreVenue.courts.tennis.price ? `${moreVenue.courts.tennis.price}/hour` : ""}</span>
                     </div>
                     {moreVenue.amenities && moreVenue.amenities.length > 0 && (
                       <div className="flex flex-wrap gap-2 justify-center">
