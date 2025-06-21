@@ -17,6 +17,6 @@ export const openscor = new OpenScor({
   baseUrl,
 });
 
-export type Ranking = Awaited<ReturnType<typeof openscor.rankings.search>>[number];
+export type Ranking = Awaited<ReturnType<typeof openscor.leaderboards.search>>[number];
 
 export type Game = Awaited<ReturnType<typeof openscor.games.search>>[number];

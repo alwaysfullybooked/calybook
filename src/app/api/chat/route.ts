@@ -1,12 +1,12 @@
-import { getAISdkTools, streamWithMCP } from "@/lib/mcp";
+import { streamWithTools } from "@/lib/mcp";
 import type { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const sessionId = req.headers.get("mcp-session-id");
+  // const sessionId = req.headers.get("mcp-session-id");
 
-  if (!sessionId) {
-    return new Response("Unauthorized", { status: 401 });
-  }
+  // if (!sessionId) {
+  //   return new Response("Unauthorized", { status: 401 });
+  // }
 
   const { country, messages, email } = await req.json();
 
@@ -30,12 +30,9 @@ export async function POST(req: NextRequest) {
   };
 
   try {
-    const result = await streamWithMCP({
-      sessionId,
+    const result = await streamWithTools({
       messages: [systemPrompt, ...messages],
     });
-
-    console.log("result", JSON.stringify(result, null, 2));
 
     return result;
   } catch (error) {

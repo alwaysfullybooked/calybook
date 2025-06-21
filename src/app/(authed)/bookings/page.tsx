@@ -6,9 +6,9 @@ import { Calendar, Clock, Coins, Pencil } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
+import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { getCitySlug, getCountrySlug } from "@/lib/locations";
-import type { Booking } from "@/lib/alwaysbookbooked";
+import type { Booking } from "@/lib/alwaysfullybooked";
 
 export default async function BookingsPage() {
   const session = await auth();
@@ -19,7 +19,7 @@ export default async function BookingsPage() {
 
   const customerEmailId = session.user.email;
 
-  const bookings = await alwaysbookbooked.bookings.searchCustomerBookings({
+  const bookings = await alwaysfullybooked.bookings.searchCustomerBookings({
     customerEmailId,
   });
 

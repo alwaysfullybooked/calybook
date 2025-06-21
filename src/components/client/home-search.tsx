@@ -10,7 +10,7 @@ import { locations, getCountryLabel } from "@/lib/locations";
 import { moreVenues } from "@/data/venues";
 import { Button } from "../ui/button";
 
-import type { MatchVenues, MoreVenues } from "@/lib/alwaysbookbooked";
+import type { MatchVenues, MoreVenues } from "@/lib/alwaysfullybooked";
 import { ExternalLink, MapPin } from "lucide-react";
 import { ViewRankings } from "../server/view-rankings";
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
+import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ExternalLink, MapPin, Phone } from "lucide-react";
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 
       const venues = await Promise.all(
         cities.map(async (city) => {
-          const venues = await alwaysbookbooked.venues.publicSearch({ country: countryLabel, city: city.label });
+          const venues = await alwaysfullybooked.venues.publicSearch({ country: countryLabel, city: city.label });
 
           return venues.map((v) => ({
             country,
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
 
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.slug === city)?.label ?? "";
-  const venue = await alwaysbookbooked.venues.publicFind({ venueId });
+  const venue = await alwaysfullybooked.venues.publicFind({ venueId });
 
   if (!venue) {
     return {
@@ -77,8 +77,8 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
   const contactWhatsAppId = session.user.contactWhatsAppId;
   const contactLineId = session.user.contactLineId;
 
-  const venue = await alwaysbookbooked.venues.publicFind({ venueId });
-  const availableSchedule = await alwaysbookbooked.venues.publicAvailability({ venueId });
+  const venue = await alwaysfullybooked.venues.publicFind({ venueId });
+  const availableSchedule = await alwaysfullybooked.venues.publicAvailability({ venueId });
   const availableScheduleFiltered = availableSchedule.filter((f) => f.paymentType !== "manual_prepaid" || (f.paymentType === "manual_prepaid" && f.paymentImage));
 
   if (!venue) {

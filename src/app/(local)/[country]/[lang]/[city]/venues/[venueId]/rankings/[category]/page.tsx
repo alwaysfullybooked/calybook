@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { openscor } from "@/lib/openscor";
 import { AddGame } from "@/components/client/openscor/games";
-import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
+import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { ApproveGameButton } from "@/components/client/openscor/approve";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
 import type { Category, MatchType } from "@/server/db/schema";
@@ -22,7 +22,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
     redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${venueId}/rankings/${category}`);
   }
 
-  const venue = await alwaysbookbooked.venues.publicFind({ venueId });
+  const venue = await alwaysfullybooked.venues.publicFind({ venueId });
 
   if (!venue) {
     return <div>Venue not found</div>;
@@ -31,11 +31,11 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   const customerName = session.user.name ?? session.user.email;
   const customerEmailId = session.user.email;
 
-  const leagueId = venue?.leagues?.[category as keyof typeof venue.leagues] ?? "";
+  const competitionId = venue?.leagues?.[category as keyof typeof venue.leagues] ?? "";
 
-  const [league, ranking, playerRankings, games] = await Promise.all([
-    openscor.leagues.find({ leagueId }),
-    openscor.rankings.find({ leagueId, category, playerId: session.user.id }),
+  const [competition, leaderboard, playerRankings, games] = await Promise.all([
+    openscor.competitions.find({ competitionId }),
+    openscor.leaderboards.find({ category, playerId: session.user.id }),
     openscor.venuePlayers.search({ venueId }),
     openscor.games.search({ venueId, category }),
   ]);
@@ -56,26 +56,25 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
         <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl capitalize">{category} Rankings</h2>
       </div>
 
-      {leagueId && (
+      {competitionId && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
           {!playerRanking && venue.allowRankings && (
             <JoinRankingsButton
               country={country}
               lang={lang}
               city={city}
-              leagueId={leagueId}
               venueId={venueId}
               playerId={session.user.id}
               playerName={customerName}
               playerContactMethod="email"
               playerContactId={customerEmailId}
               playerEmailId={customerEmailId}
-              ranking={!!ranking}
+              ranking={!!leaderboard}
             />
           )}
           <h2 className="font-bold tracking-tight capitalize text-lg">
-            <a href={`https://www.openscor.com/leagues/${league?.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
-              Open <span className="underline">{league?.name}</span>
+            <a href={`https://www.openscor.com/competitions/${competition?.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+              Open <span className="underline">{competition?.name}</span>
               <ExternalLink className="h-5 w-5" />
             </a>
           </h2>
@@ -84,11 +83,11 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
-        {league?.matchType && (
+        {competition?.matchType && (
           <AddGame
-            leagueId={leagueId}
+            competitionId={competitionId}
             category={category}
-            matchType={league.matchType as MatchType}
+            matchType={competition.matchType as MatchType}
             venueId={venueId}
             venueName={venue.name}
             venueCountry={venue.country}
@@ -207,7 +206,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-lg">{pr?.ranking?.currentRanking?.toFixed(2)}</p>
+                                <p className="font-bold text-lg">{pr?.ranking?.masteryScore?.toFixed(2)}</p>
                               </div>
                             </div>
                           </CardContent>
@@ -242,7 +241,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-lg">{pr?.ranking?.currentRanking?.toFixed(2)}</p>
+                                <p className="font-bold text-lg">{pr?.ranking?.masteryScore?.toFixed(2)}</p>
                               </div>
                             </div>
                           </CardContent>

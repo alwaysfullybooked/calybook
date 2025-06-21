@@ -23,7 +23,7 @@ import type { Resolver } from "react-hook-form";
 
 const formSchema = z
   .object({
-    leagueId: z.string().min(1, "League is required"),
+    competitionId: z.string().min(1, "Competition is required"),
     category: z.nativeEnum(Categories),
     matchType: z.nativeEnum(MatchTypes),
     winnerId: z.string().min(1, "Winner is required"),
@@ -44,7 +44,7 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 export function AddGame({
-  leagueId,
+  competitionId,
   category,
   matchType,
   venueId,
@@ -52,14 +52,14 @@ export function AddGame({
   venueCountry,
   rankings,
   userAddingId,
-}: { leagueId: string; matchType: MatchType; category: Category; venueId: string; venueName: string; venueCountry: string; rankings: Ranking[]; userAddingId: string }) {
+}: { competitionId: string; matchType: MatchType; category: Category; venueId: string; venueName: string; venueCountry: string; rankings: Ranking[]; userAddingId: string }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema) as Resolver<FormValues>,
     defaultValues: {
-      leagueId,
+      competitionId,
       category,
       matchType,
       winnerId: userAddingId,
@@ -80,7 +80,7 @@ export function AddGame({
       }
 
       await createOpenScorGame({
-        leagueId: data.leagueId as string,
+        competitionId,
         venueId,
         venueName,
         venueCountry,

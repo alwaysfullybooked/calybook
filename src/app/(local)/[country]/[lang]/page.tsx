@@ -1,10 +1,10 @@
-import { alwaysbookbooked } from "@/lib/alwaysbookbooked";
+import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { getTranslations } from "@/lib/translations";
 
 import HomeSearch from "@/components/client/home-search";
 import { matchVenues } from "@/data/venues";
 import { locations } from "@/lib/locations";
-import type { MatchVenues } from "@/lib/alwaysbookbooked";
+import type { MatchVenues } from "@/lib/alwaysfullybooked";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -38,7 +38,7 @@ export default async function CountryLangPage({ params, searchParams }: { params
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
   const cityLabel = locations[country as keyof typeof locations]?.cities.find((c) => c.value === city)?.label ?? "";
 
-  const venues = await alwaysbookbooked.venues.publicSearch({ country: countryLabel, city: cityLabel });
+  const venues = await alwaysfullybooked.venues.publicSearch({ country: countryLabel, city: cityLabel });
 
   const mergedVenues = venues.map((venue) => {
     const info = matchVenues.find((v) => v.id === venue.id);
@@ -61,9 +61,9 @@ export default async function CountryLangPage({ params, searchParams }: { params
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t?.get("homeSearch_description")}</p>
       </div>
 
-      {/* {country === "th" && (
+      {/* {country === "hk" && (
         <div className="flex flex-col justify-center my-8 text-center max-w-md mx-auto border p-4 rounded-lg">
-          <p className="text-sm sm:text-base mb-4">Ever tried to book? It's a pain, right? Try our Booking AI Assistant to book your court in seconds.</p>
+          <p className="text-sm sm:text-base mb-4">Try our Booking AI Assistant to book your court in seconds.</p>
           <Button variant="default" className="my-4" asChild>
             <Link href={`/${country}/${lang}/chat`}>Chat to book now</Link>
           </Button>

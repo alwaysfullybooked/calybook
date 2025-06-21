@@ -8,14 +8,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { locations } from "@/lib/locations";
 import { Loader2 } from "lucide-react";
 
-export default function ChatInterface({ sessionId, country, email }: { sessionId: string; country: string; email: string }) {
+export default function ChatInterface({ country, email }: { country: string; email: string }) {
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
 
   const { messages, input, handleInputChange, handleSubmit, status } = useChat({
     api: "/api/chat",
-    headers: {
-      "mcp-session-id": sessionId,
-    },
     body: {
       country,
       email,
@@ -51,7 +48,6 @@ export default function ChatInterface({ sessionId, country, email }: { sessionId
                               {part.text}
                             </span>
                           );
-                        // Add more cases for images, tool calls, etc. as needed
                         default:
                           return null;
                       }

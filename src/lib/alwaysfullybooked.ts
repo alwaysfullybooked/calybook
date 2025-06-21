@@ -12,16 +12,16 @@ if (!baseUrl) {
   throw new Error("AFB_API_URL is not set");
 }
 
-export const alwaysbookbooked = new AlwaysFullyBooked({
+export const alwaysfullybooked = new AlwaysFullyBooked({
   apiKey,
   baseUrl,
 });
 
-export type Booking = Awaited<ReturnType<typeof alwaysbookbooked.bookings.searchCustomerBookings>>[number];
+export type Booking = Awaited<ReturnType<typeof alwaysfullybooked.bookings.searchCustomerBookings>>[number];
 
-export type Service = Awaited<ReturnType<typeof alwaysbookbooked.services.search>>[number];
+export type Service = Awaited<ReturnType<typeof alwaysfullybooked.services.search>>[number];
 
-export type Venue = Awaited<ReturnType<typeof alwaysbookbooked.venues.publicSearch>>[number];
+export type Venue = Awaited<ReturnType<typeof alwaysfullybooked.venues.publicSearch>>[number];
 
 export type MatchVenues = Venue & {
   courts: number;
