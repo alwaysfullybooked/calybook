@@ -20,9 +20,10 @@
     "vercel-remove": "vercel remove -s -y calybook"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^1.2.9",
     "@ai-sdk/react": "^1.2.12",
     "@alwaysfullybooked/sdk-node": "^0.1.50",
-    "@auth/drizzle-adapter": "^1.9.1",
+    "@auth/drizzle-adapter": "^1.10.0",
     "@hookform/resolvers": "^5.1.1",
     "@modelcontextprotocol/sdk": "^1.13.0",
     "@openrouter/ai-sdk-provider": "^0.7.1",
@@ -55,7 +56,7 @@
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@t3-oss/env-nextjs": "^0.12.0",
-    "@tanstack/react-query": "^5.80.10",
+    "@tanstack/react-query": "^5.81.2",
     "@trpc/client": "^11.4.2",
     "@trpc/react-query": "^11.4.2",
     "@trpc/server": "^11.4.2",

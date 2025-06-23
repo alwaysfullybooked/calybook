@@ -75,13 +75,13 @@ export default function Footer({ country }: { country: string }) {
           <p>
             &copy; {new Date().getFullYear()}, <span className="font-bold">CalyBook</span>.
           </p>
-          <div className="my-8 p-2">
+          {/* <div className="my-8 p-2">
             Made with{" "}
             <Link href="https://alwaysfullybooked.com" className="font-bold" target="_blank" rel="noopener noreferrer">
               <span>AlwaysFullyBooked</span>
             </Link>
             , the booking engine platform.
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

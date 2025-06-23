@@ -1,17 +1,16 @@
-import Link from "next/link";
-import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
+import BookingSchedule from "@/components/client/booking-schedule";
+import { ViewRankings } from "@/components/server/view-rankings";
+import TennisChallenge from "@/components/tennis/challenge";
+import TennisRankings from "@/components/tennis/rankings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExternalLink, MapPin, Phone } from "lucide-react";
-import { auth } from "@/server/auth";
-import { redirect } from "next/navigation";
 import { matchVenues } from "@/data/venues";
-import TennisRankings from "@/components/tennis/rankings";
-import TennisChallenge from "@/components/tennis/challenge";
-import BookingSchedule from "@/components/client/booking-schedule";
+import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { locations } from "@/lib/locations";
-import { ViewRankings } from "@/components/server/view-rankings";
-import { openscor } from "@/lib/openscor";
+import { auth } from "@/server/auth";
+import { ExternalLink, MapPin, Phone } from "lucide-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export async function generateStaticParams() {
   const countries = ["th"];
