@@ -1,16 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { locations, getCountryLabel } from "@/lib/locations";
-import { moreVenues } from "@/data/venues";
+import { locations } from "@/lib/locations";
 import { Button } from "../ui/button";
 
-import type { MatchVenues, MoreVenues } from "@/lib/alwaysfullybooked";
+import type { MatchVenues } from "@/lib/alwaysfullybooked";
 import { ExternalLink, MapPin } from "lucide-react";
 import { ViewRankings } from "../server/view-rankings";
 
@@ -19,8 +18,6 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
   const pathname = usePathname();
 
   const [city, setCity] = useState<string>("*");
-
-  const filteredMoreVenues = moreVenues.filter((venue) => venue.city === city && venue.country === getCountryLabel(country)) as unknown as MoreVenues[];
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -110,6 +107,8 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
             {venues.map((venue) => {
               const citySlug = locations[country]?.cities.find((c) => c.value === venue.city)?.slug ?? "";
 
+              const categories = Object.keys(venue.leagues ?? {}) ?? [];
+
               return (
                 <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
                   {venue.image && <img src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" />}
@@ -156,8 +155,11 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
                         <Link href={`/${country}/${lang}/${citySlug}/venues/${venue.id}`}>Book Now</Link>
                       </Button>
                     )}
-
-                    {venue.allowRankings && <ViewRankings country={country} lang={lang} city={citySlug} venueId={venue.id} />}
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {venue.allowRankings &&
+                        categories.length > 0 &&
+                        categories.map((category) => <ViewRankings key={category} country={country} lang={lang} city={citySlug} venueId={venue.id} category={category} />)}
+                    </div>
                   </CardContent>
                 </Card>
               );
@@ -177,33 +179,6 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
               </Link>
               .
             </p>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredMoreVenues.map((moreVenue) => (
-                <Card key={moreVenue.altName} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
-                  {moreVenue.image && <img src={moreVenue.image} alt={moreVenue.altName} className="w-full h-48 object-cover rounded-t-xl" />}
-                  <CardHeader className="flex-1">
-                    <CardTitle className="text-lg">{moreVenue.altName}</CardTitle>
-                    <CardDescription className="text-sm">{moreVenue.altAddress}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-1 flex flex-col items-center justify-center gap-3">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>{moreVenue.courts.tennis.count ? `${moreVenue.courts.tennis.count} Courts` : ""}</span>
-                      <span>•</span>
-                      <span>{moreVenue.courts.tennis.price ? `${moreVenue.courts.tennis.price}/hour` : ""}</span>
-                    </div>
-                    {moreVenue.amenities && moreVenue.amenities.length > 0 && (
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        {moreVenue.amenities.map((amenity) => (
-                          <span key={amenity} className="text-xs bg-secondary px-2 py-1 rounded-full">
-                            {amenity}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
           </div>
         </div>
       ) : (

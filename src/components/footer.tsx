@@ -4,6 +4,7 @@ import Link from "next/link";
 
 // Map country codes to their flag components
 const countryFlags: Record<string, React.ComponentType> = {
+  be: BE,
   hk: HK,
   id: ID,
   sc: SC,

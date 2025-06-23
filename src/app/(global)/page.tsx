@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
+import { BE, HK, ID, SC, TH } from "country-flag-icons/react/3x2";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { HK, TH, SC, ID } from "country-flag-icons/react/3x2";
 
 import { locations } from "../../lib/locations";
 
 // Map country codes to their flag components
 const countryFlags: Record<string, React.ComponentType> = {
+  be: BE,
   hk: HK,
   id: ID,
   sc: SC,

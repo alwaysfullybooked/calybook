@@ -1,21 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { createOpenScorGame } from "@/actions/openscor/games";
+import { SubmitButton } from "@/components/client/submit-button";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { createOpenScorGame } from "@/actions/openscor/games";
-import { useRouter } from "next/navigation";
-import type { users } from "@/server/db/schema";
-import { SubmitButton } from "@/components/client/submit-button";
 import type { Ranking } from "@/lib/openscor";
-import { Categories, MatchTypes, type Category, type MatchType } from "@/server/db/schema";
+import type { users } from "@/server/db/schema";
+import { Categories, type Category, type MatchType, MatchTypes } from "@/server/db/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 export type User = typeof users.$inferSelect;
 
@@ -105,7 +105,7 @@ export function AddGame({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Tennis Game</Button>
+        <Button className="capitalize">Add {category} Game</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

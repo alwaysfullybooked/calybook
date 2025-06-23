@@ -4,14 +4,14 @@ type Location = {
   cities: { value: string; label: string; slug: string }[];
 };
 
-export const countries = ["th", "hk", "sc", "id"];
+export const countries = ["th", "hk", "sc", "id", "be"];
 
 export const locations: Record<string, Location> = {
-  // be: {
-  //   name: "Belgium",
-  //   languages: [{ code: "en", label: "English" }],
-  //   cities: [{ value: "Brussels", label: "Brussels" }],
-  // },
+  be: {
+    name: "Belgium",
+    languages: [{ code: "en", label: "English" }],
+    cities: [{ value: "Brussels", label: "Brussels", slug: "brussels" }],
+  },
   // fr: {
   //   name: "France",
   //   languages: [{ code: "en", label: "English" }],
