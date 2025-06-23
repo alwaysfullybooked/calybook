@@ -2,9 +2,14 @@ import { ContactPreferencesForm } from "@/components/client/profile/preferences/
 import { TennisPreferencesForm } from "@/components/client/profile/preferences/tennis-form";
 import { auth } from "@/server/auth";
 import { api } from "@/trpc/server";
+import { redirect } from "next/navigation";
 
 export default async function SettingsPage() {
   const session = await auth();
+
+  if (!session?.user?.id || !session.user?.email) {
+    redirect("/login");
+  }
 
   const email = session?.user?.email;
   const contactMethod = session?.user?.contactMethod;

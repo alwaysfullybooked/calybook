@@ -1,14 +1,14 @@
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { auth } from "@/server/auth";
 import { Calendar, Clock, Coins, Pencil } from "lucide-react";
-import { redirect } from "next/navigation";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
-import { getCitySlug, getCountrySlug } from "@/lib/locations";
 import type { Booking } from "@/lib/alwaysfullybooked";
+import { getCitySlug, getCountrySlug } from "@/lib/locations";
 
 export default async function BookingsPage() {
   const session = await auth();

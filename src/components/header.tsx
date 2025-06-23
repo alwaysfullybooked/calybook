@@ -1,11 +1,11 @@
+import { Calendar, Gamepad2, LogOut, Menu, Settings, User, Users } from "lucide-react";
 import Link from "next/link";
-import { Menu, User, Settings, LogOut, Calendar, Gamepad2 } from "lucide-react";
 
-import { auth, signIn, signOut } from "@/server/auth";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { auth, signIn, signOut } from "@/server/auth";
 
 export default async function Header({ country, link }: { country: string; link: string }) {
   const session = await auth();
@@ -32,14 +32,18 @@ export default async function Header({ country, link }: { country: string; link:
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link href="/bookings">My Bookings</Link>
+                      <Link href="/bookings">Bookings</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile">My Profile</Link>
+                      <Link href="/profile">Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/games">My Games</Link>
+                      <Link href="/games">Games</Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/groups">Groups</Link>
+                    </DropdownMenuItem>
+                    <Separator />
                     <DropdownMenuItem>
                       <form
                         action={async () => {
@@ -83,15 +87,19 @@ export default async function Header({ country, link }: { country: string; link:
                   <nav className="flex flex-col gap-2 px-3">
                     <Link href="/bookings" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
                       <Calendar className="h-4 w-4" />
-                      My Bookings
-                    </Link>
-                    <Link href="/games" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
-                      <Gamepad2 className="h-4 w-4" />
-                      My Games
+                      Bookings
                     </Link>
                     <Link href="/profile" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
                       <Settings className="h-4 w-4" />
-                      My Profile
+                      Profile
+                    </Link>
+                    <Link href="/games" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
+                      <Gamepad2 className="h-4 w-4" />
+                      Games
+                    </Link>
+                    <Link href="/groups" className="flex items-center gap-3 px-2 py-2 text-sm rounded-md hover:bg-muted transition-colors">
+                      <Users className="h-4 w-4" />
+                      Groups
                     </Link>
                   </nav>
 

@@ -1,13 +1,15 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 
-import { signIn } from "@/server/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { signIn } from "@/server/auth";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ callbackUrl?: string }> }) {
   const { callbackUrl } = await searchParams;
+
+  console.log(callbackUrl);
 
   return (
     <main className="container mx-auto flex min-h-[calc(100vh-14rem)] items-center justify-center px-4 py-16">

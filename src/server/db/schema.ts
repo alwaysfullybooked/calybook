@@ -15,7 +15,7 @@ export const Categories = {
   // BADMINTON: "badminton",
   // BASKETBALL: "basketball",
   // VOLLEYBALL: "volleyball",
-  // FOOTBALL: "football",
+  FOOTBALL: "football",
 } as const;
 
 export const MatchTypes = {
@@ -61,6 +61,47 @@ export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   preferences: many(preferences),
+  groups: many(groups),
+  groupMembers: many(groupMembers),
+}));
+
+export const groups = createTable("group", (d) => ({
+  id: d
+    .varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: d.varchar({ length: 255 }).notNull(),
+  category: d.mysqlEnum(["tennis", "badminton", "basketball", "volleyball", "football", "contact"]).notNull(),
+  description: d.varchar({ length: 255 }),
+
+  createdById: d.varchar({ length: 255 }).notNull(),
+  createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: d.timestamp().onUpdateNow(),
+}));
+
+export const groupsRelations = relations(groups, ({ many }) => ({
+  members: many(groupMembers),
+}));
+
+export const groupMembers = createTable("group_member", (d) => ({
+  id: d
+    .varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  groupId: d.varchar({ length: 255 }).notNull(),
+  userId: d.varchar({ length: 255 }).notNull(),
+  role: d.mysqlEnum(["admin", "member"]).notNull(),
+
+  createdById: d.varchar({ length: 255 }).notNull(),
+  createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: d.timestamp().onUpdateNow(),
+}));
+
+export const groupMembersRelations = relations(groupMembers, ({ one }) => ({
+  group: one(groups, { fields: [groupMembers.groupId], references: [groups.id] }),
+  user: one(users, { fields: [groupMembers.userId], references: [users.id] }),
 }));
 
 export const accounts = createTable(
