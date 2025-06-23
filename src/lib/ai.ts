@@ -9,8 +9,8 @@ const openrouter = createOpenRouter({
   apiKey: env.OPENROUTER_API_KEY,
 });
 
-const model = openrouter.chat("meta-llama/llama-4-scout");
-// const model = openrouter.chat("google/gemini-2.5-flash-lite-preview-06-17");
+// const model = openrouter.chat("meta-llama/llama-4-scout");
+const model = openrouter.chat("google/gemini-2.5-flash-lite-preview-06-17");
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;

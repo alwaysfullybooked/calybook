@@ -10,20 +10,22 @@ import { Loader2, RefreshCw, Terminal } from "lucide-react";
 
 export default function ChatInterface({ country, name, email }: { country: string; name: string; email: string }) {
   const countryLabel = locations[country as keyof typeof locations]?.name ?? "";
+  const cities = locations[country as keyof typeof locations]?.cities.map((city) => city.label).join(", ") ?? "";
+  const firstName = name.split(" ")[0];
 
   const { messages, input, handleInputChange, handleSubmit, status, reload } = useChat({
     api: "/api/chat",
     id: `${email}-${country}`,
     body: {
       country: countryLabel,
-      name,
+      name: firstName,
       email,
     },
     initialMessages: [
       {
         id: "welcome",
         role: "assistant",
-        content: `Hello ${name}! I'm your CalyBook ${countryLabel} Booking Assistant. I can help you search for venues, see availability and make bookings. How can I assist you today?`,
+        content: `Hello ${firstName}! I'm Caly your Booking Assistant for ${countryLabel}. I can help you search for venues, see availability and make bookings in these locations: ${cities}. How can I assist you today?`,
       },
     ],
   });
