@@ -1,14 +1,7 @@
 import { streamChat } from "@/lib/ai";
-import { auth } from "@/server/auth";
 import type { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-
-  if (!session?.user?.email) {
-    return new Response("Unauthorized", { status: 401 });
-  }
-
   const { messages, country, name, email } = await req.json();
 
   const systemPrompt = {
