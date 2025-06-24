@@ -1,16 +1,16 @@
-import { auth } from "@/server/auth";
-import { redirect } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Calendar, ExternalLink } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { auth } from "@/server/auth";
+import { Calendar, ExternalLink, Trophy } from "lucide-react";
+import { redirect } from "next/navigation";
 
-import { openscor } from "@/lib/openscor";
-import { AddGame } from "@/components/client/openscor/games";
-import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { ApproveGameButton } from "@/components/client/openscor/approve";
+import { AddGame } from "@/components/client/openscor/games";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
+import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
+import { openscor } from "@/lib/openscor";
 import type { Category, MatchType } from "@/server/db/schema";
 
 export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; category: Category }> }) {
@@ -47,7 +47,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   const approvedGames = games.filter((game) => game.status === "approved");
 
   const playedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount && pr.ranking.matchCount > 0);
-  const unplayedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount && pr.ranking.matchCount === 0);
+  const unplayedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount === 0);
 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
