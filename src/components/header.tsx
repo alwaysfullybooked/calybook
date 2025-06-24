@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { auth, signIn, signOut } from "@/server/auth";
+import Image from "next/image";
 
 export default async function Header({ country, link }: { country: string; link: string }) {
   const session = await auth();
@@ -14,6 +15,7 @@ export default async function Header({ country, link }: { country: string; link:
     <header className="sticky top-0 z-50 w-full bg-background">
       <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4 border-b">
         <Link href={link} className="flex items-center space-x-2">
+          <Image src="/logo.png" alt="CalyBook" width={32} height={32} />
           <span className="text-2xl sm:text-3xl font-bold text-primary">CalyBook</span>
           <span className="font-bold text-sm sm:text-base">{country && country !== "Global" ? country : ""}</span>
         </Link>
