@@ -3,10 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "license": "Apache-2.0",
+  "description": "A comprehensive sports platform that seamlessly integrates AlwaysFullyBooked for venue booking and OpenScor for sports rankings. Features AI-powered booking assistance, real-time rankings, and multi-country support.",
+  "keywords": ["sports", "rankings", "booking", "venues", "tennis", "football", "openscor", "alwaysfullybooked", "nextjs", "typescript", "t3-stack", "competition", "leaderboards"],
+  "author": "Fanscope Limited",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alwaysfullybooked/calybook.git"
+  },
   "scripts": {
     "build": "next build",
     "check": "biome check .",
-    "check:unsafe": "biome check --write --unsafe .",
     "check:write": "biome check --write .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -16,8 +23,7 @@
     "preview": "next build && next start",
     "start": "next start --port 3001",
     "clean": "git clean -xdf .next node_modules",
-    "typecheck": "tsc --noEmit",
-    "vercel-remove": "vercel remove -s -y calybook"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/groq": "^1.2.9",

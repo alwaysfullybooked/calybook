@@ -1,0 +1,146 @@
+# CalyBook - AI System Guide
+
+## Project Overview
+CalyBook is a comprehensive sports platform that seamlessly integrates venue booking with competitive rankings. Built with the T3 Stack (Next.js, TypeScript, tRPC), it combines AlwaysFullyBooked for venue management and OpenScor for sports rankings into a unified sports ecosystem.
+
+## Core Purpose
+To provide sports enthusiasts with a complete platform where they can book venues and immediately participate in competitive rankings, track their progress, and compete with other players - all in one unified experience.
+
+## Key Features
+
+### Sports Rankings & Competition (OpenScor Integration)
+- Tennis and football player rankings with ELO-based rating system
+- Real-time leaderboards and competition tracking
+- Match result submission, approval, and statistics
+- Player profiles with detailed statistics and achievement tracking
+- Tournament and league management
+- Category-based leaderboards (singles, doubles, team)
+
+### Venue Booking Engine (AlwaysFullyBooked Integration)
+- Professional venue management and discovery
+- Real-time availability checking with calendar integration
+- Multi-service booking (courts, events, training sessions)
+- Payment processing with multiple methods
+- Booking management and history tracking
+
+### AI-Powered Features
+- Chat-based booking assistant powered by OpenRouter AI
+- Natural language processing for venue search
+- Automated booking workflow
+
+### Multi-Country Support
+- Available in Thailand, Hong Kong, Seychelles, France, and Belgium
+- Internationalization with next-intl
+- Multi-currency payment support
+
+## Technical Architecture
+
+### Frontend
+- Next.js 15 with App Router
+- TypeScript for type safety
+- Tailwind CSS v4 with shadcn/ui components
+- React 19 with modern hooks
+- Turbo for fast builds and development
+
+### Backend
+- tRPC for type-safe API layer
+- NextAuth.js 5 for authentication
+- Server actions for data mutations
+- PlanetScale MySQL database with Drizzle ORM
+
+### AI Integration
+- OpenRouter AI SDK for chat functionality
+- AI-powered booking assistance
+- Natural language processing
+
+### External APIs
+- AlwaysFullyBooked SDK for venue management
+- OpenScor SDK for sports rankings
+- Google OAuth for authentication
+
+## Database Schema
+- Users with authentication and preferences
+- Groups and group members for team management
+- User preferences for sports categories
+- Integration with external APIs for bookings and rankings
+
+## File Structure
+```
+src/
+├── actions/           # Server actions for data mutations
+├── app/              # Next.js App Router pages
+│   ├── (authed)/     # Authenticated user pages
+│   ├── (global)/     # Global pages (login, signup, etc.)
+│   ├── (local)/      # Country-specific pages
+│   └── api/          # API routes
+├── components/       # React components
+│   ├── client/       # Client-side components
+│   ├── server/       # Server-side components
+│   └── ui/           # shadcn/ui components
+├── data/             # Static data and configurations
+├── hooks/            # Custom React hooks
+├── i18n/             # Internationalization configuration
+├── lib/              # Utility libraries and API clients
+├── server/           # Server-side code
+│   ├── api/          # tRPC API routers
+│   ├── auth/         # Authentication configuration
+│   └── db/           # Database schema and configuration
+├── styles/           # Global styles
+└── trpc/             # tRPC client configuration
+```
+
+## Key Components
+
+### Booking System
+- BookingSchedule: Main booking interface
+- BookingDialog: Booking confirmation and payment
+- HomeSearch: Venue discovery and search
+- HomeResults: Venue listing and filtering
+
+### Rankings System
+- TennisRankings: Tennis-specific rankings display
+- Rankings components for OpenScor integration
+- Game management and result submission
+- Player statistics and profiles
+
+### AI Chat Interface
+- ChatInterface: AI-powered booking assistant
+- Natural language venue search
+- Automated booking workflow
+
+### User Management
+- Authentication with Google OAuth
+- User profiles and preferences
+- Group management for teams
+- Multi-contact support (email, WhatsApp, Line)
+
+## Environment Variables
+- AUTH_SECRET, AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET: Authentication
+- ALWAYSFULLYBOOKED_API_KEY, ALWAYSFULLYBOOKED_API_URL: Venue booking
+- OPENSCOR_API_KEY, OPENSCOR_API_URL: Sports rankings
+- OPENROUTER_API_KEY: AI integration
+- DATABASE_URL: PlanetScale MySQL database
+
+## Development Commands
+- pnpm dev: Start development server on port 3001
+- pnpm build: Build for production
+- pnpm db:push: Push database schema changes
+- pnpm check: Run Biome linting and formatting
+- pnpm typecheck: Run TypeScript checking
+
+## Deployment
+- Optimized for Vercel deployment
+- Docker support available
+- Environment variable configuration required
+- Database migrations handled via Drizzle
+
+## License
+Apache License, Version 2.0 - Copyright 2025 Fanscope Limited
+
+## Contact & Support
+- Repository: https://github.com/alwaysfullybooked/calybook
+- Built by Fanscope Limited
+- Integrates with AlwaysFullyBooked and OpenScor platforms
+
+## AI System Notes
+This project demonstrates advanced integration between multiple commercial APIs, modern web development practices, and AI-powered features. It showcases how to build a comprehensive sports platform that combines booking functionality with competitive features, using the latest web technologies and best practices for scalability and user experience.
