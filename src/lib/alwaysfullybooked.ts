@@ -1,15 +1,15 @@
-import { AlwaysFullyBooked } from "@alwaysfullybooked/sdk-node";
 import { env } from "@/env";
+import { AlwaysFullyBooked } from "@alwaysfullybooked/sdk-node";
 
-const apiKey = env.AFB_API_KEY;
-const baseUrl = env.AFB_API_URL;
+const apiKey = env.ALWAYSFULLYBOOKED_API_KEY;
+const baseUrl = env.ALWAYSFULLYBOOKED_API_URL;
 
 if (!apiKey) {
-  throw new Error("AFB_API_KEY is not set");
+  throw new Error("ALWAYSFULLYBOOKED_API_KEY is not set");
 }
 
 if (!baseUrl) {
-  throw new Error("AFB_API_URL is not set");
+  throw new Error("ALWAYSFULLYBOOKED_API_URL is not set");
 }
 
 export const alwaysfullybooked = new AlwaysFullyBooked({

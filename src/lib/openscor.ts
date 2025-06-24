@@ -1,15 +1,15 @@
-import { OpenScor } from "@openscor-com/sdk-node";
 import { env } from "@/env";
+import { OpenScor } from "@openscor-com/sdk-node";
 
-const apiKey = env.OS_API_KEY;
-const baseUrl = env.OS_API_URL;
+const apiKey = env.OPENSCOR_API_KEY;
+const baseUrl = env.OPENSCOR_API_URL;
 
 if (!apiKey) {
-  throw new Error("AFB_API_KEY is not set");
+  throw new Error("OPENSCOR_API_KEY is not set");
 }
 
 if (!baseUrl) {
-  throw new Error("AFB_API_URL is not set");
+  throw new Error("OPENSCOR_API_URL is not set");
 }
 
 export const openscor = new OpenScor({
