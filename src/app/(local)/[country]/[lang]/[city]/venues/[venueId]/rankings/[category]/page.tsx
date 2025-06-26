@@ -81,9 +81,10 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
         </div>
       )}
 
-      <div className="text-center space-y-2 mb-6 sm:mb-12">
-        <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
-        {competition?.matchType && (
+      {playerRanking && competition?.matchType && (
+        <div className="text-center space-y-2 mb-6 sm:mb-12">
+          <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
+
           <AddGame
             competitionId={competitionId}
             category={category}
@@ -94,8 +95,8 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
             rankings={rankings}
             userAddingId={session.user.id}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {pendingGames.length > 0 && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
