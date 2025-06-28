@@ -9,8 +9,6 @@ import { signIn } from "@/server/auth";
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ callbackUrl?: string }> }) {
   const { callbackUrl } = await searchParams;
 
-  console.log(callbackUrl);
-
   return (
     <main className="container mx-auto flex min-h-[calc(100vh-14rem)] items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">

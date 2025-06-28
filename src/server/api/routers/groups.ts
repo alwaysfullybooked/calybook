@@ -1,7 +1,8 @@
 import { Categories, groupMembers, groups } from "@/server/db/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../trpc";
+import { formatName } from "../utils";
 
 export const groupsRouter = {
   find: protectedProcedure
@@ -13,8 +14,24 @@ export const groupsRouter = {
     .query(async ({ ctx, input }) => {
       const result = await ctx.db.query.groups.findFirst({
         where: and(eq(groups.createdById, ctx.session.user.id), eq(groups.id, input.groupId)),
+        with: {
+          members: {
+            with: {
+              user: true,
+            },
+          },
+        },
       });
-      return result;
+
+      const group = {
+        ...result,
+        members: result?.members.map((member) => ({
+          ...member,
+          user: { ...member.user, name: formatName(member.user.name ?? "Unknown User") },
+        })),
+      };
+
+      return group;
     }),
 
   search: protectedProcedure.query(async ({ ctx }) => {

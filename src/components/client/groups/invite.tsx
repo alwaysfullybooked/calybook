@@ -21,7 +21,7 @@ export function InviteLink({ groupId, groupName, trigger }: InviteLinkProps) {
 
   useEffect(() => {
     // Only generate URL on client side
-    setInviteUrl(`${window.location.origin}/groups/join/${groupId}`);
+    setInviteUrl(`${window.location.origin}/groups/${groupId}/join`);
   }, [groupId]);
 
   const copyToClipboard = async () => {
