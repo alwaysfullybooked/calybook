@@ -107,7 +107,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
             {venues.map((venue) => {
               const citySlug = locations[country]?.cities.find((c) => c.value === venue.city)?.slug ?? "";
 
-              const categories = Object.keys(venue.leagues ?? {}) ?? [];
+              const categories = Object.keys(venue.competitions ?? {}) ?? [];
 
               return (
                 <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">

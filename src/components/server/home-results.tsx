@@ -15,7 +15,7 @@ export function HomeResults({ country, lang, city, venues }: { country: string; 
           <h2 className="text-2xl font-bold tracking-tight mb-6">Featured Venues</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {venues.map((venue) => {
-              const categories = Object.keys(venue.leagues ?? {}) ?? [];
+              const categories = Object.keys(venue.competitions ?? {}) ?? [];
 
               return (
                 <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">

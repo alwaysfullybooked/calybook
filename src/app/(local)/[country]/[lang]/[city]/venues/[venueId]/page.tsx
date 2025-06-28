@@ -110,8 +110,8 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                   <div className="flex flex-col">
                     <div className="flex justify-end p-2">
                       {venue.allowRankings &&
-                        Object.keys(venue.leagues ?? {}).length > 0 &&
-                        Object.keys(venue.leagues ?? {}).map((category) => <ViewRankings key={category} country={country} lang={lang} city={city} venueId={venueId} category={category} />)}
+                        Object.keys(venue.competitions ?? {}).length > 0 &&
+                        Object.keys(venue.competitions ?? {}).map((category) => <ViewRankings key={category} country={country} lang={lang} city={city} venueId={venueId} category={category} />)}
                     </div>
                     <div>
                       <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{mergedVenue.name}</CardTitle>

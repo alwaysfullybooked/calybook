@@ -1,9 +1,11 @@
 import { InviteLink } from "@/components/client/groups/invite";
+import { AddGame } from "@/components/client/openscor/games";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/trpc/server";
+import type { MatchType } from "@openscor-com/sdk-node";
 import { Gamepad2, Info, Link, Trophy, User, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -57,7 +59,7 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
 
         {/* Tabs */}
         <Tabs defaultValue="players" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="players" className="flex items-center gap-2">
               <User className="h-4 w-4" />
               Players ({members.length})
@@ -66,10 +68,10 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
               <Gamepad2 className="h-4 w-4" />
               Games
             </TabsTrigger>
-            <TabsTrigger value="rankings" className="flex items-center gap-2">
+            {/* <TabsTrigger value="rankings" className="flex items-center gap-2">
               <Trophy className="h-4 w-4" />
               Rankings
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           {/* Players Tab */}
@@ -120,6 +122,16 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
 
           {/* Games Tab */}
           <TabsContent value="games" className="space-y-4">
+            {/* <AddGame
+            competitionId={group.competitionId}
+            category={category}
+            matchType={competition.matchType as MatchType}
+            venueId={venueId}
+            venueName={venue.name}
+            venueCountry={venue.country}
+            rankings={rankings}
+            userAddingId={session.user.id}
+          /> */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

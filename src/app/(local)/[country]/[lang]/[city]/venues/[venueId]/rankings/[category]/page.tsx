@@ -31,7 +31,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   const customerName = session.user.name ?? session.user.email;
   const customerEmailId = session.user.email;
 
-  const competitionId = venue?.leagues?.[category as keyof typeof venue.leagues] ?? "";
+  const competitionId = venue?.competitions?.[category as keyof typeof venue.competitions] ?? "";
 
   const [competition, leaderboard, playerRankings, games] = await Promise.all([
     openscor.competitions.find({ competitionId }),
