@@ -11,9 +11,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^1.2.12
         version: 1.2.12(react@19.1.0)(zod@3.25.67)
-      '@alwaysfullybooked/sdk-node':
-        specifier: ^0.1.50
-        version: 0.1.50(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
+      '@alwaysfullybooked/alwaysfullybooked-sdk-node':
+        specifier: ^0.1.52
+        version: 0.1.52(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
       '@auth/drizzle-adapter':
         specifier: ^1.10.0
         version: 1.10.0
@@ -276,8 +276,8 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@alwaysfullybooked/sdk-node@0.1.50':
-    resolution: {integrity: sha512-XASJ7uq9k2P55VxvmktMCP0eTZPVU6hEii4o9I+xJpAa1YmauKebmaw+ZkTzQPaS0B+zHL6NMNhaBz6zNyvOaw==, tarball: https://npm.pkg.github.com/download/@alwaysfullybooked/sdk-node/0.1.50/6d1e2fead01250c044522dbf3ebc826e046fc592}
+  '@alwaysfullybooked/alwaysfullybooked-sdk-node@0.1.52':
+    resolution: {integrity: sha512-9xZ+EoTp4ECR5yPn3Bh5VaBe4ufnyuyGifdRiKSbCL+9I4QAV5jdXcHVR3ufbSqk8+W4EU/IpJbh+Ea7gJF3fg==, tarball: https://npm.pkg.github.com/download/@alwaysfullybooked/alwaysfullybooked-sdk-node/0.1.52/415bf2aae6b2e8ef91db28edfa9e217981f4e6e9}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -2870,7 +2870,7 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@alwaysfullybooked/sdk-node@0.1.50(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
+  '@alwaysfullybooked/alwaysfullybooked-sdk-node@0.1.52(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
     dependencies:
       '@tanstack/react-query': 5.81.5(react@19.1.0)
       '@trpc/client': 11.4.3(@trpc/server@11.4.3(typescript@5.8.3))(typescript@5.8.3)

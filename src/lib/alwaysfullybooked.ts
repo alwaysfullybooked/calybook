@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { AlwaysFullyBooked } from "@alwaysfullybooked/sdk-node";
+import { AlwaysFullyBooked } from "@alwaysfullybooked/alwaysfullybooked-sdk-node";
 
 const apiKey = env.ALWAYSFULLYBOOKED_API_KEY;
 const baseUrl = env.ALWAYSFULLYBOOKED_API_URL;
