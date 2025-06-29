@@ -74,12 +74,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
               ranking={!!leaderboard}
             />
           )}
-          <h2 className="font-bold tracking-tight capitalize text-lg">
-            <a href={`https://www.openscor.com/competitions/${competition?.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
-              Open <span className="underline">{competition?.name}</span>
-              <ExternalLink className="h-5 w-5" />
-            </a>
-          </h2>
+          <h2 className="font-bold tracking-tight capitalize text-lg">{competition?.name}</h2>
         </div>
       )}
 
