@@ -25,7 +25,7 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
   }
 
   const groups = await api.groups.search();
-  const joinedGroups = await api.groups.searchJoined();
+  const joinedGroups = await api.groups.searchMemberGroups();
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
@@ -88,13 +88,17 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
                           </Link>
                           {group.description && <p className="text-xs text-muted-foreground mt-1">{group.description}</p>}
                         </div>
-                        <div className="text-center">
+                        <div className="flex gap-2 justify-center">
                           <Badge variant="secondary" className="text-xs capitalize">
                             {group.category}
                           </Badge>
+                          {group.country && (
+                            <Badge variant="secondary" className="text-xs capitalize">
+                              {group.city}, {group.country}
+                            </Badge>
+                          )}
                         </div>
-
-                        <div className="text-center sm:text-right flex gap-2">
+                        <div className="flex gap-2 justify-center">
                           <InviteLink
                             groupId={group.id}
                             groupName={group.name}
@@ -151,13 +155,17 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
                           </Link>
                           {group.description && <p className="text-xs text-muted-foreground mt-1">{group.description}</p>}
                         </div>
-                        <div className="text-center">
+                        <div className="flex gap-2 justify-center">
                           <Badge variant="secondary" className="text-xs capitalize">
                             {group.category}
                           </Badge>
+                          {group.country && (
+                            <Badge variant="secondary" className="text-xs capitalize">
+                              {group.city}, {group.country}
+                            </Badge>
+                          )}
                         </div>
-
-                        <div className="text-center sm:text-right flex gap-2">
+                        <div className="flex gap-2 justify-center">
                           <InviteLink
                             groupId={group.id}
                             groupName={group.name}
@@ -167,7 +175,6 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
                               </Button>
                             }
                           />
-
                           <EditGroupDialog
                             group={group}
                             trigger={

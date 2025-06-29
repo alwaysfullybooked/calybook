@@ -71,9 +71,12 @@ export const groups = createTable("group", (d) => ({
     .notNull()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  competitionId: d.varchar({ length: 255 }).notNull(),
   name: d.varchar({ length: 255 }).notNull(),
   category: d.mysqlEnum(["tennis", "badminton", "basketball", "volleyball", "football", "contact"]).notNull(),
   description: d.varchar({ length: 255 }),
+  city: d.varchar({ length: 255 }).notNull(),
+  country: d.varchar({ length: 255 }).notNull(),
 
   createdById: d.varchar({ length: 255 }).notNull(),
   createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
@@ -82,6 +85,27 @@ export const groups = createTable("group", (d) => ({
 
 export const groupsRelations = relations(groups, ({ many }) => ({
   members: many(groupMembers),
+  venues: many(groupVenues),
+}));
+
+export const groupVenues = createTable("group_venue", (d) => ({
+  id: d
+    .varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  groupId: d.varchar({ length: 255 }).notNull(),
+  venueId: d.varchar({ length: 255 }).notNull(),
+  venueName: d.varchar({ length: 255 }).notNull(),
+  venueCountry: d.varchar({ length: 255 }).notNull(),
+
+  createdById: d.varchar({ length: 255 }).notNull(),
+  createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+  updatedAt: d.timestamp().onUpdateNow(),
+}));
+
+export const groupVenuesRelations = relations(groupVenues, ({ one }) => ({
+  group: one(groups, { fields: [groupVenues.groupId], references: [groups.id] }),
 }));
 
 export const groupMembers = createTable("group_member", (d) => ({

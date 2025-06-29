@@ -16,7 +16,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <h1 className="mb-2 text-3xl font-bold">Log in to CalyBook</h1>
           <p className="text-muted-foreground">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-primary hover:underline">
+            <Link href="/login" className="text-primary hover:underline">
               Sign up
             </Link>
           </p>

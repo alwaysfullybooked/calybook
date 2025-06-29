@@ -7,8 +7,8 @@ import { Calendar, ExternalLink, Trophy } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { ApproveGameButton } from "@/components/client/openscor/approve";
-import { AddGame } from "@/components/client/openscor/games";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
+import { AddVenueGame } from "@/components/client/openscor/venue-games";
 import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { openscor } from "@/lib/openscor";
 import type { Category, MatchType } from "@/server/db/schema";
@@ -85,7 +85,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
         <div className="text-center space-y-2 mb-6 sm:mb-12">
           <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
 
-          <AddGame
+          <AddVenueGame
             competitionId={competitionId}
             category={category}
             matchType={competition.matchType as MatchType}

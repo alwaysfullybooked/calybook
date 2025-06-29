@@ -1,4 +1,4 @@
-import { Categories, groupMembers, groups } from "@/server/db/schema";
+import { Categories, groupMembers, groupVenues, groups } from "@/server/db/schema";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../trpc";
@@ -15,23 +15,11 @@ export const groupsRouter = {
       const result = await ctx.db.query.groups.findFirst({
         where: and(eq(groups.createdById, ctx.session.user.id), eq(groups.id, input.groupId)),
         with: {
-          members: {
-            with: {
-              user: true,
-            },
-          },
+          venues: true,
         },
       });
 
-      const group = {
-        ...result,
-        members: result?.members.map((member) => ({
-          ...member,
-          user: { ...member.user, name: formatName(member.user.name ?? "Unknown User") },
-        })),
-      };
-
-      return group;
+      return result;
     }),
 
   search: protectedProcedure.query(async ({ ctx }) => {
@@ -41,7 +29,29 @@ export const groupsRouter = {
     return result;
   }),
 
-  searchJoined: protectedProcedure.query(async ({ ctx }) => {
+  searchMembers: protectedProcedure
+    .input(
+      z.object({
+        groupId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const result = await ctx.db.query.groupMembers.findMany({
+        where: and(eq(groupMembers.groupId, input.groupId)),
+        with: {
+          user: true,
+        },
+      });
+
+      const members = result.map((member) => ({
+        ...member,
+        user: { ...member.user, name: formatName(member.user.name ?? "Unknown User") },
+      }));
+
+      return members;
+    }),
+
+  searchMemberGroups: protectedProcedure.query(async ({ ctx }) => {
     const result = await ctx.db.query.groupMembers.findMany({
       where: eq(groupMembers.userId, ctx.session.user.id),
       with: {
@@ -57,18 +67,24 @@ export const groupsRouter = {
   create: protectedProcedure
     .input(
       z.object({
+        competitionId: z.string(),
         name: z.string(),
         category: z.nativeEnum(Categories),
         description: z.string(),
+        city: z.string(),
+        country: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const [result] = await ctx.db
         .insert(groups)
         .values({
+          competitionId: input.competitionId,
           name: input.name,
           category: input.category,
           description: input.description,
+          city: input.city,
+          country: input.country,
           createdById: ctx.session.user.id,
         })
         .$returningId();
@@ -98,7 +114,7 @@ export const groupsRouter = {
       return result;
     }),
 
-  join: protectedProcedure
+  addMember: protectedProcedure
     .input(
       z.object({
         groupId: z.string(),
@@ -119,6 +135,27 @@ export const groupsRouter = {
         groupId: input.groupId,
         userId: ctx.session.user.id,
         role: "member",
+        createdById: ctx.session.user.id,
+      });
+
+      return result;
+    }),
+
+  addVenue: protectedProcedure
+    .input(
+      z.object({
+        groupId: z.string(),
+        venueId: z.string(),
+        venueName: z.string(),
+        venueCountry: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.db.insert(groupVenues).values({
+        groupId: input.groupId,
+        venueId: input.venueId,
+        venueName: input.venueName,
+        venueCountry: input.venueCountry,
         createdById: ctx.session.user.id,
       });
 

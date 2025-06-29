@@ -18,11 +18,14 @@ import { toast } from "sonner";
 import * as z from "zod";
 
 const CreateGroupSchema = z.object({
+  competitionId: z.string().min(1, "Competition ID is required"),
   name: z.string().min(1, "Group name is required").max(255, "Group name must be less than 255 characters"),
   category: z.nativeEnum(Categories, {
     required_error: "Please select a category",
   }),
   description: z.string().min(1, "Description is required").max(255, "Description must be less than 255 characters"),
+  city: z.string().min(1, "City is required"),
+  country: z.string().min(1, "Country is required"),
 });
 
 type CreateGroupForm = z.infer<typeof CreateGroupSchema>;
@@ -43,9 +46,12 @@ function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
   const form = useForm<CreateGroupForm>({
     resolver: zodResolver(CreateGroupSchema),
     defaultValues: {
+      competitionId: "",
       name: "",
       category: Categories.TENNIS,
       description: "",
+      city: "",
+      country: "",
     },
   });
 
@@ -53,9 +59,12 @@ function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
     setIsLoading(true);
     try {
       await createGroup({
+        competitionId: data.competitionId,
         name: data.name,
         category: data.category,
         description: data.description,
+        city: data.city,
+        country: data.country,
       });
       toast.success("Group created successfully");
       form.reset();

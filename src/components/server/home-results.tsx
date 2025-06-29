@@ -19,9 +19,16 @@ export function HomeResults({ country, lang, city, venues }: { country: string; 
 
               return (
                 <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
-                  {venue.image && <img src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" />}
+                  {venue.image && (
+                    <Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>
+                      <img src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" />
+                    </Link>
+                  )}
+
                   <CardHeader className="flex-1">
-                    <CardTitle className="text-lg">{venue.name}</CardTitle>
+                    <CardTitle className="text-lg">
+                      <Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>{venue.name}</Link>
+                    </CardTitle>
 
                     {venue.plusCode && (
                       <CardDescription className="text-sm">

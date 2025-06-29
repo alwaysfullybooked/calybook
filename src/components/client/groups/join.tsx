@@ -2,6 +2,7 @@
 
 import { joinGroup } from "@/actions/groups";
 import { Button } from "@/components/ui/button";
+import type { Category } from "@/server/db/schema";
 import { Check, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,9 +11,16 @@ import { toast } from "sonner";
 interface JoinGroupFormProps {
   groupId: string;
   groupName: string;
+  category: Category;
+  playerId: string;
+  playerName: string;
+  playerContactMethod: string;
+  playerContactId: string;
+  playerEmailId: string;
+  ranking: boolean;
 }
 
-export function JoinGroupForm({ groupId, groupName }: JoinGroupFormProps) {
+export function JoinGroupForm({ groupId, groupName, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking }: JoinGroupFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
   const router = useRouter();
@@ -20,7 +28,16 @@ export function JoinGroupForm({ groupId, groupName }: JoinGroupFormProps) {
   const handleJoin = async () => {
     setIsLoading(true);
     try {
-      await joinGroup({ groupId });
+      await joinGroup({
+        groupId,
+        category,
+        playerId,
+        playerName,
+        playerContactMethod,
+        playerContactId,
+        playerEmailId,
+        ranking,
+      });
       setHasJoined(true);
       toast.success(`Successfully joined ${groupName}!`);
 

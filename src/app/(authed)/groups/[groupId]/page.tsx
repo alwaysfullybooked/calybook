@@ -1,12 +1,16 @@
+import { AddVenueDialog } from "@/components/client/groups/add-venue";
 import { InviteLink } from "@/components/client/groups/invite";
-import { AddGame } from "@/components/client/openscor/games";
+// import { AddGroupGame } from "@/components/client/openscor/group-games";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
+import { openscor } from "@/lib/openscor";
+// import { auth } from "@/server/auth";
+import type { Category } from "@/server/db/schema";
 import { api } from "@/trpc/server";
-import type { MatchType } from "@openscor-com/sdk-node";
-import { Gamepad2, Info, Link, Trophy, User, Users } from "lucide-react";
+import { Gamepad2, Info, Link, Store, Trophy, User, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 
 interface GroupDetailPageProps {
@@ -16,13 +20,23 @@ interface GroupDetailPageProps {
 export default async function GroupDetailPage({ params }: GroupDetailPageProps) {
   const { groupId } = await params;
 
+  // const session = await auth();
+
   const group = await api.groups.find({ groupId });
 
   if (!group) {
     redirect("/groups?error=group-not-found");
   }
 
-  const members = group?.members?.map((member) => member.user) ?? [];
+  const [venues, groupMembers] = await Promise.all([alwaysfullybooked.venues.publicSearch({ country: group.country, city: group.city }), api.groups.searchMembers({ groupId })]);
+
+  const groupVenues = group?.venues ?? [];
+  const memberIds = groupMembers.map((member) => member.userId);
+
+  const playerRankings = await openscor.leaderboards.search({ category: group.category as Category, playerIds: memberIds });
+
+  const playedRankings = playerRankings.filter((pr) => pr?.matchCount && pr.matchCount > 0);
+  const unplayedRankings = playerRankings.filter((pr) => pr?.matchCount === 0);
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
@@ -38,31 +52,28 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs capitalize">
                 {group.category}
               </Badge>
+              {group.country && (
+                <Badge variant="secondary" className="text-xs capitalize">
+                  {group.city}, {group.country}
+                </Badge>
+              )}
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex justify-end">
-          <InviteLink
-            groupId={groupId}
-            groupName={group.name ?? ""}
-            trigger={
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                Invite
-              </Button>
-            }
-          />
-        </div>
-
         {/* Tabs */}
         <Tabs defaultValue="players" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="players" className="flex items-center gap-2">
               <User className="h-4 w-4" />
-              Players ({members.length})
+              Players ({groupMembers.length})
+            </TabsTrigger>
+            <TabsTrigger value="venues" className="flex items-center gap-2">
+              <Store className="h-4 w-4" />
+              Venues ({groupVenues.length})
             </TabsTrigger>
             <TabsTrigger value="games" className="flex items-center gap-2">
               <Gamepad2 className="h-4 w-4" />
@@ -76,22 +87,132 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
 
           {/* Players Tab */}
           <TabsContent value="players" className="space-y-4">
+            <div className="flex justify-start my-4">
+              <InviteLink
+                groupId={groupId}
+                groupName={group.name ?? ""}
+                trigger={
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    Invite
+                  </Button>
+                }
+              />
+            </div>
+
+            {groupMembers.length === 0 && <p className="text-muted-foreground text-center py-4">No members yet</p>}
+
+            {playedRankings.length > 0 && (
+              <Card>
+                <CardHeader className="px-3 py-4 sm:px-6 sm:py-6">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
+                    Rankings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="space-y-3 sm:space-y-4">
+                    {playedRankings.map((pr, index) => (
+                      <Card key={pr.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-6">
+                          <div className="grid grid-cols-2 items-center justify-center gap-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
+                                <span className="font-bold">{index + 1}</span>
+                              </div>
+                              <div>
+                                <p className="font-medium">{pr.playerName}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold text-lg">{pr.masteryScore?.toFixed(2)}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {unplayedRankings.length > 0 && (
+              <Card>
+                <CardHeader className="px-3 py-4 sm:px-6 sm:py-6">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
+                    Not Played Yet
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-3 sm:px-6">
+                  <div className="space-y-3 sm:space-y-4">
+                    {unplayedRankings.map((pr, index) => (
+                      <Card key={pr.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
+                                <span className="font-bold">{index + 1}</span>
+                              </div>
+                              <div>
+                                <p className="font-medium">{pr.playerName}</p>
+                                {/* <p className="text-sm text-muted-foreground">{ranking.venueName}</p> */}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold text-lg">{pr.masteryScore?.toFixed(2)}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Invitation Info */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Link className="h-5 w-5" />
+                  How to Join This Group
+                </CardTitle>
+                <CardDescription>Invitation required to join this group</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-start gap-3 p-4 bg-muted rounded-lg">
+                  <Info className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Invitation Required</p>
+                    <p className="text-sm text-muted-foreground">To join this group, you need an invitation link from an existing member. Contact a group member to get invited.</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Venues Tab */}
+          <TabsContent value="venues" className="space-y-4">
+            <div className="flex justify-start my-4">
+              <AddVenueDialog groupId={groupId} venues={venues} />
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Group Members
+                  Group Venues
                 </CardTitle>
-                <CardDescription>Current members of this group</CardDescription>
+                <CardDescription>Current venues of this group, where games are played</CardDescription>
               </CardHeader>
               <CardContent>
-                {members.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">No members yet</p>
+                {venues.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-4">No venues yet</p>
                 ) : (
                   <div className="space-y-3">
-                    {group?.members?.map((member) => (
-                      <div key={member.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <span className="font-medium">{member.user.name || "Unknown User"}</span>
+                    {groupVenues.map((venue) => (
+                      <div key={venue.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <span className="font-medium">{venue.venueName}</span>
+                        <span className="text-muted-foreground">{venue.venueCountry}</span>
                       </div>
                     ))}
                   </div>
@@ -122,16 +243,18 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
 
           {/* Games Tab */}
           <TabsContent value="games" className="space-y-4">
-            {/* <AddGame
-            competitionId={group.competitionId}
-            category={category}
-            matchType={competition.matchType as MatchType}
-            venueId={venueId}
-            venueName={venue.name}
-            venueCountry={venue.country}
-            rankings={rankings}
-            userAddingId={session.user.id}
-          /> */}
+            <div className="flex justify-start my-4">
+              {/* {session?.user.id && (
+                <AddGroupGame
+                  groupId={groupId}
+                  competitionId={group.competitionId}
+                  category={group.category as Category}
+                  venues={groupVenues}
+                  rankings={playerRankings}
+                  userAddingId={session.user.id}
+                />
+              )} */}
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">

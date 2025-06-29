@@ -17,13 +17,18 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export type User = typeof users.$inferSelect;
+import type { groupVenues } from "@/server/db/schema";
+// export type User = typeof users.$inferSelect;
 
 import type { Resolver } from "react-hook-form";
 
 const formSchema = z
   .object({
+    groupId: z.string().min(1, "Group is required"),
     competitionId: z.string().min(1, "Competition is required"),
+    venueId: z.string().min(1, "Venue is required"),
+    venueName: z.string().min(1, "Venue name is required"),
+    venueCountry: z.string().min(1, "Venue country is required"),
     category: z.nativeEnum(Categories),
     matchType: z.nativeEnum(MatchTypes),
     winnerId: z.string().min(1, "Winner is required"),
@@ -43,25 +48,28 @@ const formSchema = z
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function AddGame({
+export function AddGroupGame({
+  groupId,
   competitionId,
   category,
-  matchType,
-  venueId,
-  venueName,
-  venueCountry,
+  venues,
   rankings,
   userAddingId,
-}: { competitionId: string; matchType: MatchType; category: Category; venueId: string; venueName: string; venueCountry: string; rankings: Ranking[]; userAddingId: string }) {
+}: { groupId: string; competitionId: string; category: Category; venues: (typeof groupVenues.$inferSelect)[]; rankings: Ranking[]; userAddingId: string }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+
+  console.log(rankings);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema) as Resolver<FormValues>,
     defaultValues: {
+      groupId,
       competitionId,
+      venueId: "",
+      venueName: "",
+      venueCountry: "",
       category,
-      matchType,
       winnerId: userAddingId,
       winnerName: rankings.find((r) => r.playerId === userAddingId)?.playerName ?? "UNKNOWN",
       playerId: "",
@@ -81,9 +89,9 @@ export function AddGame({
 
       await createOpenScorGame({
         competitionId,
-        venueId,
-        venueName,
-        venueCountry,
+        venueId: data.venueId,
+        venueName: data.venueName,
+        venueCountry: data.venueCountry,
         category: data.category,
         matchType: data.matchType,
         winnerId: data.winnerId as string,
@@ -114,6 +122,39 @@ export function AddGame({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="venueId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Venue</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      const selectedVenue = venues.find((venue) => venue.id === value);
+                      field.onChange(value);
+                      form.setValue("venueName", selectedVenue?.venueName ?? "UNKNOWN");
+                      form.setValue("venueCountry", selectedVenue?.venueCountry ?? "UNKNOWN");
+                    }}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a venue" className="truncate" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {venues.map((venue) => (
+                        <SelectItem key={venue.id} value={venue.id}>
+                          {venue.venueName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="winnerId"
@@ -177,7 +218,13 @@ export function AddGame({
               name="score"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Score (No commas for score, format X-X with spaces)</FormLabel>
+                  <FormLabel>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-bold mb-3">Score Format</span>
+                      <span>For Tennis, format is 6-4 with spaces for sets</span>
+                      <span>For Football, format is 2-1</span>
+                    </div>
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="e.g., 6-4 6-3" />
                   </FormControl>

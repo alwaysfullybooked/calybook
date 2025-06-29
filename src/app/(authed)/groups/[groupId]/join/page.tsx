@@ -1,7 +1,9 @@
 import { JoinGroupForm } from "@/components/client/groups/join";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { openscor } from "@/lib/openscor";
 import { auth } from "@/server/auth";
+import type { Category } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { Users } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -14,7 +16,7 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
   const { groupId } = await params;
   const session = await auth();
 
-  if (!session?.user?.id) {
+  if (!session?.user?.id || !session.user.email || !session.user.name) {
     redirect(`/login?callbackUrl=/groups/${groupId}/join`);
   }
 
@@ -24,11 +26,16 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
     redirect("/groups?error=group-not-found");
   }
 
-  const isMember = group?.members?.some((member) => member.userId === session.user.id);
+  const [groupMembers, playerRanking] = await Promise.all([api.groups.searchMembers({ groupId }), openscor.leaderboards.find({ category: group.category as Category, playerId: session.user.id })]);
+
+  const isMember = groupMembers?.some((member) => member.userId === session.user.id);
 
   if (isMember) {
     redirect(`/groups/${groupId}`);
   }
+
+  const playerName = session.user.name;
+  const playerEmailId = session.user.email;
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
@@ -49,16 +56,26 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
               </div>
 
               <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs capitalize">
                   {group.category}
                 </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  {group.members?.length} members
+                <Badge variant="secondary" className="text-xs capitalize">
+                  {groupMembers.length} members
                 </Badge>
               </div>
             </div>
 
-            <JoinGroupForm groupId={groupId} groupName={group.name ?? "UNKNOWN"} />
+            <JoinGroupForm
+              groupId={groupId}
+              groupName={group.name ?? "UNKNOWN"}
+              category={group.category as Category}
+              playerId={session.user.id}
+              playerName={playerName}
+              playerContactMethod={"email"}
+              playerContactId={playerEmailId}
+              playerEmailId={playerEmailId}
+              ranking={!!playerRanking}
+            />
           </CardContent>
         </Card>
       </div>

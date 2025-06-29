@@ -1,8 +1,8 @@
 "use server";
 
-import { auth } from "@/server/auth";
 import { openscor } from "@/lib/openscor";
-import type { Category, MatchType } from "@openscor-com/sdk-node";
+import { auth } from "@/server/auth";
+import type { Category, MatchType } from "@openscor-com/openscor-com-sdk-node";
 
 interface CreateGameProps {
   competitionId: string;
