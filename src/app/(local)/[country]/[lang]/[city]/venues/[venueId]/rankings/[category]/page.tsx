@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/server/auth";
+import { api } from "@/trpc/server";
 import { Calendar, ExternalLink, Trophy } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -31,23 +32,24 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   const customerName = session.user.name ?? session.user.email;
   const customerEmailId = session.user.email;
 
+  const venueMembers = await api.venueMembers.search({ venueId });
+  const venueMemberIds = venueMembers.map((vm) => vm.playerId);
+
   const competitionId = venue?.competitions?.[category as keyof typeof venue.competitions] ?? "";
 
-  const [competition, leaderboard, playerRankings, games] = await Promise.all([
+  const [competition, leaderboard, games] = await Promise.all([
     openscor.competitions.find({ competitionId }),
-    openscor.leaderboards.find({ category, playerId: session.user.id }),
-    openscor.venuePlayers.search({ venueId }),
+    openscor.leaderboards.search({ category, playerIds: venueMemberIds }),
     openscor.games.search({ venueId, category }),
   ]);
 
-  const playerRanking = playerRankings.find((pr) => pr?.playerId === session.user.id);
-  const rankings = playerRankings.map((pr) => pr?.ranking).filter((r) => r !== null);
+  const playerRanking = leaderboard.find((pr) => pr?.playerId === session.user.id);
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
   const approvedGames = games.filter((game) => game.status === "approved");
 
-  const playedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount && pr.ranking.matchCount > 0);
-  const unplayedRankings = playerRankings.filter((pr) => pr?.ranking?.matchCount === 0);
+  const playedRankings = leaderboard.filter((pr) => pr?.matchCount && pr.matchCount > 0);
+  const unplayedRankings = leaderboard.filter((pr) => pr?.matchCount === 0);
 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
@@ -92,7 +94,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
             venueId={venueId}
             venueName={venue.name}
             venueCountry={venue.country}
-            rankings={rankings}
+            rankings={leaderboard}
             userAddingId={session.user.id}
           />
         </div>
@@ -207,7 +209,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-lg">{pr?.ranking?.masteryScore?.toFixed(2)}</p>
+                                <p className="font-bold text-lg">{pr?.masteryScore?.toFixed(2)}</p>
                               </div>
                             </div>
                           </CardContent>
@@ -242,7 +244,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                                 </div>
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-lg">{pr?.ranking?.masteryScore?.toFixed(2)}</p>
+                                <p className="font-bold text-lg">{pr?.masteryScore?.toFixed(2)}</p>
                               </div>
                             </div>
                           </CardContent>

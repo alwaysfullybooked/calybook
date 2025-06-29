@@ -1,10 +1,11 @@
 "use server";
 
-import { auth } from "@/server/auth";
-import { openscor } from "@/lib/openscor";
-import { revalidatePath } from "next/cache";
-import type { Category } from "@/server/db/schema";
 import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
+import { openscor } from "@/lib/openscor";
+import { auth } from "@/server/auth";
+import type { Category } from "@/server/db/schema";
+import { api } from "@/trpc/server";
+import { revalidatePath } from "next/cache";
 
 interface JoinRankingsProps {
   country: string;
@@ -44,7 +45,7 @@ export async function joinVenueRankings({ country, lang, city, venueId, category
     });
   }
 
-  const result = await openscor.venuePlayers.create({
+  const result = await api.venueMembers.create({
     venueId,
     venueName: venue.name,
     venueCountry: venue.country,
