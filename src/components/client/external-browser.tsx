@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const LINE_USER_AGENT_REGEX = /line/i;
 const TELEGRAM_USER_AGENT_REGEX = /telegram/i;
 
-type BrowserType = "line" | "telegram" | null;
-
-export default function TelegramBrowserBanner() {
+export default function ExternalBrowserBanner() {
   const [showBanner, setShowBanner] = useState(false);
-  const [browserType, setBrowserType] = useState<BrowserType>(null);
-  const [currentUrl, setCurrentUrl] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -20,18 +18,15 @@ export default function TelegramBrowserBanner() {
 
       if (userAgent) {
         if (LINE_USER_AGENT_REGEX.test(userAgent)) {
-          setBrowserType("line");
           setShowBanner(true);
         } else if (TELEGRAM_USER_AGENT_REGEX.test(userAgent)) {
-          setBrowserType("telegram");
           setShowBanner(true);
         }
-        setCurrentUrl(window.location.href);
       }
     }
   }, []);
 
-  if (!showBanner) {
+  if (showBanner) {
     return null;
   }
 
@@ -39,7 +34,13 @@ export default function TelegramBrowserBanner() {
     <div className="bg-amber-600 py-16 px-4 shadow-lg">
       <div className="flex flex-col items-center gap-3 mx-auto">
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm font-medium text-center text-white">To login, please open website in your default browser, like Safari or Chrome. LINE and Telegram webview is not supported.</p>
+          <p className="text-sm font-medium text-center text-white">Please open CalyBook in your device browser, like Safari or Chrome. LINE and Telegram browser is not supported.</p>
+          <Link href="https://www.calybook.com" target="_new">
+            <Button>Open in Browser</Button>
+          </Link>
+          <a href="https://www.calybook.com" onClick={() => window.open("https://www.calybook.com", "_blank")}>
+            Open in Browser
+          </a>
         </div>
         <AlertDialog>
           <AlertDialogTrigger asChild>

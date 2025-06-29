@@ -18,7 +18,7 @@ export default function Footer({ country }: { country: string }) {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">CalyBook</h3>
-            <p className="text-sm">The easiest way to book your activities for {country}.</p>
+            <p className="text-sm">The easiest way to organise your activities for {country}.</p>
           </div>
           <div>
             <h3 className="mb-3 text-lg font-semibold text-gray-900">Quick Links</h3>
