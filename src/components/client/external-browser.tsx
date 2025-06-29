@@ -26,7 +26,7 @@ export default function ExternalBrowserBanner() {
     }
   }, []);
 
-  if (showBanner) {
+  if (!showBanner) {
     return null;
   }
 
