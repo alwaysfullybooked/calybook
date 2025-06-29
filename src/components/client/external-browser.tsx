@@ -26,7 +26,7 @@ export default function ExternalBrowserBanner() {
     }
   }, []);
 
-  if (!showBanner) {
+  if (showBanner) {
     return null;
   }
 
@@ -34,13 +34,7 @@ export default function ExternalBrowserBanner() {
     <div className="bg-amber-600 py-16 px-4 shadow-lg">
       <div className="flex flex-col items-center gap-3 mx-auto">
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm font-medium text-center text-white">Please open CalyBook in your device browser, like Safari or Chrome. LINE and Telegram browser is not supported.</p>
-          <Link href="https://www.calybook.com" target="_new">
-            <Button>Open in Browser</Button>
-          </Link>
-          <a href="https://www.calybook.com" onClick={() => window.open("https://www.calybook.com", "_blank")}>
-            Open in Browser
-          </a>
+          <p className="text-lg font-medium text-center text-white">To log in with Google, you need to open this page in your phone's main browser (like Chrome or Safari).</p>
         </div>
         <AlertDialog>
           <AlertDialogTrigger asChild>
