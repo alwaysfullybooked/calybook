@@ -2,7 +2,7 @@
 
 import { openscor } from "@/lib/openscor";
 import { auth } from "@/server/auth";
-import type { Category, MatchType } from "@openscor-com/openscor-com-sdk-node";
+import type { Category, MatchType } from "@openscor-com/sdk-node";
 
 interface CreateGameProps {
   competitionId: string;

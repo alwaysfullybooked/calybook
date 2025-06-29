@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { OpenScor } from "@openscor-com/openscor-com-sdk-node";
+import { OpenScor } from "@openscor-com/sdk-node";
 
 const apiKey = env.OPENSCOR_API_KEY;
 const baseUrl = env.OPENSCOR_API_URL;

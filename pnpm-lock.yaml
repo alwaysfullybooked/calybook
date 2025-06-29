@@ -11,9 +11,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^1.2.12
         version: 1.2.12(react@19.1.0)(zod@3.25.67)
-      '@alwaysfullybooked/alwaysfullybooked-sdk-node':
-        specifier: ^0.1.53
-        version: 0.1.53(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
+      '@alwaysfullybooked/sdk-node':
+        specifier: ^0.1.54
+        version: 0.1.54(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
       '@auth/drizzle-adapter':
         specifier: ^1.10.0
         version: 1.10.0
@@ -26,9 +26,9 @@ importers:
       '@openrouter/ai-sdk-provider':
         specifier: ^0.7.2
         version: 0.7.2(ai@4.3.16(react@19.1.0)(zod@3.25.67))(zod@3.25.67)
-      '@openscor-com/openscor-com-sdk-node':
-        specifier: ^0.1.24
-        version: 0.1.24(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
+      '@openscor-com/sdk-node':
+        specifier: ^0.1.25
+        version: 0.1.25(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
       '@planetscale/database':
         specifier: ^1.19.0
         version: 1.19.0
@@ -276,8 +276,8 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@alwaysfullybooked/alwaysfullybooked-sdk-node@0.1.53':
-    resolution: {integrity: sha512-VRJkd3PcKsYdVK7T6V8WjQyyR21M9oT5ydMMtWxUDh//A2gSeylVq/g6bfakzaiATPDIUajfhK54fAxrPlUtmg==, tarball: https://npm.pkg.github.com/download/@alwaysfullybooked/alwaysfullybooked-sdk-node/0.1.53/2c6f59a2aec6ff6a8be38f8614d3c7638ece9280}
+  '@alwaysfullybooked/sdk-node@0.1.54':
+    resolution: {integrity: sha512-pDLrSzlXxpZtL2nD8j2cBraRAzbLWpOBWL7Amh7zajrBT5MkkrwspDo0JtU4RYzoJ0x7dB9t6ILgbNVhpEooMQ==, tarball: https://npm.pkg.github.com/download/@alwaysfullybooked/sdk-node/0.1.54/3219c9215a9f435c358a1f3074389116ac2ba5c2}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -908,8 +908,8 @@ packages:
       ai: ^4.3.16
       zod: ^3.25.34
 
-  '@openscor-com/openscor-com-sdk-node@0.1.24':
-    resolution: {integrity: sha512-zS4W7TWit5fXeOAABGBCdIAi2TxcGr+Hh1r/aZvUb9i8wCzdS2CVLX+1XeTrvrvSFGsFniJxEqFrbp5zCZulAg==, tarball: https://npm.pkg.github.com/download/@openscor-com/openscor-com-sdk-node/0.1.24/e252780503b461566b1468360080fc55cd39de65}
+  '@openscor-com/sdk-node@0.1.25':
+    resolution: {integrity: sha512-HRaiy5UcGmCnv3cKxylvBTWYVNY/amA87A6j8m/XzbIRfKJ8g8c0doU97BZu6mn8rIVyUNccv6x2JajlbBwHHg==, tarball: https://npm.pkg.github.com/download/@openscor-com/sdk-node/0.1.25/ea00e1a1506a10ffbc607451a88b3f1cd16b4a3b}
 
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
@@ -2870,7 +2870,7 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@alwaysfullybooked/alwaysfullybooked-sdk-node@0.1.53(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
+  '@alwaysfullybooked/sdk-node@0.1.54(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
     dependencies:
       '@tanstack/react-query': 5.81.5(react@19.1.0)
       '@trpc/client': 11.4.3(@trpc/server@11.4.3(typescript@5.8.3))(typescript@5.8.3)
@@ -3310,7 +3310,7 @@ snapshots:
       ai: 4.3.16(react@19.1.0)(zod@3.25.67)
       zod: 3.25.67
 
-  '@openscor-com/openscor-com-sdk-node@0.1.24(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
+  '@openscor-com/sdk-node@0.1.25(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
     dependencies:
       '@tanstack/react-query': 5.81.5(react@19.1.0)
       '@trpc/client': 11.4.3(@trpc/server@11.4.3(typescript@5.8.3))(typescript@5.8.3)
