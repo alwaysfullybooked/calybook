@@ -82,7 +82,9 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
     return <div>Venue not found</div>;
   }
 
-  const competitions = await openscor.competitions.search({ competitionIds: venue?.competitions ?? [] });
+  const competitionIds = venue.competitions ?? [];
+  const competitions = await openscor.competitions.search({ competitionIds });
+  const filteredCompetitions = competitions.filter((c) => competitionIds.includes(c.id));
 
   const availableScheduleFiltered = availableSchedule.filter((f) => f.paymentType !== "manual_prepaid" || (f.paymentType === "manual_prepaid" && f.paymentImage));
 
@@ -149,7 +151,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
               Competitions
             </h2>
             <div className="flex flex-wrap gap-2">
-              {competitions.map((m) => (
+              {filteredCompetitions.map((m) => (
                 <Link key={m.id} href={`/${country}/${lang}/${city}/venues/${venueId}/competitions/${m.id}`} className="flex items-center gap-2 bg-primary text-white p-2 rounded-md">
                   <Trophy className="h-4 w-4" />
                   <span className="capitalize">{m.name}</span>

@@ -58,8 +58,6 @@ export function AddGroupGame({
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  console.log(rankings);
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema) as Resolver<FormValues>,
     defaultValues: {

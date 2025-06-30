@@ -38,18 +38,18 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
   const venueMemberIds = venueMembers.map((vm) => vm.playerId);
 
-  const [leaderboard, games] = await Promise.all([
-    openscor.leaderboards.search({ category: competition.category, playerIds: venueMemberIds }),
+  const [myRanking, leaderboard, games] = await Promise.all([
+    openscor.leaderboards.find({ category: competition.category, playerId: session.user.id, competitionId }),
+    openscor.leaderboards.search({ category: competition.category, playerIds: venueMemberIds, competitionId }),
     openscor.games.search({ venueId, category: competition.category }),
   ]);
-
-  const playerRanking = leaderboard.find((pr) => pr?.playerId === session.user.id);
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
   const approvedGames = games.filter((game) => game.status === "approved");
 
   const playedRankings = leaderboard.filter((pr) => pr?.matchCount && pr.matchCount > 0);
   const unplayedRankings = leaderboard.filter((pr) => pr?.matchCount === 0);
+  const isMember = venueMemberIds.includes(session.user.id);
 
   return (
     <div className="px-2 py-4 sm:px-6 lg:px-8">
@@ -61,7 +61,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
       {competitionId && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
           <h2 className="font-bold tracking-tight capitalize text-lg">{competition?.name}</h2>
-          {!playerRanking && venue.allowRankings && (
+          {!isMember && venue.allowRankings && (
             <JoinRankingsButton
               country={country}
               lang={lang}
@@ -74,13 +74,13 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
               playerContactMethod="email"
               playerContactId={customerEmailId}
               playerEmailId={customerEmailId}
-              ranking={!!playerRanking}
+              ranking={!!myRanking}
             />
           )}
         </div>
       )}
 
-      {playerRanking && competition?.matchType && (
+      {myRanking && competition?.matchType && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
           <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
 
