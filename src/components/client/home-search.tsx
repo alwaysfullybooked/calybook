@@ -11,7 +11,6 @@ import { Button } from "../ui/button";
 
 import type { MatchVenues } from "@/lib/alwaysfullybooked";
 import { ExternalLink, MapPin } from "lucide-react";
-import { ViewRankings } from "../server/view-rankings";
 
 export default function HomeSearch({ country, venues, lang }: { country: keyof typeof locations; venues: MatchVenues[]; lang: string }) {
   const router = useRouter();
@@ -107,7 +106,7 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
             {venues.map((venue) => {
               const citySlug = locations[country]?.cities.find((c) => c.value === venue.city)?.slug ?? "";
 
-              const categories = Object.keys(venue.competitions ?? {}) ?? [];
+              // const categories = Object.keys(venue.competitions ?? {}) ?? [];
 
               return (
                 <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
@@ -150,16 +149,20 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
                       </div>
                     )}
 
-                    {venue.bookable && (
+                    <Button className="w-full mt-4" asChild>
+                      <Link href={`/${country}/${lang}/${citySlug}/venues/${venue.id}`}>View Venue</Link>
+                    </Button>
+
+                    {/* {venue.bookable && (
                       <Button className="w-full mt-4" asChild>
                         <Link href={`/${country}/${lang}/${citySlug}/venues/${venue.id}`}>Book Now</Link>
                       </Button>
-                    )}
-                    <div className="flex flex-wrap gap-2 justify-center">
+                    )} */}
+                    {/* <div className="flex flex-wrap gap-2 justify-center">
                       {venue.allowRankings &&
                         categories.length > 0 &&
                         categories.map((category) => <ViewRankings key={category} country={country} lang={lang} city={citySlug} venueId={venue.id} category={category} />)}
-                    </div>
+                    </div> */}
                   </CardContent>
                 </Card>
               );

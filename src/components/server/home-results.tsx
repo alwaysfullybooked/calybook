@@ -5,7 +5,6 @@ import { Button } from "../ui/button";
 
 import type { MatchVenues } from "@/lib/alwaysfullybooked";
 import { ExternalLink, MapPin } from "lucide-react";
-import { ViewRankings } from "./view-rankings";
 
 export function HomeResults({ country, lang, city, venues }: { country: string; lang: string; city: string; venues: MatchVenues[] }) {
   return (
@@ -15,8 +14,6 @@ export function HomeResults({ country, lang, city, venues }: { country: string; 
           <h2 className="text-2xl font-bold tracking-tight mb-6">Featured Venues</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {venues.map((venue) => {
-              const categories = Object.keys(venue.competitions ?? {}) ?? [];
-
               return (
                 <Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
                   {venue.image && (
@@ -61,15 +58,19 @@ export function HomeResults({ country, lang, city, venues }: { country: string; 
                       </div>
                     )}
 
-                    {venue.bookable && (
+                    <Button className="w-full mt-4" asChild>
+                      <Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>View Venue</Link>
+                    </Button>
+
+                    {/* {venue.bookable && (
                       <Button className="w-full mt-4" asChild>
                         <Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>Book Now</Link>
                       </Button>
-                    )}
+                    )} */}
 
-                    {venue.allowRankings &&
-                      categories.length > 0 &&
-                      categories.map((category) => <ViewRankings key={category} country={country} lang={lang} city={city} venueId={venue.id} category={category} />)}
+                    {/* {venue.allowRankings &&
+                      venue.competitions.length > 0 &&
+                      categories.map((category) => <ViewRankings key={category} country={country} lang={lang} city={city} venueId={venue.id} category={category} />)} */}
                   </CardContent>
                 </Card>
               );

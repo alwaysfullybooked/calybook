@@ -279,14 +279,14 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5" />
+                  <Trophy className="h-5 w-5 text-yellow-500" />
                   Group Rankings
                 </CardTitle>
                 <CardDescription>Leaderboard and rankings for this group</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-8">
-                  <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <Trophy className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No Rankings Yet</h3>
                   <p className="text-muted-foreground mb-4">Group rankings and leaderboards will appear here once games are played.</p>
                   <Badge variant="outline">Coming Soon</Badge>

@@ -1,5 +1,4 @@
 import BookingSchedule from "@/components/client/booking-schedule";
-import { ViewRankings } from "@/components/server/view-rankings";
 import TennisChallenge from "@/components/tennis/challenge";
 import TennisRankings from "@/components/tennis/rankings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,8 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { matchVenues } from "@/data/venues";
 import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { locations } from "@/lib/locations";
+import { openscor } from "@/lib/openscor";
 import { auth } from "@/server/auth";
-import { ExternalLink, MapPin, Phone } from "lucide-react";
+import { ExternalLink, MapPin, Phone, Trophy } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -76,13 +76,15 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
   const contactWhatsAppId = session.user.contactWhatsAppId;
   const contactLineId = session.user.contactLineId;
 
-  const venue = await alwaysfullybooked.venues.publicFind({ venueId });
-  const availableSchedule = await alwaysfullybooked.venues.publicAvailability({ venueId });
-  const availableScheduleFiltered = availableSchedule.filter((f) => f.paymentType !== "manual_prepaid" || (f.paymentType === "manual_prepaid" && f.paymentImage));
+  const [venue, availableSchedule] = await Promise.all([alwaysfullybooked.venues.publicFind({ venueId }), alwaysfullybooked.venues.publicAvailability({ venueId })]);
 
   if (!venue) {
     return <div>Venue not found</div>;
   }
+
+  const competitions = await openscor.competitions.search({ competitionIds: venue?.competitions ?? [] });
+
+  const availableScheduleFiltered = availableSchedule.filter((f) => f.paymentType !== "manual_prepaid" || (f.paymentType === "manual_prepaid" && f.paymentImage));
 
   const info = matchVenues.find((v) => v.id === venue.id);
 
@@ -98,6 +100,7 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
     <main className="container mx-auto px-4 py-4 sm:py-6 md:py-8">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-8">
         <div className="md:col-span-3">
+          {/* Venue Info Section */}
           <Card className="mb-6 md:mb-8">
             <div className="flex flex-col md:flex-row">
               {mergedVenue.image && (
@@ -107,14 +110,11 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
               )}
               <div className="flex-1">
                 <CardHeader className="space-y-2">
-                  <div className="flex flex-col">
-                    <div className="flex justify-end p-2">
-                      {venue.allowRankings &&
-                        Object.keys(venue.competitions ?? {}).length > 0 &&
-                        Object.keys(venue.competitions ?? {}).map((category) => <ViewRankings key={category} country={country} lang={lang} city={city} venueId={venueId} category={category} />)}
-                    </div>
+                  <div className="flex justify-between p-2 gap-2">
                     <div>
-                      <CardTitle className="text-2xl sm:text-3xl md:text-4xl">{mergedVenue.name}</CardTitle>
+                      <CardTitle className="text-2xl sm:text-3xl md:text-4xl">
+                        <h1>{mergedVenue.name}</h1>
+                      </CardTitle>
                       <CardDescription className="text-base sm:text-lg">
                         {mergedVenue.city}, {mergedVenue.country}
                       </CardDescription>
@@ -136,87 +136,64 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
                         {mergedVenue.phone}
                       </a>
                     </div>
-                    {/* <div className="flex items-center gap-2">
-                      <Globe className="h-5 w-5 text-gray-500" />
-                      <Link href={venue.website} className="text-sm text-blue-500 hover:underline sm:text-base" target="_blank" rel="noopener noreferrer">
-                        Website
-                      </Link>
-                    </div> */}
                   </div>
                 </CardContent>
               </div>
             </div>
           </Card>
 
-          {/* <div className="flex flex-col justify-center my-8 text-center max-w-md mx-auto">
-            <p className="text-sm sm:text-base mb-4">Ever tried to book? It's a pain, right? Try our Booking AI Assistant to book your court in seconds.</p>
-            <Button variant="default" className="my-4" asChild>
-              <Link href={`/${country}/${lang}/chat`}>Chat to book now</Link>
-            </Button>
-          </div> */}
+          {/* Competitions Section */}
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold mb-3 flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-yellow-500" />
+              Competitions
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {competitions.map((m) => (
+                <Link key={m.id} href={`/${country}/${lang}/${city}/venues/${venueId}/competitions/${m.id}`} className="flex items-center gap-2 bg-primary text-white p-2 rounded-md">
+                  <Trophy className="h-4 w-4" />
+                  <span className="capitalize">{m.name}</span>
+                </Link>
+              ))}
+              {competitions.length === 0 && <span className="text-muted-foreground">No competitions available for this venue.</span>}
+            </div>
+          </section>
 
-          <Tabs defaultValue="booking" className="w-full">
-            <TabsList className="w-full justify-start overflow-x-auto">
-              <TabsTrigger value="booking" className="text-sm sm:text-base">
-                Booking
-              </TabsTrigger>
-              {/* <TabsTrigger value="ranking" className="text-sm sm:text-base">
-                Ranking (Mockup)
-              </TabsTrigger> */}
-              <TabsTrigger value="reviews" className="text-sm sm:text-base">
-                Reviews (Coming soon)
-              </TabsTrigger>
-              {/* <TabsTrigger value="challenger" className="text-sm sm:text-base">
-                Challenger (Draft)
-              </TabsTrigger> */}
-              {/* <TabsTrigger value="services" className="text-sm sm:text-base">
-                Services
-              </TabsTrigger> */}
-            </TabsList>
+          {/* Booking Section */}
+          <section className="mb-8">
+            <Tabs defaultValue="booking" className="w-full">
+              <TabsList className="w-full justify-start overflow-x-auto">
+                <TabsTrigger value="booking" className="text-sm sm:text-base">
+                  Booking
+                </TabsTrigger>
+                <TabsTrigger value="reviews" className="text-sm sm:text-base">
+                  Reviews (Coming soon)
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="booking">
-              <div className="mt-4">
-                <BookingSchedule
-                  country={country}
-                  lang={lang}
-                  city={city}
-                  customerName={customerName}
-                  customerEmailId={customerEmailId}
-                  contactWhatsAppId={contactWhatsAppId}
-                  contactLineId={contactLineId}
-                  venueId={venueId}
-                  venueName={venue.name}
-                  services={services}
-                  availableSchedule={availableScheduleFiltered}
-                />
-              </div>
-            </TabsContent>
+              <TabsContent value="booking">
+                <div className="mt-4">
+                  <BookingSchedule
+                    country={country}
+                    lang={lang}
+                    city={city}
+                    customerName={customerName}
+                    customerEmailId={customerEmailId}
+                    contactWhatsAppId={contactWhatsAppId}
+                    contactLineId={contactLineId}
+                    venueId={venueId}
+                    venueName={venue.name}
+                    services={services}
+                    availableSchedule={availableScheduleFiltered}
+                  />
+                </div>
+              </TabsContent>
 
-            <TabsContent value="reviews">
-              <div className="mt-4" />
-            </TabsContent>
-
-            <TabsContent value="ranking">
-              <TennisRankings />
-            </TabsContent>
-
-            <TabsContent value="challenger">
-              <TennisChallenge />
-            </TabsContent>
-
-            <TabsContent value="services">
-              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                {services.map((service) => (
-                  <Card key={service.id}>
-                    <CardHeader>
-                      <CardTitle className="text-lg sm:text-xl">{service.name}</CardTitle>
-                      <CardDescription className="text-sm sm:text-base">{service.description}</CardDescription>
-                    </CardHeader>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
+              <TabsContent value="reviews">
+                <div className="mt-4" />
+              </TabsContent>
+            </Tabs>
+          </section>
         </div>
       </div>
     </main>

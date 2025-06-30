@@ -1,20 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { joinVenueRankings } from "@/actions/openscor/rankings";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Categories, type Category } from "@/server/db/schema";
 import { Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { joinVenueRankings } from "@/actions/openscor/rankings";
-import { Categories, type Category } from "@/server/db/schema";
+import { useState } from "react";
 
 interface JoinVenueButtonProps {
   country: string;
   lang: string;
   city: string;
   venueId: string;
+  competitionId: string;
+  category: Category;
   playerId: string;
   playerName: string;
   playerContactMethod: string;
@@ -23,10 +25,22 @@ interface JoinVenueButtonProps {
   ranking: boolean;
 }
 
-export function JoinRankingsButton({ country, lang, city, venueId, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking }: JoinVenueButtonProps) {
+export function JoinRankingsButton({
+  country,
+  lang,
+  city,
+  venueId,
+  competitionId,
+  category,
+  playerId,
+  playerName,
+  playerContactMethod,
+  playerContactId,
+  playerEmailId,
+  ranking,
+}: JoinVenueButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [category, setCategory] = useState<Category | "">("");
   const router = useRouter();
 
   const categories = Object.values(Categories) as unknown as Category[];
@@ -38,7 +52,7 @@ export function JoinRankingsButton({ country, lang, city, venueId, playerId, pla
 
     try {
       setIsLoading(true);
-      await joinVenueRankings({ country, lang, city, venueId, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking });
+      await joinVenueRankings({ country, lang, city, venueId, competitionId, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking });
       setIsOpen(false);
       router.refresh();
     } catch (error) {
@@ -53,18 +67,18 @@ export function JoinRankingsButton({ country, lang, city, venueId, playerId, pla
       <DialogTrigger asChild>
         <Button size="sm" className="gap-2 bg-primary">
           <Trophy className="h-4 w-4" />
-          Join Rankings
+          Join Competition
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Join Venue Rankings</DialogTitle>
-          <DialogDescription>Join this venue's rankings to track your progress and compete with other players. You'll start with 1000 challenge points.</DialogDescription>
+          <DialogDescription>Join this venue's rankings to track your progress and compete with other players. You'll start with 300 Mastery Score.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="category">Select Your Category</Label>
-            <Select value={category} onValueChange={(value: Category) => setCategory(value)}>
+            <Label htmlFor="category">Category</Label>
+            <Select value={category} disabled>
               <SelectTrigger id="category">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>

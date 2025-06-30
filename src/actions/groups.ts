@@ -72,6 +72,7 @@ export async function updateGroup({
 
 export async function joinGroup({
   groupId,
+  competitionId,
   category,
   playerId,
   playerName,
@@ -81,6 +82,7 @@ export async function joinGroup({
   ranking,
 }: {
   groupId: string;
+  competitionId: string;
   category: Category;
   playerId: string;
   playerName: string;
@@ -95,17 +97,9 @@ export async function joinGroup({
     throw new Error("Unauthorized");
   }
 
-  console.log("ranking", ranking, {
-    category,
-    playerId,
-    playerName,
-    playerContactMethod,
-    playerContactId,
-    playerEmailId,
-  });
-
   if (!ranking) {
     await openscor.leaderboards.create({
+      competitionId,
       category,
       playerId,
       playerName,

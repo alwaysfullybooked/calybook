@@ -50,7 +50,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function AddGroupGame({
   groupId,
-  competitionId,
   category,
   venues,
   rankings,
@@ -65,10 +64,7 @@ export function AddGroupGame({
     resolver: zodResolver(formSchema) as Resolver<FormValues>,
     defaultValues: {
       groupId,
-      competitionId,
       venueId: "",
-      venueName: "",
-      venueCountry: "",
       category,
       winnerId: userAddingId,
       winnerName: rankings.find((r) => r.playerId === userAddingId)?.playerName ?? "UNKNOWN",
@@ -87,26 +83,18 @@ export function AddGroupGame({
         return;
       }
 
-      await createOpenScorGame({
-        competitionId,
+      const payload = {
+        ...data,
         venueId: data.venueId,
-        venueName: data.venueName,
-        venueCountry: data.venueCountry,
-        category: data.category,
-        matchType: data.matchType,
-        winnerId: data.winnerId as string,
-        winnerName: data.winnerName as string,
-        playerId: data.playerId as string,
-        playerName: data.playerName as string,
-        score: data.score as string,
-        playedDate: data.playedDate as string,
-      });
-      toast.success("Tennis game created successfully");
+      };
+
+      await createOpenScorGame(payload);
+      toast.success("Game created successfully");
       setOpen(false);
       router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to create tennis game");
+      toast.error("Failed to create game");
     }
   }
 

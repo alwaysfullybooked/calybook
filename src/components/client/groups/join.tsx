@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 interface JoinGroupFormProps {
   groupId: string;
+  competitionId: string;
   groupName: string;
   category: Category;
   playerId: string;
@@ -20,7 +21,7 @@ interface JoinGroupFormProps {
   ranking: boolean;
 }
 
-export function JoinGroupForm({ groupId, groupName, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking }: JoinGroupFormProps) {
+export function JoinGroupForm({ groupId, competitionId, groupName, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking }: JoinGroupFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
   const router = useRouter();
@@ -30,6 +31,7 @@ export function JoinGroupForm({ groupId, groupName, category, playerId, playerNa
     try {
       await joinGroup({
         groupId,
+        competitionId,
         category,
         playerId,
         playerName,

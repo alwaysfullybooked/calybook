@@ -12,6 +12,7 @@ interface JoinRankingsProps {
   lang: string;
   city: string;
   venueId: string;
+  competitionId: string;
   category: Category;
   playerId: string;
   playerName: string;
@@ -21,7 +22,20 @@ interface JoinRankingsProps {
   ranking: boolean;
 }
 
-export async function joinVenueRankings({ country, lang, city, venueId, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking }: JoinRankingsProps) {
+export async function joinVenueRankings({
+  country,
+  lang,
+  city,
+  venueId,
+  competitionId,
+  category,
+  playerId,
+  playerName,
+  playerContactMethod,
+  playerContactId,
+  playerEmailId,
+  ranking,
+}: JoinRankingsProps) {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -36,6 +50,7 @@ export async function joinVenueRankings({ country, lang, city, venueId, category
 
   if (!ranking) {
     await openscor.leaderboards.create({
+      competitionId,
       category,
       playerId,
       playerName,

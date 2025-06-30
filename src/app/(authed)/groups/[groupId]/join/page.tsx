@@ -66,8 +66,9 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
             </div>
 
             <JoinGroupForm
+              competitionId={group.competitionId}
               groupId={groupId}
-              groupName={group.name ?? "UNKNOWN"}
+              groupName={group.name}
               category={group.category as Category}
               playerId={session.user.id}
               playerName={playerName}

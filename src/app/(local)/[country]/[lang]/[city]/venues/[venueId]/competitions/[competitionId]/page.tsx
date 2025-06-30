@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/server/auth";
 import { api } from "@/trpc/server";
-import { Calendar, ExternalLink, Trophy } from "lucide-react";
+import { Calendar, Trophy } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { ApproveGameButton } from "@/components/client/openscor/approve";
@@ -14,33 +14,33 @@ import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { openscor } from "@/lib/openscor";
 import type { Category, MatchType } from "@/server/db/schema";
 
-export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; category: Category }> }) {
-  const { country, lang, city, venueId, category } = await params;
+export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; competitionId: string }> }) {
+  const { country, lang, city, venueId, competitionId } = await params;
 
   const session = await auth();
 
   if (!session?.user?.email) {
-    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${venueId}/rankings/${category}`);
+    redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${venueId}/competitions/${competitionId}`);
   }
 
-  const venue = await alwaysfullybooked.venues.publicFind({ venueId });
+  const [venue, venueMembers, competition] = await Promise.all([alwaysfullybooked.venues.publicFind({ venueId }), api.venueMembers.search({ venueId }), openscor.competitions.find({ competitionId })]);
 
   if (!venue) {
     return <div>Venue not found</div>;
   }
 
+  if (!competition) {
+    return <div>Competition not found</div>;
+  }
+
   const customerName = session.user.name ?? session.user.email;
   const customerEmailId = session.user.email;
 
-  const venueMembers = await api.venueMembers.search({ venueId });
   const venueMemberIds = venueMembers.map((vm) => vm.playerId);
 
-  const competitionId = venue?.competitions?.[category as keyof typeof venue.competitions] ?? "";
-
-  const [competition, leaderboard, games] = await Promise.all([
-    openscor.competitions.find({ competitionId }),
-    openscor.leaderboards.search({ category, playerIds: venueMemberIds }),
-    openscor.games.search({ venueId, category }),
+  const [leaderboard, games] = await Promise.all([
+    openscor.leaderboards.search({ category: competition.category, playerIds: venueMemberIds }),
+    openscor.games.search({ venueId, category: competition.category }),
   ]);
 
   const playerRanking = leaderboard.find((pr) => pr?.playerId === session.user.id);
@@ -55,26 +55,28 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
     <div className="px-2 py-4 sm:px-6 lg:px-8">
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">{venue.name}</h1>
-        <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl capitalize">{category} Rankings</h2>
+        <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl capitalize">{competition.category} Rankings</h2>
       </div>
 
       {competitionId && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
+          <h2 className="font-bold tracking-tight capitalize text-lg">{competition?.name}</h2>
           {!playerRanking && venue.allowRankings && (
             <JoinRankingsButton
               country={country}
               lang={lang}
               city={city}
               venueId={venueId}
+              competitionId={competitionId}
+              category={competition.category as Category}
               playerId={session.user.id}
               playerName={customerName}
               playerContactMethod="email"
               playerContactId={customerEmailId}
               playerEmailId={customerEmailId}
-              ranking={!!leaderboard}
+              ranking={!!playerRanking}
             />
           )}
-          <h2 className="font-bold tracking-tight capitalize text-lg">{competition?.name}</h2>
         </div>
       )}
 
@@ -84,7 +86,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
           <AddVenueGame
             competitionId={competitionId}
-            category={category}
+            category={competition.category as Category}
             matchType={competition.matchType as MatchType}
             venueId={venueId}
             venueName={venue.name}
@@ -112,7 +114,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                       <div className="flex items-center gap-2 justify-center">
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={`https://avatar.vercel.sh/${game.winnerId}`} />
-                          <AvatarFallback>{game.winnerId.slice(0, 2).toUpperCase()}</AvatarFallback>
+                          <AvatarFallback>{game.winnerId?.slice(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <span className="font-medium text-sm sm:text-base">{game.winnerName}</span>
                         {game.winnerApproved && !game.playerApproved && (
@@ -148,7 +150,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                       <div className="flex items-center gap-2 justify-center">
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={`https://avatar.vercel.sh/${game.playerId}`} />
-                          <AvatarFallback>{game.playerId.slice(0, 2).toUpperCase()}</AvatarFallback>
+                          <AvatarFallback>{game.playerId?.slice(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <span className="font-medium text-sm sm:text-base">{game.playerName}</span>
                         {game.playerApproved && !game.winnerApproved && (
