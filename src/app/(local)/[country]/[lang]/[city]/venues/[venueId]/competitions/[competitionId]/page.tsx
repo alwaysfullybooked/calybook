@@ -39,9 +39,9 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
   const venueMemberIds = venueMembers.map((vm) => vm.playerId);
 
   const [myRanking, leaderboard, games] = await Promise.all([
-    openscor.leaderboards.find({ category: competition.category, playerId: session.user.id, competitionId }),
-    openscor.leaderboards.search({ category: competition.category, playerIds: venueMemberIds, competitionId }),
-    openscor.games.search({ venueId, category: competition.category }),
+    openscor.leaderboards.find({ competitionId, playerId: session.user.id }),
+    openscor.leaderboards.search({ competitionId, playerIds: venueMemberIds }),
+    openscor.games.search({ competitionId, venueId }),
   ]);
 
   const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
@@ -55,13 +55,15 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
     <div className="px-2 py-4 sm:px-6 lg:px-8">
       <div className="text-center space-y-2 mb-6 sm:mb-12">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">{venue.name}</h1>
-        <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl capitalize">{competition.category} Rankings</h2>
+        <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl capitalize">{competition?.name}</h2>
       </div>
 
       {competitionId && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
-          <h2 className="font-bold tracking-tight capitalize text-lg">{competition?.name}</h2>
-          {!isMember && venue.allowRankings && (
+          <h2 className="font-bold tracking-tight capitalize text-lg">
+            {competition.category}, {competition.matchType} Rankings
+          </h2>
+          {!myRanking && venue.allowRankings && (
             <JoinRankingsButton
               country={country}
               lang={lang}
@@ -74,7 +76,8 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
               playerContactMethod="email"
               playerContactId={customerEmailId}
               playerEmailId={customerEmailId}
-              ranking={!!myRanking}
+              addToLeaderboard={!myRanking}
+              addToVenue={!isMember}
             />
           )}
         </div>
@@ -83,7 +86,6 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
       {myRanking && competition?.matchType && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
           <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
-
           <AddVenueGame
             competitionId={competitionId}
             category={competition.category as Category}

@@ -22,7 +22,8 @@ interface JoinVenueButtonProps {
   playerContactMethod: string;
   playerContactId: string;
   playerEmailId: string;
-  ranking: boolean;
+  addToLeaderboard: boolean;
+  addToVenue: boolean;
 }
 
 export function JoinRankingsButton({
@@ -37,7 +38,8 @@ export function JoinRankingsButton({
   playerContactMethod,
   playerContactId,
   playerEmailId,
-  ranking,
+  addToLeaderboard,
+  addToVenue,
 }: JoinVenueButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +54,7 @@ export function JoinRankingsButton({
 
     try {
       setIsLoading(true);
-      await joinVenueRankings({ country, lang, city, venueId, competitionId, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, ranking });
+      await joinVenueRankings({ country, lang, city, venueId, competitionId, category, playerId, playerName, playerContactMethod, playerContactId, playerEmailId, addToLeaderboard, addToVenue });
       setIsOpen(false);
       router.refresh();
     } catch (error) {

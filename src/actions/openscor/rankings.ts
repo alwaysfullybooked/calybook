@@ -19,7 +19,8 @@ interface JoinRankingsProps {
   playerContactMethod: string;
   playerContactId: string;
   playerEmailId: string;
-  ranking: boolean;
+  addToLeaderboard: boolean;
+  addToVenue: boolean;
 }
 
 export async function joinVenueRankings({
@@ -34,7 +35,8 @@ export async function joinVenueRankings({
   playerContactMethod,
   playerContactId,
   playerEmailId,
-  ranking,
+  addToLeaderboard,
+  addToVenue,
 }: JoinRankingsProps) {
   const session = await auth();
 
@@ -48,7 +50,7 @@ export async function joinVenueRankings({
     throw new Error("Venue not found");
   }
 
-  if (!ranking) {
+  if (addToLeaderboard) {
     await openscor.leaderboards.create({
       competitionId,
       category,
@@ -60,18 +62,18 @@ export async function joinVenueRankings({
     });
   }
 
-  const result = await api.venueMembers.create({
-    venueId,
-    venueName: venue.name,
-    venueCountry: venue.country,
-    playerId,
-    playerName,
-    playerContactMethod,
-    playerContactId,
-    playerEmailId,
-  });
+  if (addToVenue) {
+    await api.venueMembers.create({
+      venueId,
+      venueName: venue.name,
+      venueCountry: venue.country,
+      playerId,
+      playerName,
+      playerContactMethod,
+      playerContactId,
+      playerEmailId,
+    });
+  }
 
   revalidatePath(`/${country}/${lang}/${city}/venues/${venueId}`);
-
-  return result;
 }
