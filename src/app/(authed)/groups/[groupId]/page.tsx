@@ -1,14 +1,14 @@
 import { AddVenueDialog } from "@/components/client/groups/add-venue";
 import { InviteLink } from "@/components/client/groups/invite";
-// import { AddGroupGame } from "@/components/client/openscor/group-games";
+import { AddGroupGame } from "@/components/client/openscor/group-games";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { openscor } from "@/lib/openscor";
-// import { auth } from "@/server/auth";
-import type { Category } from "@/server/db/schema";
+import { auth } from "@/server/auth";
+import type { Category, MatchType } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { Gamepad2, Info, Link, Store, Trophy, User, Users } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -20,20 +20,23 @@ interface GroupDetailPageProps {
 export default async function GroupDetailPage({ params }: GroupDetailPageProps) {
   const { groupId } = await params;
 
-  // const session = await auth();
+  const session = await auth();
 
-  const group = await api.groups.find({ groupId });
+  const [group, groupMembers] = await Promise.all([api.groups.find({ groupId }), api.groups.searchMembers({ groupId })]);
 
   if (!group) {
     redirect("/groups?error=group-not-found");
   }
 
-  const [venues, groupMembers] = await Promise.all([alwaysfullybooked.venues.publicSearch({ country: group.country, city: group.city }), api.groups.searchMembers({ groupId })]);
-
-  const groupVenues = group?.venues ?? [];
   const memberIds = groupMembers.map((member) => member.userId);
 
-  const playerRankings = await openscor.leaderboards.search({ category: group.category as Category, playerIds: memberIds });
+  const [venues, playerRankings, competition] = await Promise.all([
+    alwaysfullybooked.venues.publicSearch({ country: group.country, city: group.city }),
+    openscor.leaderboards.search({ competitionId: group.competitionId, playerIds: memberIds }),
+    openscor.competitions.find({ competitionId: group.competitionId }),
+  ]);
+
+  const groupVenues = group?.venues ?? [];
 
   const playedRankings = playerRankings.filter((pr) => pr?.matchCount && pr.matchCount > 0);
   const unplayedRankings = playerRankings.filter((pr) => pr?.matchCount === 0);
@@ -244,16 +247,17 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
           {/* Games Tab */}
           <TabsContent value="games" className="space-y-4">
             <div className="flex justify-start my-4">
-              {/* {session?.user.id && (
+              {session?.user.id && (
                 <AddGroupGame
                   groupId={groupId}
                   competitionId={group.competitionId}
                   category={group.category as Category}
+                  matchType={competition?.matchType as MatchType}
                   venues={groupVenues}
                   rankings={playerRankings}
                   userAddingId={session.user.id}
                 />
-              )} */}
+              )}
             </div>
             <Card>
               <CardHeader>

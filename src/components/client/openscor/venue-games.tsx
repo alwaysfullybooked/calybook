@@ -3,6 +3,7 @@
 import { createOpenScorGame } from "@/actions/openscor/games";
 import { SubmitButton } from "@/components/client/submit-button";
 import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -176,12 +177,16 @@ export function AddVenueGame({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="capitalize">Add {category} Game</Button>
+        <Button className="capitalize">
+          Add {category} {matchType} Game
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Tennis Game</DialogTitle>
-          <DialogDescription>Add a new tennis game record.</DialogDescription>
+          <DialogTitle>
+            Add {category} {matchType} Game
+          </DialogTitle>
+          <DialogDescription>Add game final score.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -217,29 +222,24 @@ export function AddVenueGame({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Player</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
-                          field.onChange(value);
-                          form.setValue("playerTeam.0.name", selectedPlayer?.playerName ?? "UNKNOWN");
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a player" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {rankings
+                      <FormControl>
+                        <Combobox
+                          options={rankings
                             .filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
-                            .map((ranking) => (
-                              <SelectItem key={ranking.playerId} value={ranking.playerId}>
-                                {ranking.playerName}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
+                            .map((ranking) => ({
+                              value: ranking.playerId,
+                              label: ranking.playerName,
+                            }))}
+                          value={field.value}
+                          onValueChange={(value) => {
+                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            field.onChange(value);
+                            form.setValue("playerTeam.0.name", selectedPlayer?.playerName ?? "UNKNOWN");
+                          }}
+                          placeholder="Select a player"
+                          searchPlaceholder="Search players..."
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -278,29 +278,24 @@ export function AddVenueGame({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Winner Partner</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
-                          field.onChange(value);
-                          form.setValue("winnerTeam.1.name", selectedPlayer?.playerName ?? "UNKNOWN");
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a winner partner" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {rankings
+                      <FormControl>
+                        <Combobox
+                          options={rankings
                             .filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
-                            .map((ranking) => (
-                              <SelectItem key={ranking.playerId} value={ranking.playerId}>
-                                {ranking.playerName}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
+                            .map((ranking) => ({
+                              value: ranking.playerId,
+                              label: ranking.playerName,
+                            }))}
+                          value={field.value}
+                          onValueChange={(value) => {
+                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            field.onChange(value);
+                            form.setValue("winnerTeam.1.name", selectedPlayer?.playerName ?? "UNKNOWN");
+                          }}
+                          placeholder="Select a winner partner"
+                          searchPlaceholder="Search players..."
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -311,29 +306,24 @@ export function AddVenueGame({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Player</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
-                          field.onChange(value);
-                          form.setValue("playerTeam.0.name", selectedPlayer?.playerName ?? "UNKNOWN");
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a player" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {rankings
+                      <FormControl>
+                        <Combobox
+                          options={rankings
                             .filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id") && ranking.playerId !== form.getValues("winnerTeam.1.id"))
-                            .map((ranking) => (
-                              <SelectItem key={ranking.playerId} value={ranking.playerId}>
-                                {ranking.playerName}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
+                            .map((ranking) => ({
+                              value: ranking.playerId,
+                              label: ranking.playerName,
+                            }))}
+                          value={field.value}
+                          onValueChange={(value) => {
+                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            field.onChange(value);
+                            form.setValue("playerTeam.0.name", selectedPlayer?.playerName ?? "UNKNOWN");
+                          }}
+                          placeholder="Select a player"
+                          searchPlaceholder="Search players..."
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -344,34 +334,29 @@ export function AddVenueGame({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Player Partner</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
-                          field.onChange(value);
-                          form.setValue("playerTeam.1.name", selectedPlayer?.playerName ?? "UNKNOWN");
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a player partner" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {rankings
+                      <FormControl>
+                        <Combobox
+                          options={rankings
                             .filter(
                               (ranking) =>
                                 ranking.playerId !== form.getValues("winnerTeam.0.id") &&
                                 ranking.playerId !== form.getValues("winnerTeam.1.id") &&
                                 ranking.playerId !== form.getValues("playerTeam.0.id"),
                             )
-                            .map((ranking) => (
-                              <SelectItem key={ranking.playerId} value={ranking.playerId}>
-                                {ranking.playerName}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
+                            .map((ranking) => ({
+                              value: ranking.playerId,
+                              label: ranking.playerName,
+                            }))}
+                          value={field.value}
+                          onValueChange={(value) => {
+                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            field.onChange(value);
+                            form.setValue("playerTeam.1.name", selectedPlayer?.playerName ?? "UNKNOWN");
+                          }}
+                          placeholder="Select a player partner"
+                          searchPlaceholder="Search players..."
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -386,27 +371,22 @@ export function AddVenueGame({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Winner Team</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
-                          field.onChange(value);
-                          form.setValue("winnerTeam.0.name", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select winner team" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {rankings.map((ranking) => (
-                            <SelectItem key={ranking.playerId} value={ranking.playerId}>
-                              {ranking.playerName}'s Team
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <Combobox
+                          options={rankings.map((ranking) => ({
+                            value: ranking.playerId,
+                            label: `${ranking.playerName}'s Team`,
+                          }))}
+                          value={field.value}
+                          onValueChange={(value) => {
+                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            field.onChange(value);
+                            form.setValue("winnerTeam.0.name", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
+                          }}
+                          placeholder="Select winner team"
+                          searchPlaceholder="Search teams..."
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -417,29 +397,24 @@ export function AddVenueGame({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Player Team</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
-                          field.onChange(value);
-                          form.setValue("playerTeam.0.name", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select player team" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {rankings
+                      <FormControl>
+                        <Combobox
+                          options={rankings
                             .filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
-                            .map((ranking) => (
-                              <SelectItem key={ranking.playerId} value={ranking.playerId}>
-                                {ranking.playerName}'s Team
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
+                            .map((ranking) => ({
+                              value: ranking.playerId,
+                              label: `${ranking.playerName}'s Team`,
+                            }))}
+                          value={field.value}
+                          onValueChange={(value) => {
+                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            field.onChange(value);
+                            form.setValue("playerTeam.0.name", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
+                          }}
+                          placeholder="Select player team"
+                          searchPlaceholder="Search teams..."
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
