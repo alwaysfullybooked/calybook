@@ -19,7 +19,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
 
   const session = await auth();
 
-  if (!session?.user?.email) {
+  if (!session?.user?.email || !session?.user?.id) {
     redirect(`/login?callbackUrl=/${country}/${lang}/${city}/venues/${venueId}/competitions/${competitionId}`);
   }
 
@@ -44,7 +44,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
     openscor.games.search({ competitionId, venueId }),
   ]);
 
-  const pendingGames = games.filter((game) => game.status === "pending" && [game.winnerId, game.playerId].includes(session.user.id));
+  const pendingGames = games.filter((game) => game.status === "pending" && [...game.winnerTeam.map((player) => player.id), ...game.playerTeam.map((player) => player.id)].includes(session.user.id));
   const approvedGames = games.filter((game) => game.status === "approved");
 
   const playedRankings = leaderboard.filter((pr) => pr?.matchCount && pr.matchCount > 0);
@@ -91,8 +91,6 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
             category={competition.category as Category}
             matchType={competition.matchType as MatchType}
             venueId={venueId}
-            venueName={venue.name}
-            venueCountry={venue.country}
             rankings={leaderboard}
             userAddingId={session.user.id}
           />
@@ -114,11 +112,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                   <div key={game.id} className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                       <div className="flex items-center gap-2 justify-center">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={`https://avatar.vercel.sh/${game.winnerId}`} />
-                          <AvatarFallback>{game.winnerId?.slice(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium text-sm sm:text-base">{game.winnerName}</span>
+                        <span className="font-medium text-sm sm:text-base">{game.winnerTeam.map((player) => player.name).join(", ")}</span>
                         {game.winnerApproved && !game.playerApproved && (
                           <Badge variant="outline" className="text-xs bg-primary">
                             Approved
@@ -131,13 +125,13 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                         </Badge>
                         <span className="text-xs sm:text-sm text-muted-foreground mt-3">{game.playedDate}</span>
                         <span className="text-xs sm:text-sm text-orange-500">Pending approval</span>
-                        {session.user.id === game.winnerId && !game.winnerApproved && (
+                        {game.winnerTeam.map((player) => player.id).includes(session.user.id) && !game.winnerApproved && (
                           <div className="mt-2">
                             <ApproveGameButton gameId={game.id} approvedBy={session.user.id} />
                           </div>
                         )}
 
-                        {session.user.id === game.playerId && !game.playerApproved && (
+                        {game.playerTeam.map((player) => player.id).includes(session.user.id) && !game.playerApproved && (
                           <div className="mt-2">
                             <ApproveGameButton gameId={game.id} approvedBy={session.user.id} />
                           </div>
@@ -150,11 +144,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                         )}
                       </div>
                       <div className="flex items-center gap-2 justify-center">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={`https://avatar.vercel.sh/${game.playerId}`} />
-                          <AvatarFallback>{game.playerId?.slice(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium text-sm sm:text-base">{game.playerName}</span>
+                        <span className="font-medium text-sm sm:text-base">{game.playerTeam.map((player) => player.name).join(", ")}</span>
                         {game.playerApproved && !game.winnerApproved && (
                           <Badge variant="outline" className="text-xs bg-primary">
                             Approved
@@ -271,7 +261,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
                         <div className="text-center">
                           <span className="font-medium text-sm sm:text-base">
-                            {game.winnerName} vs {game.playerName}
+                            {game.winnerTeam.map((player) => player.name).join(", ")} vs {game.playerTeam.map((player) => player.name).join(", ")}
                           </span>
                         </div>
                         <div className="flex flex-col items-center">

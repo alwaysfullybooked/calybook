@@ -1,9 +1,9 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { openscor } from "@/lib/openscor";
 import { auth } from "@/server/auth";
+import { Calendar } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function GamesPage() {
@@ -38,7 +38,7 @@ export default async function GamesPage() {
                     </div>
                     <div className="text-center">
                       <span className="font-medium text-sm sm:text-base">
-                        {game.winnerName} vs {game.playerName}
+                        {game.winnerTeam.map((player) => player.name).join(", ")} vs {game.playerTeam.map((player) => player.name).join(", ")}
                       </span>
                     </div>
                     <div className="flex flex-col items-center">

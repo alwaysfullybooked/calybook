@@ -10,16 +10,8 @@ interface CreateGameOptions {
   category: Category;
   matchType: MatchType;
   venueId: string;
-  winnerId?: string;
-  winnerName?: string;
-  winnerPartnerId?: string;
-  winnerPartnerName?: string;
-  playerId?: string;
-  playerName?: string;
-  playerPartnerId?: string;
-  playerPartnerName?: string;
-  winnerTeamId?: string;
-  playerTeamId?: string;
+  winnerTeam: { id: string; name: string }[];
+  playerTeam: { id: string; name: string }[];
   score: string;
   playedDate: string;
 }
@@ -45,18 +37,8 @@ export async function createOpenScorGame(props: CreateGameOptions) {
     venueName: venue.name,
     venueCountry: venue.country,
 
-    winnerId: props.winnerId,
-    winnerName: props.winnerName,
-    playerId: props.playerId,
-    playerName: props.playerName,
-
-    winnerPartnerId: props.winnerPartnerId,
-    winnerPartnerName: props.winnerPartnerName,
-    playerPartnerId: props.playerPartnerId,
-    playerPartnerName: props.playerPartnerName,
-
-    winnerTeamId: props.winnerTeamId,
-    playerTeamId: props.playerTeamId,
+    winnerTeam: props.winnerTeam,
+    playerTeam: props.playerTeam,
 
     score: props.score,
     playedDate: props.playedDate,
