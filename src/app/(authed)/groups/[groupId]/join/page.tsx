@@ -26,7 +26,7 @@ export default async function JoinGroupPage({ params }: JoinGroupPageProps) {
     redirect("/groups?error=group-not-found");
   }
 
-  const [groupMembers, playerRanking] = await Promise.all([api.groups.searchMembers({ groupId }), openscor.leaderboards.find({ category: group.category as Category, playerId: session.user.id })]);
+  const [groupMembers, playerRanking] = await Promise.all([api.groups.searchMembers({ groupId }), openscor.leaderboards.find({ competitionId: group.competitionId, playerId: session.user.id })]);
 
   const isMember = groupMembers?.some((member) => member.userId === session.user.id);
 
