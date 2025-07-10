@@ -93,6 +93,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
             rankings={leaderboard}
             userAddingId={session.user.id}
           />
+          <p className="text-sm text-muted-foreground">Winner adds final score. Player approves.</p>
         </div>
       )}
 
