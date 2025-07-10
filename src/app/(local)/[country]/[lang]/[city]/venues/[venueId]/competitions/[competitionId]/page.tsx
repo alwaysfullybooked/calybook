@@ -1,18 +1,17 @@
+import { Calendar, Trophy } from "lucide-react";
+import { redirect } from "next/navigation";
+import { ApproveGameButton } from "@/components/client/openscor/approve";
+import { JoinRankingsButton } from "@/components/client/openscor/rankings";
+import { AddVenueGame } from "@/components/client/openscor/venue-games";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { auth } from "@/server/auth";
-import { api } from "@/trpc/server";
-import { Calendar, Trophy } from "lucide-react";
-import { redirect } from "next/navigation";
-
-import { ApproveGameButton } from "@/components/client/openscor/approve";
-import { JoinRankingsButton } from "@/components/client/openscor/rankings";
-import { AddVenueGame } from "@/components/client/openscor/venue-games";
 import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { openscor } from "@/lib/openscor";
+import { auth } from "@/server/auth";
 import type { Category, MatchType } from "@/server/db/schema";
+import { api } from "@/trpc/server";
 
 export default async function VenueRankingsPage({ params }: { params: Promise<{ country: string; lang: string; city: string; venueId: string; competitionId: string }> }) {
   const { country, lang, city, venueId, competitionId } = await params;
@@ -63,7 +62,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
           <h2 className="font-bold tracking-tight capitalize text-lg">
             {competition.category}, {competition.matchType} Rankings
           </h2>
-          {!myRanking && venue.allowRankings && (
+          {!isMember && venue.allowRankings && (
             <JoinRankingsButton
               country={country}
               lang={lang}
@@ -83,7 +82,7 @@ export default async function VenueRankingsPage({ params }: { params: Promise<{ 
         </div>
       )}
 
-      {myRanking && competition?.matchType && (
+      {isMember && competition?.matchType && (
         <div className="text-center space-y-2 mb-6 sm:mb-12">
           <h2 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl capitalize">Just Played?</h2>
           <AddVenueGame

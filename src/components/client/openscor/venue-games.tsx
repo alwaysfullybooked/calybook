@@ -1,5 +1,12 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import type { Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import { createOpenScorGame } from "@/actions/openscor/games";
 import { SubmitButton } from "@/components/client/submit-button";
 import { Button } from "@/components/ui/button";
@@ -10,14 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Ranking } from "@/lib/openscor";
 import type { Category, MatchType } from "@/server/db/schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-
-import type { Resolver } from "react-hook-form";
 
 // Schema for singles matches
 const singlesSchema = z.object({
