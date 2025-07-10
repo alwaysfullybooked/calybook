@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { ApproveGameButton } from "@/components/client/openscor/approve";
 import { JoinRankingsButton } from "@/components/client/openscor/rankings";
 import { AddVenueGame } from "@/components/client/openscor/venue-games";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
