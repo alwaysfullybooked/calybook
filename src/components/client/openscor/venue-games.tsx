@@ -18,6 +18,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Ranking } from "@/lib/openscor";
 import type { Category, MatchType } from "@/server/db/schema";
 
+// Custom validation function for tennis scores
+function validateTennisScore(score: string): boolean {
+  // Check basic format first
+  if (!/^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/.test(score)) {
+    return false;
+  }
+
+  const sets = score.split(/\s+/);
+  let winnerSets = 0;
+  let loserSets = 0;
+
+  for (const set of sets) {
+    const parts = set.split("-").map(Number);
+    if (parts.length !== 2) {
+      return false;
+    }
+
+    const [first, second] = parts as [number, number];
+
+    // Prevent ties - sets must have a winner
+    if (first === second) {
+      return false;
+    }
+
+    // Count sets won by each player
+    if (first > second) {
+      winnerSets++;
+    } else {
+      loserSets++;
+    }
+  }
+
+  // Winner must win more sets than loser
+  return winnerSets > loserSets;
+}
+
 // Schema for singles matches
 const singlesSchema = z.object({
   matchType: z.literal("singles"),
@@ -37,10 +73,7 @@ const singlesSchema = z.object({
       }),
     )
     .length(1),
-  score: z
-    .string()
-    .min(1, "Score is required")
-    .regex(/^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/, "No commas, score must be in X-X with spaces"),
+  score: z.string().min(1, "Score is required").refine(validateTennisScore, "Score must be from winner's perspective (e.g., 6-3 not 3-6)"),
   playedDate: z.string().min(1, "Played date is required"),
 });
 
@@ -63,10 +96,7 @@ const doublesSchema = z.object({
       }),
     )
     .length(2),
-  score: z
-    .string()
-    .min(1, "Score is required")
-    .regex(/^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/, "No commas, score must be in X-X with spaces"),
+  score: z.string().min(1, "Score is required").refine(validateTennisScore, "Score must be from winner's perspective (e.g., 6-3 not 3-6)"),
   playedDate: z.string().min(1, "Played date is required"),
 });
 
@@ -89,10 +119,7 @@ const teamSchema = z.object({
       }),
     )
     .length(5),
-  score: z
-    .string()
-    .min(1, "Score is required")
-    .regex(/^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/, "No commas, score must be in X-X with spaces"),
+  score: z.string().min(1, "Score is required").refine(validateTennisScore, "Score must be from winner's perspective (e.g., 6-3 not 3-6)"),
   playedDate: z.string().min(1, "Played date is required"),
 });
 
@@ -425,7 +452,7 @@ export function AddVenueGame({
               name="score"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Score (No commas for score, format X-X with spaces)</FormLabel>
+                  <FormLabel>Score (Winner's perspective, no ties - e.g., 6-4 6-3)</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="e.g., 6-4 6-3" />
                   </FormControl>
