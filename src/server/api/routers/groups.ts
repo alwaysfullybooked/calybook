@@ -1,19 +1,26 @@
-import { Categories, groupMembers, groupVenues, groups } from "@/server/db/schema";
+import {
+  Categories,
+  groupMembers,
+  groupVenues,
+  groups,
+} from "@/server/db/schema";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "../trpc";
-import { formatName } from "../utils";
 
 export const groupsRouter = {
   find: protectedProcedure
     .input(
       z.object({
         groupId: z.string(),
-      }),
+      })
     )
     .query(async ({ ctx, input }) => {
       const result = await ctx.db.query.groups.findFirst({
-        where: and(eq(groups.createdById, ctx.session.user.id), eq(groups.id, input.groupId)),
+        where: and(
+          eq(groups.createdById, ctx.session.user.id),
+          eq(groups.id, input.groupId)
+        ),
         with: {
           venues: true,
         },
@@ -33,7 +40,7 @@ export const groupsRouter = {
     .input(
       z.object({
         groupId: z.string(),
-      }),
+      })
     )
     .query(async ({ ctx, input }) => {
       const result = await ctx.db.query.groupMembers.findMany({
@@ -43,12 +50,7 @@ export const groupsRouter = {
         },
       });
 
-      const members = result.map((member) => ({
-        ...member,
-        user: { ...member.user, name: formatName(member.user.name ?? "Unknown User") },
-      }));
-
-      return members;
+      return result;
     }),
 
   searchMemberGroups: protectedProcedure.query(async ({ ctx }) => {
@@ -73,7 +75,7 @@ export const groupsRouter = {
         description: z.string(),
         city: z.string(),
         country: z.string(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const [result] = await ctx.db
@@ -99,7 +101,7 @@ export const groupsRouter = {
         name: z.string(),
         category: z.nativeEnum(Categories),
         description: z.string(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const result = await ctx.db
@@ -118,12 +120,15 @@ export const groupsRouter = {
     .input(
       z.object({
         groupId: z.string(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       // Check if user is already a member
       const existingMember = await ctx.db.query.groupMembers.findFirst({
-        where: and(eq(groupMembers.groupId, input.groupId), eq(groupMembers.userId, ctx.session.user.id)),
+        where: and(
+          eq(groupMembers.groupId, input.groupId),
+          eq(groupMembers.userId, ctx.session.user.id)
+        ),
       });
 
       if (existingMember) {
@@ -148,7 +153,7 @@ export const groupsRouter = {
         venueId: z.string(),
         venueName: z.string(),
         venueCountry: z.string(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const result = await ctx.db.insert(groupVenues).values({
