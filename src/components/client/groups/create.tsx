@@ -3,13 +3,40 @@
 import { createGroup } from "@/actions/groups";
 import { SubmitButton } from "@/components/client/submit-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Categories } from "@/server/db/schema";
+import { Categories, MatchTypes, type MatchType } from "@/server/db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Users } from "lucide-react";
 import { useState } from "react";
@@ -18,14 +45,18 @@ import { toast } from "sonner";
 import * as z from "zod";
 
 const CreateGroupSchema = z.object({
-  competitionId: z.string().min(1, "Competition ID is required"),
-  name: z.string().min(1, "Group name is required").max(255, "Group name must be less than 255 characters"),
+  name: z
+    .string()
+    .min(1, "Group name is required")
+    .max(255, "Group name must be less than 255 characters"),
   category: z.nativeEnum(Categories, {
     required_error: "Please select a category",
   }),
-  description: z.string().min(1, "Description is required").max(255, "Description must be less than 255 characters"),
-  city: z.string().min(1, "City is required"),
-  country: z.string().min(1, "Country is required"),
+  matchType: z.string().optional(),
+  description: z
+    .string()
+    .min(1, "Description is required")
+    .max(255, "Description must be less than 255 characters"),
 });
 
 type CreateGroupForm = z.infer<typeof CreateGroupSchema>;
@@ -33,25 +64,31 @@ type CreateGroupForm = z.infer<typeof CreateGroupSchema>;
 interface CreateGroupFormProps {
   onSuccess?: () => void;
   variant?: "standalone" | "dialog";
+  categoriesMatchTypes: Record<string, string[]>;
 }
 
 interface CreateGroupDialogProps {
   onSuccess?: () => void;
   trigger?: React.ReactNode;
+  categoriesMatchTypes: Record<string, string[]>;
 }
 
-function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
+function CreateGroupFormContent({
+  onSuccess,
+  categoriesMatchTypes,
+}: {
+  onSuccess?: () => void;
+  categoriesMatchTypes: Record<string, string[]>;
+}) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<CreateGroupForm>({
     resolver: zodResolver(CreateGroupSchema),
     defaultValues: {
-      competitionId: "",
       name: "",
       category: Categories.TENNIS,
+      matchType: MatchTypes.SINGLES,
       description: "",
-      city: "",
-      country: "",
     },
   });
 
@@ -59,12 +96,10 @@ function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
     setIsLoading(true);
     try {
       await createGroup({
-        competitionId: data.competitionId,
         name: data.name,
         category: data.category,
+        matchType: data.matchType as MatchType,
         description: data.description,
-        city: data.city,
-        country: data.country,
       });
       toast.success("Group created successfully");
       form.reset();
@@ -76,6 +111,8 @@ function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
       setIsLoading(false);
     }
   };
+
+  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
@@ -89,7 +126,9 @@ function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
               <FormControl>
                 <Input placeholder="Enter group name" {...field} />
               </FormControl>
-              <FormDescription>Choose a descriptive name for your group.</FormDescription>
+              <FormDescription>
+                Choose a descriptive name for your group.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -101,25 +140,68 @@ function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  form.setValue("matchType", "");
+                }}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {Object.values(Categories).map((category) => (
+                  {Object.keys(categoriesMatchTypes).map((category) => (
                     <SelectItem key={category} value={category}>
                       <span className="capitalize">{category}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <FormDescription>Select the sport or activity category for this group.</FormDescription>
+              <FormDescription>
+                Select the sport or activity category for this group.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {categoriesMatchTypes[form.watch("category")] && (
+          <FormField
+            control={form.control}
+            name="matchType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Match Type</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a match type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {categoriesMatchTypes[form.watch("category")]?.map(
+                      (matchType) => (
+                        <SelectItem key={matchType} value={matchType}>
+                          <span className="capitalize">{matchType}</span>
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  Select the match type for this group.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
@@ -128,16 +210,29 @@ function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="Describe your group's purpose, skill level, or any other relevant information" className="resize-none" rows={3} {...field} />
+                <Textarea
+                  placeholder="Describe your group's purpose, skill level, or any other relevant information"
+                  className="resize-none"
+                  rows={3}
+                  {...field}
+                />
               </FormControl>
-              <FormDescription>Provide details about the group's purpose and requirements.</FormDescription>
+              <FormDescription>
+                Provide details about the group's purpose and requirements.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
         <div className="flex gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isLoading} className="flex-1">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => form.reset()}
+            disabled={isLoading}
+            className="flex-1"
+          >
             Reset
           </Button>
           <SubmitButton type="submit" disabled={isLoading} className="flex-1">
@@ -149,9 +244,18 @@ function CreateGroupFormContent({ onSuccess }: { onSuccess?: () => void }) {
   );
 }
 
-export function CreateGroupForm({ onSuccess, variant = "standalone" }: CreateGroupFormProps) {
+export function CreateGroupForm({
+  onSuccess,
+  variant = "standalone",
+  categoriesMatchTypes,
+}: CreateGroupFormProps) {
   if (variant === "dialog") {
-    return <CreateGroupFormContent onSuccess={onSuccess} />;
+    return (
+      <CreateGroupFormContent
+        onSuccess={onSuccess}
+        categoriesMatchTypes={categoriesMatchTypes}
+      />
+    );
   }
 
   return (
@@ -161,16 +265,25 @@ export function CreateGroupForm({ onSuccess, variant = "standalone" }: CreateGro
           <Users className="h-5 w-5" />
           Create New Group
         </CardTitle>
-        <CardDescription>Create a new group to organize your activities.</CardDescription>
+        <CardDescription>
+          Create a new group to organize your activities.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <CreateGroupFormContent onSuccess={onSuccess} />
+        <CreateGroupFormContent
+          onSuccess={onSuccess}
+          categoriesMatchTypes={categoriesMatchTypes}
+        />
       </CardContent>
     </Card>
   );
 }
 
-export function CreateGroupDialog({ onSuccess, trigger }: CreateGroupDialogProps) {
+export function CreateGroupDialog({
+  onSuccess,
+  trigger,
+  categoriesMatchTypes,
+}: CreateGroupDialogProps) {
   const [open, setOpen] = useState(false);
 
   const handleSuccess = () => {
@@ -194,9 +307,15 @@ export function CreateGroupDialog({ onSuccess, trigger }: CreateGroupDialogProps
             <Users className="h-5 w-5" />
             Create New Group
           </DialogTitle>
-          <DialogDescription>Create a new group to organize your activities.</DialogDescription>
+          <DialogDescription>
+            Create a new group to organize your activities.
+          </DialogDescription>
         </DialogHeader>
-        <CreateGroupForm variant="dialog" onSuccess={handleSuccess} />
+        <CreateGroupForm
+          variant="dialog"
+          onSuccess={handleSuccess}
+          categoriesMatchTypes={categoriesMatchTypes}
+        />
       </DialogContent>
     </Dialog>
   );

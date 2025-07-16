@@ -2,24 +2,21 @@
 
 import { openscor } from "@/lib/openscor";
 import { auth } from "@/server/auth";
-import type { Category } from "@/server/db/schema";
+import type { Category, MatchType } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { revalidatePath } from "next/cache";
+import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 
 export async function createGroup({
-  competitionId,
   name,
   category,
+  matchType,
   description,
-  city,
-  country,
 }: {
-  competitionId: string;
   name: string;
   category: Category;
+  matchType: MatchType;
   description: string;
-  city: string;
-  country: string;
 }) {
   const session = await auth();
 
@@ -27,13 +24,20 @@ export async function createGroup({
     throw new Error("Unauthorized");
   }
 
+  const competition = await openscor.competitions.find({
+    category,
+    matchType,
+  });
+
+  if (!competition) {
+    throw new Error("Competition not found");
+  }
+
   const result = await api.groups.create({
-    competitionId,
+    competitionId: competition.id,
     name,
     category,
     description,
-    city,
-    country,
   });
 
   revalidatePath("/groups");
@@ -145,4 +149,15 @@ export async function addVenueToGroup({
   revalidatePath(`/groups/${groupId}`);
 
   return result;
+}
+
+export async function fetchVenues({
+  country,
+  city,
+}: {
+  country: string;
+  city: string;
+}) {
+  // No auth required for public venue search
+  return alwaysfullybooked.venues.publicSearch({ country, city });
 }

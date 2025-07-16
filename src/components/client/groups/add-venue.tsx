@@ -1,13 +1,35 @@
 "use client";
 
 import { addVenueToGroup } from "@/actions/groups";
+import { fetchVenues } from "@/actions/groups";
 import { SubmitButton } from "@/components/client/submit-button";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Venue } from "@/lib/alwaysfullybooked";
+import { locations } from "@/lib/locations";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -23,10 +45,17 @@ type AddVenueForm = {
   venueId: string;
 };
 
-export function AddVenueDialog({ groupId, trigger, venues }: AddVenueDialogProps) {
+export function AddVenueDialog({
+  groupId,
+  trigger,
+  venues: initialVenues,
+}: AddVenueDialogProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [country, setCountry] = useState<string>("Belgium");
+  const [city, setCity] = useState<string>("");
+  const [venues, setVenues] = useState<Venue[]>(initialVenues);
 
   const form = useForm<AddVenueForm>({
     defaultValues: {
@@ -38,11 +67,31 @@ export function AddVenueDialog({ groupId, trigger, venues }: AddVenueDialogProps
     setLoading(true);
     try {
       // Filter by search string (case-insensitive)
-      const filtered = venues.find((venue) => venue.name.toLowerCase().includes(search.toLowerCase()));
+      const filtered = venues.find((venue) =>
+        venue.name.toLowerCase().includes(search.toLowerCase())
+      );
       form.setValue("venueId", filtered?.id ?? "");
     } catch (e) {
       console.error(e);
       toast.error("Failed to search venues");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleFetchVenues(
+    selectedCountry: string,
+    selectedCity: string
+  ) {
+    setLoading(true);
+    try {
+      const fetchedVenues = await fetchVenues({
+        country: selectedCountry,
+        city: selectedCity,
+      });
+      setVenues(fetchedVenues);
+    } catch (e) {
+      toast.error("Failed to fetch venues");
     } finally {
       setLoading(false);
     }
@@ -82,15 +131,69 @@ export function AddVenueDialog({ groupId, trigger, venues }: AddVenueDialogProps
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add Venue to Group</DialogTitle>
-          <DialogDescription>Select a venue to add to this group.</DialogDescription>
+          <DialogDescription>
+            Select a venue to add to this group.
+          </DialogDescription>
         </DialogHeader>
+        <div className="flex gap-2 mb-4">
+          <Select
+            value={country}
+            onValueChange={(value) => {
+              setCountry(value);
+              setCity("");
+              setVenues([]);
+            }}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Country" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(locations).map((loc) => (
+                <SelectItem key={loc.name} value={loc.name}>
+                  {loc.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={city}
+            onValueChange={async (value) => {
+              setCity(value);
+              await handleFetchVenues(country, value);
+            }}
+            disabled={!country}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="City" />
+            </SelectTrigger>
+            <SelectContent>
+              {(
+                Object.values(locations).find((loc) => loc.name === country)
+                  ?.cities || []
+              ).map((c) => (
+                <SelectItem key={c.label} value={c.label}>
+                  {c.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormItem>
               <FormLabel>Search Venue</FormLabel>
               <div className="flex gap-2">
-                <Input placeholder="Type venue name..." value={search} onChange={(e) => setSearch(e.target.value)} className="flex-1" />
-                <Button type="button" onClick={handleSearch} disabled={loading || !search}>
+                <Input
+                  placeholder="Type venue name..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  onClick={handleSearch}
+                  disabled={loading || !search}
+                >
                   {loading ? "Searching..." : "Search"}
                 </Button>
               </div>
@@ -108,11 +211,6 @@ export function AddVenueDialog({ groupId, trigger, venues }: AddVenueDialogProps
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {venues.length === 0 && (
-                        <SelectItem value="" disabled>
-                          No venues found
-                        </SelectItem>
-                      )}
                       {venues.map((venue) => (
                         <SelectItem key={venue.id} value={venue.id}>
                           {venue.name}
@@ -124,7 +222,10 @@ export function AddVenueDialog({ groupId, trigger, venues }: AddVenueDialogProps
                 </FormItem>
               )}
             />
-            <SubmitButton type="submit" disabled={form.formState.isSubmitting || !form.watch("venueId")}>
+            <SubmitButton
+              type="submit"
+              disabled={form.formState.isSubmitting || !form.watch("venueId")}
+            >
               Add Venue
             </SubmitButton>
           </form>

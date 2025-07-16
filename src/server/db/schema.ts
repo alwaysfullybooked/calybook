@@ -1,5 +1,10 @@
 import { relations, sql } from "drizzle-orm";
-import { index, mysqlTableCreator, primaryKey, uniqueIndex } from "drizzle-orm/mysql-core";
+import {
+  index,
+  mysqlTableCreator,
+  primaryKey,
+  uniqueIndex,
+} from "drizzle-orm/mysql-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
 /**
@@ -72,7 +77,10 @@ export const accounts = createTable(
     id_token: d.text(),
     session_state: d.varchar({ length: 255 }),
   }),
-  (account) => [primaryKey({ columns: [account.provider, account.providerAccountId] }), index("accounts_user_id_idx").on(account.userId)],
+  (account) => [
+    primaryKey({ columns: [account.provider, account.providerAccountId] }),
+    index("accounts_user_id_idx").on(account.userId),
+  ]
 );
 
 export const sessions = createTable(
@@ -82,7 +90,7 @@ export const sessions = createTable(
     userId: d.varchar({ length: 255 }).notNull(),
     expires: d.timestamp({ mode: "date" }).notNull(),
   }),
-  (session) => [index("session_user_id_idx").on(session.userId)],
+  (session) => [index("session_user_id_idx").on(session.userId)]
 );
 
 export const verificationTokens = createTable(
@@ -92,7 +100,7 @@ export const verificationTokens = createTable(
     token: d.varchar({ length: 255 }).notNull(),
     expires: d.timestamp({ mode: "date" }).notNull(),
   }),
-  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })]
 );
 
 export const venueMembers = createTable(
@@ -121,19 +129,28 @@ export const venueMembers = createTable(
     venueCountry: d.varchar({ length: 255 }).notNull(),
 
     status: d.varchar({ length: 10 }).notNull().default("active"), // active, inactive, etc.
-    joinedAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+    joinedAt: d
+      .timestamp()
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
     leftAt: d.timestamp(),
 
     createdById: d.varchar({ length: 255 }).notNull(),
-    createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+    createdAt: d
+      .timestamp()
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
     updatedAt: d.timestamp().onUpdateNow(),
   }),
   (pv) => [
     index("player_venues_player_id_idx").on(pv.playerId),
     index("player_venues_venue_id_idx").on(pv.venueId),
     index("player_venues_status_idx").on(pv.status),
-    uniqueIndex("player_venues_player_venue_unique").on(pv.playerId, pv.venueId),
-  ],
+    uniqueIndex("player_venues_player_venue_unique").on(
+      pv.playerId,
+      pv.venueId
+    ),
+  ]
 );
 
 export const preferences = createTable(
@@ -145,15 +162,27 @@ export const preferences = createTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     userId: d.varchar({ length: 255 }).notNull().unique(),
-    category: d.mysqlEnum(["tennis", "badminton", "basketball", "volleyball", "football", "contact"]).notNull(),
+    category: d
+      .mysqlEnum([
+        "tennis",
+        "badminton",
+        "basketball",
+        "volleyball",
+        "football",
+        "contact",
+      ])
+      .notNull(),
     universalTennisRating: d.varchar({ length: 5 }).notNull(),
     nationalTennisRatingProgram: d.varchar({ length: 3 }).notNull(),
 
     createdById: d.varchar({ length: 255 }).notNull(),
-    createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+    createdAt: d
+      .timestamp()
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
     updatedAt: d.timestamp().onUpdateNow(),
   }),
-  (p) => [index("preferences_user_id_idx").on(p.userId)],
+  (p) => [index("preferences_user_id_idx").on(p.userId)]
 );
 
 export const groups = createTable("group", (d) => ({
@@ -164,13 +193,27 @@ export const groups = createTable("group", (d) => ({
     .$defaultFn(() => crypto.randomUUID()),
   competitionId: d.varchar({ length: 255 }).notNull(),
   name: d.varchar({ length: 255 }).notNull(),
-  category: d.mysqlEnum(["tennis", "badminton", "basketball", "volleyball", "football", "contact"]).notNull(),
+  category: d
+    .mysqlEnum([
+      "tennis",
+      "badminton",
+      "basketball",
+      "volleyball",
+      "football",
+      "contact",
+    ])
+    .notNull(),
+  matchType: d
+    .mysqlEnum(Object.values(MatchTypes) as [string, ...string[]])
+    .notNull()
+    .default(MatchTypes.SINGLES),
   description: d.varchar({ length: 255 }),
-  city: d.varchar({ length: 255 }).notNull(),
-  country: d.varchar({ length: 255 }).notNull(),
 
   createdById: d.varchar({ length: 255 }).notNull(),
-  createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: d
+    .timestamp()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   updatedAt: d.timestamp().onUpdateNow(),
 }));
 
@@ -191,12 +234,18 @@ export const groupVenues = createTable("group_venue", (d) => ({
   venueCountry: d.varchar({ length: 255 }).notNull(),
 
   createdById: d.varchar({ length: 255 }).notNull(),
-  createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: d
+    .timestamp()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   updatedAt: d.timestamp().onUpdateNow(),
 }));
 
 export const groupVenuesRelations = relations(groupVenues, ({ one }) => ({
-  group: one(groups, { fields: [groupVenues.groupId], references: [groups.id] }),
+  group: one(groups, {
+    fields: [groupVenues.groupId],
+    references: [groups.id],
+  }),
 }));
 
 export const groupMembers = createTable("group_member", (d) => ({
@@ -210,12 +259,18 @@ export const groupMembers = createTable("group_member", (d) => ({
   role: d.mysqlEnum(["admin", "member"]).notNull(),
 
   createdById: d.varchar({ length: 255 }).notNull(),
-  createdAt: d.timestamp().default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: d
+    .timestamp()
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   updatedAt: d.timestamp().onUpdateNow(),
 }));
 
 export const groupMembersRelations = relations(groupMembers, ({ one }) => ({
-  group: one(groups, { fields: [groupMembers.groupId], references: [groups.id] }),
+  group: one(groups, {
+    fields: [groupMembers.groupId],
+    references: [groups.id],
+  }),
   user: one(users, { fields: [groupMembers.userId], references: [users.id] }),
 }));
 

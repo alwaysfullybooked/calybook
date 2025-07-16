@@ -4,13 +4,38 @@ import { createOpenScorGame } from "@/actions/openscor/games";
 import { SubmitButton } from "@/components/client/submit-button";
 import { Button } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Ranking } from "@/lib/openscor";
 import type { users } from "@/server/db/schema";
-import { Categories, type Category, type MatchType, MatchTypes } from "@/server/db/schema";
+import {
+  Categories,
+  type Category,
+  type MatchType,
+  MatchTypes,
+} from "@/server/db/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,6 +47,7 @@ import type { groupVenues } from "@/server/db/schema";
 // export type User = typeof users.$inferSelect;
 
 import type { Resolver } from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Schema for singles matches
 const singlesSchema = z.object({
@@ -31,7 +57,7 @@ const singlesSchema = z.object({
       z.object({
         id: z.string().min(1, "Winner is required"),
         name: z.string().min(1, "Winner name is required"),
-      }),
+      })
     )
     .length(1),
   playerTeam: z
@@ -39,13 +65,16 @@ const singlesSchema = z.object({
       z.object({
         id: z.string().min(1, "Player is required"),
         name: z.string().min(1, "Player name is required"),
-      }),
+      })
     )
     .length(1),
   score: z
     .string()
     .min(1, "Score is required")
-    .regex(/^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/, "No commas, score must be in X-X with spaces"),
+    .regex(
+      /^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/,
+      "No commas, score must be in X-X with spaces"
+    ),
   playedDate: z.string().min(1, "Played date is required"),
   groupId: z.string().min(1, "Group is required"),
   competitionId: z.string().min(1, "Competition is required"),
@@ -63,7 +92,7 @@ const doublesSchema = z.object({
       z.object({
         id: z.string().min(1, "Winner is required"),
         name: z.string().min(1, "Winner name is required"),
-      }),
+      })
     )
     .length(2),
   playerTeam: z
@@ -71,13 +100,16 @@ const doublesSchema = z.object({
       z.object({
         id: z.string().min(1, "Player is required"),
         name: z.string().min(1, "Player name is required"),
-      }),
+      })
     )
     .length(2),
   score: z
     .string()
     .min(1, "Score is required")
-    .regex(/^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/, "No commas, score must be in X-X with spaces"),
+    .regex(
+      /^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/,
+      "No commas, score must be in X-X with spaces"
+    ),
   playedDate: z.string().min(1, "Played date is required"),
   groupId: z.string().min(1, "Group is required"),
   competitionId: z.string().min(1, "Competition is required"),
@@ -95,7 +127,7 @@ const teamSchema = z.object({
       z.object({
         id: z.string().min(1, "Winner team is required"),
         name: z.string().min(1, "Winner team name is required"),
-      }),
+      })
     )
     .length(5),
   playerTeam: z
@@ -103,13 +135,16 @@ const teamSchema = z.object({
       z.object({
         id: z.string().min(1, "Player team is required"),
         name: z.string().min(1, "Player team name is required"),
-      }),
+      })
     )
     .length(5),
   score: z
     .string()
     .min(1, "Score is required")
-    .regex(/^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/, "No commas, score must be in X-X with spaces"),
+    .regex(
+      /^[0-9]+-[0-9]+(?:\s+[0-9]+-[0-9]+){0,2}$/,
+      "No commas, score must be in X-X with spaces"
+    ),
   playedDate: z.string().min(1, "Played date is required"),
   groupId: z.string().min(1, "Group is required"),
   competitionId: z.string().min(1, "Competition is required"),
@@ -120,7 +155,11 @@ const teamSchema = z.object({
 });
 
 // Union schema for all match types
-const gameSchema = z.discriminatedUnion("matchType", [singlesSchema, doublesSchema, teamSchema]);
+const gameSchema = z.discriminatedUnion("matchType", [
+  singlesSchema,
+  doublesSchema,
+  teamSchema,
+]);
 
 type FormValues = z.infer<typeof gameSchema>;
 
@@ -244,16 +283,27 @@ export function AddGroupGame({
                   <FormLabel>Venue</FormLabel>
                   <Select
                     onValueChange={(value) => {
-                      const selectedVenue = venues.find((venue) => venue.id === value);
+                      const selectedVenue = venues.find(
+                        (venue) => venue.id === value
+                      );
                       field.onChange(value);
-                      form.setValue("venueName", selectedVenue?.venueName ?? "UNKNOWN");
-                      form.setValue("venueCountry", selectedVenue?.venueCountry ?? "UNKNOWN");
+                      form.setValue(
+                        "venueName",
+                        selectedVenue?.venueName ?? "UNKNOWN"
+                      );
+                      form.setValue(
+                        "venueCountry",
+                        selectedVenue?.venueCountry ?? "UNKNOWN"
+                      );
                     }}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a venue" className="truncate" />
+                        <SelectValue
+                          placeholder="Select a venue"
+                          className="truncate"
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -280,12 +330,18 @@ export function AddGroupGame({
                       <Select defaultValue={field.value} disabled={true}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a winner" className="truncate" />
+                            <SelectValue
+                              placeholder="Select a winner"
+                              className="truncate"
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {rankings.map((ranking) => (
-                            <SelectItem key={ranking.playerId} value={ranking.playerId}>
+                            <SelectItem
+                              key={ranking.playerId}
+                              value={ranking.playerId}
+                            >
                               {ranking.playerName}
                             </SelectItem>
                           ))}
@@ -304,16 +360,25 @@ export function AddGroupGame({
                       <FormControl>
                         <Combobox
                           options={rankings
-                            .filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
+                            .filter(
+                              (ranking) =>
+                                ranking.playerId !==
+                                form.getValues("winnerTeam.0.id")
+                            )
                             .map((ranking) => ({
                               value: ranking.playerId,
                               label: ranking.playerName,
                             }))}
                           value={field.value}
                           onValueChange={(value) => {
-                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            const selectedPlayer = rankings.find(
+                              (ranking) => ranking.playerId === value
+                            );
                             field.onChange(value);
-                            form.setValue("playerTeam.0.name", selectedPlayer?.playerName ?? "UNKNOWN");
+                            form.setValue(
+                              "playerTeam.0.name",
+                              selectedPlayer?.playerName ?? "UNKNOWN"
+                            );
                           }}
                           placeholder="Select a player"
                           searchPlaceholder="Search players..."
@@ -337,12 +402,18 @@ export function AddGroupGame({
                       <Select defaultValue={field.value} disabled={true}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a winner" className="truncate" />
+                            <SelectValue
+                              placeholder="Select a winner"
+                              className="truncate"
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {rankings.map((ranking) => (
-                            <SelectItem key={ranking.playerId} value={ranking.playerId}>
+                            <SelectItem
+                              key={ranking.playerId}
+                              value={ranking.playerId}
+                            >
                               {ranking.playerName}
                             </SelectItem>
                           ))}
@@ -361,16 +432,25 @@ export function AddGroupGame({
                       <FormControl>
                         <Combobox
                           options={rankings
-                            .filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
+                            .filter(
+                              (ranking) =>
+                                ranking.playerId !==
+                                form.getValues("winnerTeam.0.id")
+                            )
                             .map((ranking) => ({
                               value: ranking.playerId,
                               label: ranking.playerName,
                             }))}
                           value={field.value}
                           onValueChange={(value) => {
-                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            const selectedPlayer = rankings.find(
+                              (ranking) => ranking.playerId === value
+                            );
                             field.onChange(value);
-                            form.setValue("winnerTeam.1.name", selectedPlayer?.playerName ?? "UNKNOWN");
+                            form.setValue(
+                              "winnerTeam.1.name",
+                              selectedPlayer?.playerName ?? "UNKNOWN"
+                            );
                           }}
                           placeholder="Select a winner partner"
                           searchPlaceholder="Search players..."
@@ -389,16 +469,27 @@ export function AddGroupGame({
                       <FormControl>
                         <Combobox
                           options={rankings
-                            .filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id") && ranking.playerId !== form.getValues("winnerTeam.1.id"))
+                            .filter(
+                              (ranking) =>
+                                ranking.playerId !==
+                                  form.getValues("winnerTeam.0.id") &&
+                                ranking.playerId !==
+                                  form.getValues("winnerTeam.1.id")
+                            )
                             .map((ranking) => ({
                               value: ranking.playerId,
                               label: ranking.playerName,
                             }))}
                           value={field.value}
                           onValueChange={(value) => {
-                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            const selectedPlayer = rankings.find(
+                              (ranking) => ranking.playerId === value
+                            );
                             field.onChange(value);
-                            form.setValue("playerTeam.0.name", selectedPlayer?.playerName ?? "UNKNOWN");
+                            form.setValue(
+                              "playerTeam.0.name",
+                              selectedPlayer?.playerName ?? "UNKNOWN"
+                            );
                           }}
                           placeholder="Select a player"
                           searchPlaceholder="Search players..."
@@ -419,9 +510,12 @@ export function AddGroupGame({
                           options={rankings
                             .filter(
                               (ranking) =>
-                                ranking.playerId !== form.getValues("winnerTeam.0.id") &&
-                                ranking.playerId !== form.getValues("winnerTeam.1.id") &&
-                                ranking.playerId !== form.getValues("playerTeam.0.id"),
+                                ranking.playerId !==
+                                  form.getValues("winnerTeam.0.id") &&
+                                ranking.playerId !==
+                                  form.getValues("winnerTeam.1.id") &&
+                                ranking.playerId !==
+                                  form.getValues("playerTeam.0.id")
                             )
                             .map((ranking) => ({
                               value: ranking.playerId,
@@ -429,9 +523,14 @@ export function AddGroupGame({
                             }))}
                           value={field.value}
                           onValueChange={(value) => {
-                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
+                            const selectedPlayer = rankings.find(
+                              (ranking) => ranking.playerId === value
+                            );
                             field.onChange(value);
-                            form.setValue("playerTeam.1.name", selectedPlayer?.playerName ?? "UNKNOWN");
+                            form.setValue(
+                              "playerTeam.1.name",
+                              selectedPlayer?.playerName ?? "UNKNOWN"
+                            );
                           }}
                           placeholder="Select a player partner"
                           searchPlaceholder="Search players..."
@@ -445,62 +544,123 @@ export function AddGroupGame({
             )}
 
             {matchType === "team" && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="winnerTeam.0.id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Winner Team</FormLabel>
-                      <FormControl>
-                        <Combobox
-                          options={rankings.map((ranking) => ({
-                            value: ranking.playerId,
-                            label: `${ranking.playerName}'s Team`,
-                          }))}
-                          value={field.value}
-                          onValueChange={(value) => {
-                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
-                            field.onChange(value);
-                            form.setValue("winnerTeam.0.name", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
-                          }}
-                          placeholder="Select winner team"
-                          searchPlaceholder="Search teams..."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="playerTeam.0.id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Player Team</FormLabel>
-                      <FormControl>
-                        <Combobox
-                          options={rankings
-                            .filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
-                            .map((ranking) => ({
-                              value: ranking.playerId,
-                              label: `${ranking.playerName}'s Team`,
-                            }))}
-                          value={field.value}
-                          onValueChange={(value) => {
-                            const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
-                            field.onChange(value);
-                            form.setValue("playerTeam.0.name", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
-                          }}
-                          placeholder="Select player team"
-                          searchPlaceholder="Search teams..."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row gap-6">
+                  <div className="flex-1">
+                    <div className="font-semibold mb-2">
+                      Winner Team{" "}
+                      <span className="text-xs text-muted-foreground">
+                        ({form.watch("winnerTeam")?.length || 0}/5)
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2">
+                      {rankings.map((ranking) => {
+                        const checked = form
+                          .watch("winnerTeam")
+                          ?.some((p) => p.id === ranking.playerId);
+                        const disabled =
+                          form
+                            .watch("playerTeam")
+                            ?.some((p) => p.id === ranking.playerId) ||
+                          (form.watch("winnerTeam")?.length >= 5 && !checked);
+                        return (
+                          <label
+                            key={ranking.playerId}
+                            className={`flex items-center gap-2 ${
+                              disabled ? "opacity-50" : ""
+                            }`}
+                          >
+                            <Checkbox
+                              checked={checked}
+                              disabled={disabled}
+                              onCheckedChange={(val) => {
+                                const current =
+                                  form.getValues("winnerTeam") || [];
+                                if (val) {
+                                  if (current.length < 5) {
+                                    form.setValue("winnerTeam", [
+                                      ...current,
+                                      {
+                                        id: ranking.playerId,
+                                        name: ranking.playerName,
+                                      },
+                                    ]);
+                                  }
+                                } else {
+                                  form.setValue(
+                                    "winnerTeam",
+                                    current.filter(
+                                      (p) => p.id !== ranking.playerId
+                                    )
+                                  );
+                                }
+                              }}
+                            />
+                            <span>{ranking.playerName}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-semibold mb-2">
+                      Player Team{" "}
+                      <span className="text-xs text-muted-foreground">
+                        ({form.watch("playerTeam")?.length || 0}/5)
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2">
+                      {rankings.map((ranking) => {
+                        const checked = form
+                          .watch("playerTeam")
+                          ?.some((p) => p.id === ranking.playerId);
+                        const disabled =
+                          form
+                            .watch("winnerTeam")
+                            ?.some((p) => p.id === ranking.playerId) ||
+                          (form.watch("playerTeam")?.length >= 5 && !checked);
+                        return (
+                          <label
+                            key={ranking.playerId}
+                            className={`flex items-center gap-2 ${
+                              disabled ? "opacity-50" : ""
+                            }`}
+                          >
+                            <Checkbox
+                              checked={checked}
+                              disabled={disabled}
+                              onCheckedChange={(val) => {
+                                const current =
+                                  form.getValues("playerTeam") || [];
+                                if (val) {
+                                  if (current.length < 5) {
+                                    form.setValue("playerTeam", [
+                                      ...current,
+                                      {
+                                        id: ranking.playerId,
+                                        name: ranking.playerName,
+                                      },
+                                    ]);
+                                  }
+                                } else {
+                                  form.setValue(
+                                    "playerTeam",
+                                    current.filter(
+                                      (p) => p.id !== ranking.playerId
+                                    )
+                                  );
+                                }
+                              }}
+                            />
+                            <span>{ranking.playerName}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <FormMessage />
+              </div>
             )}
 
             <FormField
@@ -511,7 +671,9 @@ export function AddGroupGame({
                   <FormLabel>
                     <div className="flex flex-col gap-1">
                       <span className="font-bold mb-3">Score Format</span>
-                      <span>For Tennis, format is 6-4 with spaces for sets</span>
+                      <span>
+                        For Tennis, format is 6-4 with spaces for sets
+                      </span>
                       <span>For Football, format is 2-1</span>
                     </div>
                   </FormLabel>
@@ -536,7 +698,9 @@ export function AddGroupGame({
                 </FormItem>
               )}
             />
-            <SubmitButton type="submit">{form.formState.isSubmitting ? "Submitting..." : "Submit"}</SubmitButton>
+            <SubmitButton type="submit">
+              {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+            </SubmitButton>
           </form>
         </Form>
       </DialogContent>

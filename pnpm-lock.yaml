@@ -27,8 +27,8 @@ importers:
         specifier: ^0.7.2
         version: 0.7.2(ai@4.3.17(react@19.1.0)(zod@3.25.75))(zod@3.25.75)
       '@openscor-com/sdk-node':
-        specifier: ^0.1.41
-        version: 0.1.41(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
+        specifier: ^0.1.43
+        version: 0.1.43(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)
       '@planetscale/database':
         specifier: ^1.19.0
         version: 1.19.0
@@ -908,8 +908,8 @@ packages:
       ai: ^4.3.16
       zod: ^3.25.34
 
-  '@openscor-com/sdk-node@0.1.41':
-    resolution: {integrity: sha512-ltBxO9gzAxFqL87dyMIkDmblZxdHulPpQZc54qnZxD8bT1/uYYgz+Vf1Vz1CIYwmUFKXVeri+SqHOkTyps/fQQ==, tarball: https://npm.pkg.github.com/download/@openscor-com/sdk-node/0.1.41/ed202f1c96765349cf0ca59404586d71e991b305}
+  '@openscor-com/sdk-node@0.1.43':
+    resolution: {integrity: sha512-N0m+Kc4MDXdeAUb/0fEmHp4jIh1UNBbRNMIe1VdvE7C5ra/rb4rPl5Fj20tgX78G8SJTM+aOrU+j/jFiVQ8UZA==, tarball: https://npm.pkg.github.com/download/@openscor-com/sdk-node/0.1.43/9f15d048fc6b2d6a8a04a9dd8372f51c92512c9c}
 
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
@@ -2880,7 +2880,7 @@ snapshots:
 
   '@alwaysfullybooked/sdk-node@0.1.56(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
     dependencies:
-      '@tanstack/react-query': 5.81.5(react@19.1.0)
+      '@tanstack/react-query': 5.83.0(react@19.1.0)
       '@trpc/client': 11.4.3(@trpc/server@11.4.3(typescript@5.8.3))(typescript@5.8.3)
     transitivePeerDependencies:
       - '@trpc/server'
@@ -3319,7 +3319,7 @@ snapshots:
       ai: 4.3.17(react@19.1.0)(zod@3.25.75)
       zod: 3.25.75
 
-  '@openscor-com/sdk-node@0.1.41(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
+  '@openscor-com/sdk-node@0.1.43(@trpc/server@11.4.3(typescript@5.8.3))(react@19.1.0)(typescript@5.8.3)':
     dependencies:
       '@tanstack/react-query': 5.83.0(react@19.1.0)
       '@trpc/client': 11.4.3(@trpc/server@11.4.3(typescript@5.8.3))(typescript@5.8.3)

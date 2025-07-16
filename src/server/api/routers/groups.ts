@@ -73,8 +73,6 @@ export const groupsRouter = {
         name: z.string(),
         category: z.nativeEnum(Categories),
         description: z.string(),
-        city: z.string(),
-        country: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -85,8 +83,6 @@ export const groupsRouter = {
           name: input.name,
           category: input.category,
           description: input.description,
-          city: input.city,
-          country: input.country,
           createdById: ctx.session.user.id,
         })
         .$returningId();
