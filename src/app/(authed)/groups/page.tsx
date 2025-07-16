@@ -125,14 +125,6 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
                           >
                             {group.category}
                           </Badge>
-                          {group.country && (
-                            <Badge
-                              variant="secondary"
-                              className="text-xs capitalize"
-                            >
-                              {group.city}, {group.country}
-                            </Badge>
-                          )}
                         </div>
                         <div className="flex gap-2 justify-center">
                           <InviteLink
@@ -217,14 +209,6 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
                           >
                             {group.category}
                           </Badge>
-                          {group.country && (
-                            <Badge
-                              variant="secondary"
-                              className="text-xs capitalize"
-                            >
-                              {group.city}, {group.country}
-                            </Badge>
-                          )}
                         </div>
                         <div className="flex gap-2 justify-center">
                           <InviteLink
