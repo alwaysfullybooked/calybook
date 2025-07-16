@@ -25,7 +25,7 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
     redirect("/login");
   }
 
-  const groups = await api.groups.search();
+  const createdGroups = await api.groups.search();
   const joinedGroups = await api.groups.searchMemberGroups();
   const competitions = await openscor.competitions.search({});
 
@@ -38,8 +38,6 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
 
     return acc;
   }, {} as Record<string, string[]>);
-
-  console.log(categoriesMatchTypes);
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
@@ -72,7 +70,7 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
           </TabsTrigger>
           <TabsTrigger value="created" className="flex items-center gap-2">
             <Crown className="h-4 w-4" />
-            Groups Created ({groups.length})
+            Groups Created ({createdGroups.length})
           </TabsTrigger>
         </TabsList>
 
@@ -152,7 +150,7 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
 
         {/* Groups Created Tab */}
         <TabsContent value="created" className="space-y-4">
-          {groups.length === 0 ? (
+          {createdGroups.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Users className="h-12 w-12 text-muted-foreground mb-4" />
@@ -184,7 +182,7 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
               </CardHeader>
               <CardContent className="px-3 sm:px-6">
                 <div className="space-y-3 sm:space-y-4">
-                  {groups.map((group) => (
+                  {createdGroups.map((group) => (
                     <div
                       key={group.id}
                       className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50"

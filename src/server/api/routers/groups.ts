@@ -17,10 +17,7 @@ export const groupsRouter = {
     )
     .query(async ({ ctx, input }) => {
       const result = await ctx.db.query.groups.findFirst({
-        where: and(
-          eq(groups.createdById, ctx.session.user.id),
-          eq(groups.id, input.groupId)
-        ),
+        where: and(eq(groups.id, input.groupId)),
         with: {
           venues: true,
         },
