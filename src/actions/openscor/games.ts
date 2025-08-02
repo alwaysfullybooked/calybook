@@ -1,17 +1,17 @@
 "use server";
 
+import type { Category, MatchType } from "@openscor-com/sdk-node";
 import { alwaysfullybooked } from "@/lib/alwaysfullybooked";
 import { openscor } from "@/lib/openscor";
 import { auth } from "@/server/auth";
-import type { Category, MatchType } from "@openscor-com/sdk-node";
 
 interface CreateGameOptions {
 	competitionId: string;
 	category: Category;
 	matchType: MatchType;
 	venueId: string;
-	winnerTeam: { id: string; name: string }[];
-	playerTeam: { id: string; name: string }[];
+	winnerTeam: string[];
+	playerTeam: string[];
 	score: string;
 	playedDate: string;
 }

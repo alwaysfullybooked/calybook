@@ -57,22 +57,8 @@ function validateTennisScore(score: string): boolean {
 // Schema for singles matches
 const singlesSchema = z.object({
 	matchType: z.literal("singles"),
-	winnerTeam: z
-		.array(
-			z.object({
-				id: z.string().min(1, "Winner is required"),
-				name: z.string().min(1, "Winner name is required"),
-			}),
-		)
-		.length(1),
-	playerTeam: z
-		.array(
-			z.object({
-				id: z.string().min(1, "Player is required"),
-				name: z.string().min(1, "Player name is required"),
-			}),
-		)
-		.length(1),
+	winnerTeam: z.array(z.string().min(1, "Winner is required")).length(1),
+	playerTeam: z.array(z.string().min(1, "Player is required")).length(1),
 	score: z.string().min(1, "Score is required").refine(validateTennisScore, "Score must be from winner's perspective (e.g., 6-3 not 3-6)"),
 	playedDate: z.string().min(1, "Played date is required"),
 });
@@ -80,22 +66,8 @@ const singlesSchema = z.object({
 // Schema for doubles matches
 const doublesSchema = z.object({
 	matchType: z.literal("doubles"),
-	winnerTeam: z
-		.array(
-			z.object({
-				id: z.string().min(1, "Winner is required"),
-				name: z.string().min(1, "Winner name is required"),
-			}),
-		)
-		.length(2),
-	playerTeam: z
-		.array(
-			z.object({
-				id: z.string().min(1, "Player is required"),
-				name: z.string().min(1, "Player name is required"),
-			}),
-		)
-		.length(2),
+	winnerTeam: z.array(z.string().min(1, "Winner is required")).length(2),
+	playerTeam: z.array(z.string().min(1, "Player is required")).length(2),
 	score: z.string().min(1, "Score is required").refine(validateTennisScore, "Score must be from winner's perspective (e.g., 6-3 not 3-6)"),
 	playedDate: z.string().min(1, "Played date is required"),
 });
@@ -103,22 +75,8 @@ const doublesSchema = z.object({
 // Schema for team matches
 const teamSchema = z.object({
 	matchType: z.literal("team"),
-	winnerTeam: z
-		.array(
-			z.object({
-				id: z.string().min(1, "Winner team is required"),
-				name: z.string().min(1, "Winner team name is required"),
-			}),
-		)
-		.length(5),
-	playerTeam: z
-		.array(
-			z.object({
-				id: z.string().min(1, "Player team is required"),
-				name: z.string().min(1, "Player team name is required"),
-			}),
-		)
-		.length(5),
+	winnerTeam: z.array(z.string().min(1, "Winner team is required")).length(5),
+	playerTeam: z.array(z.string().min(1, "Player team is required")).length(5),
 	score: z.string().min(1, "Score is required").refine(validateTennisScore, "Score must be from winner's perspective (e.g., 6-3 not 3-6)"),
 	playedDate: z.string().min(1, "Played date is required"),
 });
@@ -149,13 +107,10 @@ export function AddVenueGame({
 	const form = useForm<FormValues>({
 		resolver: zodResolver(gameSchema) as Resolver<FormValues>,
 		defaultValues: (() => {
-			const userRanking = rankings.find((r) => r.playerId === userAddingId);
-			const userName = userRanking?.playerName ?? "UNKNOWN";
-
 			if (matchType === "singles") {
 				return {
 					matchType: "singles" as const,
-					winnerTeam: [{ id: userAddingId, name: userName }],
+					winnerTeam: [userAddingId],
 					playerTeam: [],
 					score: "",
 					playedDate: new Date().toISOString().split("T")[0],
@@ -164,7 +119,7 @@ export function AddVenueGame({
 			if (matchType === "doubles") {
 				return {
 					matchType: "doubles" as const,
-					winnerTeam: [{ id: userAddingId, name: userName }],
+					winnerTeam: [userAddingId],
 					playerTeam: [],
 					score: "",
 					playedDate: new Date().toISOString().split("T")[0],
@@ -173,7 +128,7 @@ export function AddVenueGame({
 			// team
 			return {
 				matchType: "team" as const,
-				winnerTeam: [{ id: userAddingId, name: `${userName}'s Team` }],
+				winnerTeam: [userAddingId],
 				playerTeam: [],
 				score: "",
 				playedDate: new Date().toISOString().split("T")[0],
@@ -220,11 +175,11 @@ export function AddVenueGame({
 							<>
 								<FormField
 									control={form.control}
-									name="winnerTeam.0.id"
+									name="winnerTeam"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Winner</FormLabel>
-											<Select defaultValue={field.value} disabled={true}>
+											<Select defaultValue={field.value[0]} disabled={true}>
 												<FormControl>
 													<SelectTrigger>
 														<SelectValue placeholder="Select a winner" className="truncate" />
@@ -244,23 +199,23 @@ export function AddVenueGame({
 								/>
 								<FormField
 									control={form.control}
-									name="playerTeam.0.id"
+									name="playerTeam"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Player</FormLabel>
 											<FormControl>
 												<Combobox
 													options={rankings
-														.filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
+														.filter((ranking) => !form.getValues("winnerTeam").includes(ranking.playerId))
 														.map((ranking) => ({
 															value: ranking.playerId,
 															label: ranking.playerName,
 														}))}
-													value={field.value}
+													value={field.value[0]}
 													onValueChange={(value) => {
 														const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
 														field.onChange(value);
-														form.setValue("playerTeam.0.name", selectedPlayer?.playerName ?? "UNKNOWN");
+														form.setValue("playerTeam.0", selectedPlayer?.playerName ?? "UNKNOWN");
 													}}
 													placeholder="Select a player"
 													searchPlaceholder="Search players..."
@@ -276,11 +231,11 @@ export function AddVenueGame({
 							<>
 								<FormField
 									control={form.control}
-									name="winnerTeam.0.id"
+									name="winnerTeam"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Winner</FormLabel>
-											<Select defaultValue={field.value} disabled={true}>
+											<Select defaultValue={field.value[0]} disabled={true}>
 												<FormControl>
 													<SelectTrigger>
 														<SelectValue placeholder="Select a winner" className="truncate" />
@@ -300,23 +255,23 @@ export function AddVenueGame({
 								/>
 								<FormField
 									control={form.control}
-									name="winnerTeam.1.id"
+									name="winnerTeam"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Winner Partner</FormLabel>
 											<FormControl>
 												<Combobox
 													options={rankings
-														.filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
+														.filter((ranking) => ranking.playerId !== form.getValues("winnerTeam")[0])
 														.map((ranking) => ({
 															value: ranking.playerId,
 															label: ranking.playerName,
 														}))}
-													value={field.value}
+													value={field.value[1]}
 													onValueChange={(value) => {
 														const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
 														field.onChange(value);
-														form.setValue("winnerTeam.1.name", selectedPlayer?.playerName ?? "UNKNOWN");
+														form.setValue("winnerTeam.1", selectedPlayer?.playerName ?? "UNKNOWN");
 													}}
 													placeholder="Select a winner partner"
 													searchPlaceholder="Search players..."
@@ -328,23 +283,23 @@ export function AddVenueGame({
 								/>
 								<FormField
 									control={form.control}
-									name="playerTeam.0.id"
+									name="playerTeam"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Player</FormLabel>
 											<FormControl>
 												<Combobox
 													options={rankings
-														.filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id") && ranking.playerId !== form.getValues("winnerTeam.1.id"))
+														.filter((ranking) => !form.getValues("winnerTeam").includes(ranking.playerId))
 														.map((ranking) => ({
 															value: ranking.playerId,
 															label: ranking.playerName,
 														}))}
-													value={field.value}
+													value={field.value[0]}
 													onValueChange={(value) => {
 														const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
 														field.onChange(value);
-														form.setValue("playerTeam.0.name", selectedPlayer?.playerName ?? "UNKNOWN");
+														form.setValue("playerTeam.0", selectedPlayer?.playerName ?? "UNKNOWN");
 													}}
 													placeholder="Select a player"
 													searchPlaceholder="Search players..."
@@ -356,7 +311,7 @@ export function AddVenueGame({
 								/>
 								<FormField
 									control={form.control}
-									name="playerTeam.1.id"
+									name="playerTeam"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Player Partner</FormLabel>
@@ -365,19 +320,17 @@ export function AddVenueGame({
 													options={rankings
 														.filter(
 															(ranking) =>
-																ranking.playerId !== form.getValues("winnerTeam.0.id") &&
-																ranking.playerId !== form.getValues("winnerTeam.1.id") &&
-																ranking.playerId !== form.getValues("playerTeam.0.id"),
+																ranking.playerId !== form.getValues("winnerTeam")[0] && ranking.playerId !== form.getValues("winnerTeam")[1] && ranking.playerId !== form.getValues("playerTeam")[0],
 														)
 														.map((ranking) => ({
 															value: ranking.playerId,
 															label: ranking.playerName,
 														}))}
-													value={field.value}
+													value={field.value[1]}
 													onValueChange={(value) => {
 														const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
 														field.onChange(value);
-														form.setValue("playerTeam.1.name", selectedPlayer?.playerName ?? "UNKNOWN");
+														form.setValue("playerTeam.1", selectedPlayer?.playerName ?? "UNKNOWN");
 													}}
 													placeholder="Select a player partner"
 													searchPlaceholder="Search players..."
@@ -393,7 +346,7 @@ export function AddVenueGame({
 							<>
 								<FormField
 									control={form.control}
-									name="winnerTeam.0.id"
+									name="winnerTeam"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Winner Team</FormLabel>
@@ -403,11 +356,11 @@ export function AddVenueGame({
 														value: ranking.playerId,
 														label: `${ranking.playerName}'s Team`,
 													}))}
-													value={field.value}
+													value={field.value[0]}
 													onValueChange={(value) => {
 														const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
 														field.onChange(value);
-														form.setValue("winnerTeam.0.name", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
+														form.setValue("winnerTeam.0", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
 													}}
 													placeholder="Select winner team"
 													searchPlaceholder="Search teams..."
@@ -419,23 +372,23 @@ export function AddVenueGame({
 								/>
 								<FormField
 									control={form.control}
-									name="playerTeam.0.id"
+									name="playerTeam"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Player Team</FormLabel>
 											<FormControl>
 												<Combobox
 													options={rankings
-														.filter((ranking) => ranking.playerId !== form.getValues("winnerTeam.0.id"))
+														.filter((ranking) => !form.getValues("winnerTeam").includes(ranking.playerId))
 														.map((ranking) => ({
 															value: ranking.playerId,
 															label: `${ranking.playerName}'s Team`,
 														}))}
-													value={field.value}
+													value={field.value[0]}
 													onValueChange={(value) => {
 														const selectedPlayer = rankings.find((ranking) => ranking.playerId === value);
 														field.onChange(value);
-														form.setValue("playerTeam.0.name", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
+														form.setValue("playerTeam.0", `${selectedPlayer?.playerName ?? "UNKNOWN"}'s Team`);
 													}}
 													placeholder="Select player team"
 													searchPlaceholder="Search teams..."

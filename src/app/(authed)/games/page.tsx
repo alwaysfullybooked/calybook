@@ -11,13 +11,17 @@ export default async function GamesPage() {
 	}
 
 	const games = await openscor.games.search({ category: "tennis", userId: session.user.id });
+
+	const playerIds = [...new Set([...games.flatMap((game) => [...game.winnerTeam, ...game.playerTeam])])];
+	const players = await openscor.leaderboards.search({ playerIds });
+
 	const playerMap = new Map<string, string>();
 	games.forEach((game) => {
 		game.winnerTeam.forEach((player) => {
-			playerMap.set(player.id, player.name);
+			playerMap.set(player, players.find((p) => p.id === player)?.playerName ?? player);
 		});
 		game.playerTeam.forEach((player) => {
-			playerMap.set(player.id, player.name);
+			playerMap.set(player, players.find((p) => p.id === player)?.playerName ?? player);
 		});
 	});
 

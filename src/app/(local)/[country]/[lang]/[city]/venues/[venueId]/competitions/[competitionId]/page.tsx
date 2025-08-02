@@ -56,7 +56,7 @@ export default async function VenueRankingsPage({
 
 	const playerMap = new Map(venueMembers.map((vm) => [vm.playerId, vm.playerName]));
 
-	const pendingGames = games.filter((game) => game.status === "pending" && [...game.winnerTeam.map((player) => player.id), ...game.playerTeam.map((player) => player.id)].includes(session.user.id));
+	const pendingGames = games.filter((game) => game.status === "pending" && [...game.winnerTeam, ...game.playerTeam].includes(session.user.id));
 	const approvedGames = games.filter((game) => game.status === "approved");
 
 	const playedRankings = leaderboard.filter((pr) => pr?.matchCount && pr.matchCount > 0);
@@ -124,7 +124,7 @@ export default async function VenueRankingsPage({
 									<div key={game.id} className="rounded-lg border p-3 sm:p-4 transition-colors hover:bg-muted/50">
 										<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 											<div className="flex items-center gap-2 justify-center">
-												<span className="font-medium text-sm sm:text-base">{game.winnerTeam.map((player) => player.name).join(", ")}</span>
+												<span className="font-medium text-sm sm:text-base">{game.winnerTeam.join(", ")}</span>
 												{game.winnerApproved && !game.playerApproved && (
 													<Badge variant="outline" className="text-xs bg-primary">
 														Approved
@@ -137,13 +137,13 @@ export default async function VenueRankingsPage({
 												</Badge>
 												<span className="text-xs sm:text-sm text-muted-foreground mt-3">{game.playedDate}</span>
 												<span className="text-xs sm:text-sm text-orange-500">Pending approval</span>
-												{game.winnerTeam.map((player) => player.id).includes(session.user.id) && !game.winnerApproved && (
+												{game.winnerTeam.includes(session.user.id) && !game.winnerApproved && (
 													<div className="mt-2">
 														<ApproveGameButton gameId={game.id} approvedBy={session.user.id} />
 													</div>
 												)}
 
-												{game.playerTeam.map((player) => player.id).includes(session.user.id) && !game.playerApproved && (
+												{game.playerTeam.includes(session.user.id) && !game.playerApproved && (
 													<div className="mt-2">
 														<ApproveGameButton gameId={game.id} approvedBy={session.user.id} />
 													</div>
@@ -156,7 +156,7 @@ export default async function VenueRankingsPage({
 												)}
 											</div>
 											<div className="flex items-center gap-2 justify-center">
-												<span className="font-medium text-sm sm:text-base">{game.playerTeam.map((player) => player.name).join(", ")}</span>
+												<span className="font-medium text-sm sm:text-base">{game.playerTeam.join(", ")}</span>
 												{game.playerApproved && !game.winnerApproved && (
 													<Badge variant="outline" className="text-xs bg-primary">
 														Approved

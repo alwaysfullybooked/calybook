@@ -21,14 +21,14 @@ export default function GamesList({ games, playerMap }: { games: Game[]; playerM
 								<div className="text-center col-span-2">
 									<span className="font-bold text-sm sm:text-base capitalize flex flex-col items-center justify-center gap-2">
 										<div className="flex items-center gap-2">
-											<span>{game.winnerTeam.map((player) => playerMap.get(player.id)).join(", ")}</span>
+											<span>{game.winnerTeam.map((player) => playerMap.get(player)).join(", ")}</span>
 											<span className={game?.winnerRankingVariation && game.winnerRankingVariation >= 0 ? "text-green-500 text-xs" : "text-red-500 text-xs"}>
 												[{formatRankingVariation(game.winnerRankingVariation)}]
 											</span>
 										</div>
 										<span className="lowercase font-normal">vs.</span>
 										<div className="flex items-center gap-2">
-											<span>{game.playerTeam.map((player) => playerMap.get(player.id)).join(", ")}</span>
+											<span>{game.playerTeam.map((player) => playerMap.get(player)).join(", ")}</span>
 											<span className={game?.playerRankingVariation && game.playerRankingVariation >= 0 ? "text-green-500 text-xs" : "text-red-500 text-xs"}>
 												[{formatRankingVariation(game.playerRankingVariation)}]
 											</span>
