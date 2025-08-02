@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -23,4 +23,11 @@ export const convertUTRtoNTRP = (utr: string): string => {
 	if (utrNum >= 1.0) return "3.0";
 
 	return "2.5";
+};
+
+export const formatRankingVariation = (variation: number | null): string => {
+	if (variation === null) return "-";
+	if (variation > 0) return `+${variation.toFixed(3)}`;
+	if (variation < 0) return variation.toFixed(3);
+	return "-";
 };

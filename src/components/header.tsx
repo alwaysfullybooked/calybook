@@ -1,12 +1,11 @@
 import { Calendar, Gamepad2, LogOut, Menu, Settings, User, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { auth, signIn, signOut } from "@/server/auth";
-import Image from "next/image";
 
 export default async function Header({ country, link }: { country: string; link: string }) {
 	const session = await auth();
@@ -29,7 +28,7 @@ export default async function Header({ country, link }: { country: string; link:
 									<DropdownMenuTrigger asChild>
 										<Button variant="outline" size="sm">
 											<Menu className="h-5 w-5" />
-											{session.user.email}
+											Menu
 										</Button>
 									</DropdownMenuTrigger>
 									<DropdownMenuContent align="end">
