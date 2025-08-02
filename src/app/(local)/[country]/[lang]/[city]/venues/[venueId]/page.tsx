@@ -132,12 +132,14 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
 												<ExternalLink className="w-4 h-4" />
 											</Link>
 										</div>
-										<div className="flex items-center gap-2">
-											<Phone className="h-5 w-5 text-gray-500" />
-											<a href={`tel:${mergedVenue.phone}`} className="text-sm sm:text-base hover:underline">
-												{mergedVenue.phone}
-											</a>
-										</div>
+										{mergedVenue.phone && (
+											<div className="flex items-center gap-2">
+												<Phone className="h-5 w-5 text-gray-500" />
+												<a href={`tel:${mergedVenue.phone}`} className="text-sm sm:text-base hover:underline">
+													{mergedVenue.phone}
+												</a>
+											</div>
+										)}
 									</div>
 								</CardContent>
 							</div>
@@ -150,10 +152,9 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
 							<Trophy className="h-5 w-5 text-yellow-500" />
 							Competitions
 						</h2>
-						<div className="flex flex-wrap gap-2">
+						<div className="flex flex-col md:flex-row gap-2">
 							{filteredCompetitions.map((m) => (
-								<Link key={m.id} href={`/${country}/${lang}/${city}/venues/${venueId}/competitions/${m.id}`} className="flex items-center gap-2 bg-primary text-white p-2 rounded-md">
-									<Trophy className="h-4 w-4" />
+								<Link key={m.id} href={`/${country}/${lang}/${city}/venues/${venueId}/competitions/${m.id}`} className="flex items-center justify-center gap-2 bg-primary text-white p-2 rounded-md">
 									<span className="capitalize">{m.name}</span>
 								</Link>
 							))}
@@ -162,40 +163,42 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
 					</section>
 
 					{/* Booking Section */}
-					<section className="mb-8">
-						<Tabs defaultValue="booking" className="w-full">
-							<TabsList className="w-full justify-start overflow-x-auto">
-								<TabsTrigger value="booking" className="text-sm sm:text-base">
-									Booking
-								</TabsTrigger>
-								<TabsTrigger value="reviews" className="text-sm sm:text-base">
-									Reviews (Coming soon)
-								</TabsTrigger>
-							</TabsList>
+					{venue.bookable && (
+						<section className="mb-8">
+							<Tabs defaultValue="booking" className="w-full">
+								<TabsList className="w-full justify-start overflow-x-auto">
+									<TabsTrigger value="booking" className="text-sm sm:text-base">
+										Booking
+									</TabsTrigger>
+									<TabsTrigger value="reviews" className="text-sm sm:text-base">
+										Reviews (Coming soon)
+									</TabsTrigger>
+								</TabsList>
 
-							<TabsContent value="booking">
-								<div className="mt-4">
-									<BookingSchedule
-										country={country}
-										lang={lang}
-										city={city}
-										customerName={customerName}
-										customerEmailId={customerEmailId}
-										contactWhatsAppId={contactWhatsAppId}
-										contactLineId={contactLineId}
-										venueId={venueId}
-										venueName={venue.name}
-										services={services}
-										availableSchedule={availableScheduleFiltered}
-									/>
-								</div>
-							</TabsContent>
+								<TabsContent value="booking">
+									<div className="mt-4">
+										<BookingSchedule
+											country={country}
+											lang={lang}
+											city={city}
+											customerName={customerName}
+											customerEmailId={customerEmailId}
+											contactWhatsAppId={contactWhatsAppId}
+											contactLineId={contactLineId}
+											venueId={venueId}
+											venueName={venue.name}
+											services={services}
+											availableSchedule={availableScheduleFiltered}
+										/>
+									</div>
+								</TabsContent>
 
-							<TabsContent value="reviews">
-								<div className="mt-4" />
-							</TabsContent>
-						</Tabs>
-					</section>
+								<TabsContent value="reviews">
+									<div className="mt-4" />
+								</TabsContent>
+							</Tabs>
+						</section>
+					)}
 				</div>
 			</div>
 		</main>

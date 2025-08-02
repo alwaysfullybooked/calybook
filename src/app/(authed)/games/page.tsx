@@ -16,13 +16,9 @@ export default async function GamesPage() {
 	const players = await openscor.leaderboards.search({ playerIds });
 
 	const playerMap = new Map<string, string>();
-	games.forEach((game) => {
-		game.winnerTeam.forEach((player) => {
-			playerMap.set(player, players.find((p) => p.id === player)?.playerName ?? player);
-		});
-		game.playerTeam.forEach((player) => {
-			playerMap.set(player, players.find((p) => p.id === player)?.playerName ?? player);
-		});
+
+	players.forEach((player) => {
+		playerMap.set(player.playerId, player.playerName);
 	});
 
 	return (

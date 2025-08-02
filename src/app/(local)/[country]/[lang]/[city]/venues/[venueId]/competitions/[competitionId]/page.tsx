@@ -174,7 +174,7 @@ export default async function VenueRankingsPage({
 
 			<section className="container mx-auto px-2 py-4 sm:px-4 sm:py-8">
 				<Tabs defaultValue="rankings" className="w-full">
-					<TabsList className="w-full justify-start">
+					<TabsList className="w-full justify-start my-4">
 						<TabsTrigger value="rankings" className="flex items-center gap-1 sm:gap-2 text-sm sm:text-base">
 							<Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
 							Rankings
@@ -187,47 +187,13 @@ export default async function VenueRankingsPage({
 
 					<TabsContent value="rankings">
 						<div className="space-y-5">
-							{playedRankings.length > 0 && <RankingsList rankings={playedRankings} />}
-
-							{unplayedRankings.length > 0 && (
-								<Card>
-									<CardHeader className="px-3 py-4 sm:px-6 sm:py-6">
-										<CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-											<Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
-											Not Played Yet
-										</CardTitle>
-									</CardHeader>
-									<CardContent className="px-3 sm:px-6">
-										<div className="space-y-3 sm:space-y-4">
-											{unplayedRankings.map((pr, index) => (
-												<Card key={pr.id} className="hover:shadow-md transition-shadow">
-													<CardContent className="p-6">
-														<div className="flex items-center justify-between">
-															<div className="flex items-center gap-4">
-																<div className="w-8 h-8 flex items-center justify-center bg-muted rounded-full">
-																	<span className="font-bold">{index + 1}</span>
-																</div>
-																<div>
-																	<p className="font-medium capitalize">{pr.playerName}</p>
-																	{/* <p className="text-sm text-muted-foreground">{ranking.venueName}</p> */}
-																</div>
-															</div>
-															<div className="text-right">
-																<p className="font-bold text-lg">{pr?.masteryScore?.toFixed(2)}</p>
-															</div>
-														</div>
-													</CardContent>
-												</Card>
-											))}
-										</div>
-									</CardContent>
-								</Card>
-							)}
+							{playedRankings.length > 0 && <RankingsList rankings={playedRankings} title="Rankings" />}
+							{unplayedRankings.length > 0 && <RankingsList rankings={unplayedRankings} title="Not Played Yet" />}
 						</div>
 					</TabsContent>
 
 					<TabsContent value="games">
-						<GamesList games={approvedGames} playerMap={playerMap} />
+						{approvedGames.length > 0 ? <GamesList games={approvedGames} playerMap={playerMap} /> : <div className="text-center text-sm text-muted-foreground">No games have been played yet</div>}
 					</TabsContent>
 				</Tabs>
 			</section>
