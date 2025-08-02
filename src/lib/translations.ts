@@ -8,13 +8,13 @@ import fs from "node:fs/promises";
  * @returns The translation string, or undefined if not found.
  */
 export async function getTranslations(lang: string): Promise<Map<string, string> | undefined> {
-  try {
-    const filePath = path.join(process.cwd(), "messages", `${lang}.json`);
-    const file = await fs.readFile(filePath, "utf-8");
-    const translations = JSON.parse(file);
-    return new Map(Object.entries(translations));
-  } catch (error) {
-    console.error(`Error loading translation for locale '${lang}':`, error);
-    return undefined;
-  }
+	try {
+		const filePath = path.join(process.cwd(), "messages", `${lang}.json`);
+		const file = await fs.readFile(filePath, "utf-8");
+		const translations = JSON.parse(file);
+		return new Map(Object.entries(translations));
+	} catch (error) {
+		console.error(`Error loading translation for locale '${lang}':`, error);
+		return undefined;
+	}
 }

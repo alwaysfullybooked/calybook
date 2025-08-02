@@ -2,11 +2,11 @@ import { streamChat } from "@/lib/ai";
 import type { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { messages, country, name, email } = await req.json();
+	const { messages, country, name, email } = await req.json();
 
-  const systemPrompt = {
-    role: "system",
-    content: `You are CalyBook ${country} Booking Assistant. Today is ${new Date().toLocaleDateString("en-CA")} format YYYY-MM-DD. 
+	const systemPrompt = {
+		role: "system",
+		content: `You are CalyBook ${country} Booking Assistant. Today is ${new Date().toLocaleDateString("en-CA")} format YYYY-MM-DD. 
     Your primary goal is to assist users with booking. You MUST use the tools provided to achieve this.
 
     **Booking Workflow:**
@@ -18,19 +18,19 @@ export async function POST(req: NextRequest) {
     Do not try to call 'bookings_create' before successfully getting a response from an availability tool. If you are missing information at any step, ask the user for it.
     
     Keep all other responses very short, use bullet points, and be professional.`,
-  };
+	};
 
-  try {
-    const result = await streamChat({
-      messages: [systemPrompt, ...messages],
-      country,
-      name,
-      email,
-    });
+	try {
+		const result = await streamChat({
+			messages: [systemPrompt, ...messages],
+			country,
+			name,
+			email,
+		});
 
-    return result;
-  } catch (error) {
-    console.error("Chat API error:", error);
-    return new Response("Internal Server Error", { status: 500 });
-  }
+		return result;
+	} catch (error) {
+		console.error("Chat API error:", error);
+		return new Response("Internal Server Error", { status: 500 });
+	}
 }
