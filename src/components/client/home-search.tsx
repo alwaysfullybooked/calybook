@@ -1,7 +1,6 @@
 "use client";
 
 import { ExternalLink, MapPin } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -109,7 +108,11 @@ export default function HomeSearch({ country, venues, lang }: { country: keyof t
 
 							return (
 								<Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
-									{venue.image && <Image src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" width={500} height={500} />}
+									{venue.image && (
+										<picture>
+											<img src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" />
+										</picture>
+									)}
 									<CardHeader className="flex-1">
 										<CardTitle className="text-lg">{venue.name}</CardTitle>
 

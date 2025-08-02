@@ -1,5 +1,4 @@
 import { ExternalLink, MapPin } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -18,7 +17,9 @@ export function HomeResults({ country, lang, city, venues }: { country: string; 
 								<Card key={venue.id} className="h-full flex flex-col hover:shadow-lg transition-shadow duration-200 p-0 pb-3">
 									{venue.image && (
 										<Link href={`/${country}/${lang}/${city}/venues/${venue.id}`}>
-											<Image src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" width={500} height={500} />
+											<picture>
+												<img src={venue.image} alt={venue.name} className="w-full h-48 object-cover rounded-t-xl" />
+											</picture>
 										</Link>
 									)}
 

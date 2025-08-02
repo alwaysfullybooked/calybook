@@ -106,7 +106,9 @@ export default async function VenuePage({ params }: { params: Promise<{ country:
 						<div className="flex flex-col md:flex-row">
 							{mergedVenue.image && (
 								<div className="w-full md:w-1/3 h-48">
-									<Image src={mergedVenue.image} alt={mergedVenue.name} className="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none" width={500} height={500} />
+									<picture>
+										<img src={mergedVenue.image} alt={mergedVenue.name} className="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none" />
+									</picture>
 								</div>
 							)}
 							<div className="flex-1">
