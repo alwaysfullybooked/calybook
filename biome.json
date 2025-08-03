@@ -1,16 +1,18 @@
 {
-	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-	"files": {
-		"includes": ["**/src/**", "!**/components/ui/**"]
-	},
-	"formatter": {
-		"enabled": true,
-		"lineWidth": 200
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true
-		}
-	}
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "includes": ["**/src/**", "!**/components/ui/**"]
+  },
+  "formatter": {
+    "enabled": true,
+    "lineWidth": 200,
+    "indentWidth": 2,
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  }
 }

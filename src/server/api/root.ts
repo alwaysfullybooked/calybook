@@ -10,10 +10,10 @@ import { venueMembersRouter } from "./routers/venueMembers";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-	user: userRouter,
-	preferences: preferencesRouter,
-	groups: groupsRouter,
-	venueMembers: venueMembersRouter,
+  user: userRouter,
+  preferences: preferencesRouter,
+  groups: groupsRouter,
+  venueMembers: venueMembersRouter,
 });
 
 // export type definition of API
