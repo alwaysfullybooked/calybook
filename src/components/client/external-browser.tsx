@@ -7,11 +7,6 @@ import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescript
 const LINE_USER_AGENT_REGEX = /line/i;
 const TELEGRAM_USER_AGENT_REGEX = /telegram/i;
 
-function openInExternalBrowser() {
-  const currentUrl = encodeURIComponent(window.location.href);
-  window.location.href = `line://nv/browser?url=${currentUrl}`;
-}
-
 export default function ExternalBrowserBanner() {
   const [showBanner, setShowBanner] = useState(false);
 
@@ -22,7 +17,6 @@ export default function ExternalBrowserBanner() {
       if (userAgent) {
         if (LINE_USER_AGENT_REGEX.test(userAgent)) {
           setShowBanner(true);
-          openInExternalBrowser();
         } else if (TELEGRAM_USER_AGENT_REGEX.test(userAgent)) {
           setShowBanner(true);
         }
