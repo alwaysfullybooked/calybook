@@ -7,6 +7,11 @@ import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescript
 const LINE_USER_AGENT_REGEX = /line/i;
 const TELEGRAM_USER_AGENT_REGEX = /telegram/i;
 
+function openInExternalBrowser() {
+  const currentUrl = encodeURIComponent(window.location.href);
+  window.location.href = `line://nv/browser?url=${currentUrl}`;
+}
+
 export default function ExternalBrowserBanner() {
   const [showBanner, setShowBanner] = useState(false);
 
@@ -17,6 +22,7 @@ export default function ExternalBrowserBanner() {
       if (userAgent) {
         if (LINE_USER_AGENT_REGEX.test(userAgent)) {
           setShowBanner(true);
+          openInExternalBrowser();
         } else if (TELEGRAM_USER_AGENT_REGEX.test(userAgent)) {
           setShowBanner(true);
         }
@@ -32,7 +38,7 @@ export default function ExternalBrowserBanner() {
     <div className="bg-amber-600 py-16 px-4 shadow-lg">
       <div className="flex flex-col items-center gap-3 mx-auto">
         <div className="flex flex-col items-center gap-2">
-          <p className="text-lg font-medium text-center text-white">To log in with Google, you need to open this page in your phone's main browser (like Chrome or Safari).</p>
+          <p className="text-lg font-medium text-center text-white">To login, you need to open this page in your phone's browser, Chrome or Safari.</p>
         </div>
         <AlertDialog>
           <AlertDialogTrigger asChild>
