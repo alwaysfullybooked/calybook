@@ -47,7 +47,7 @@ export default function ExternalBrowserBanner() {
               <AlertDialogDescription asChild>
                 <div className="flex flex-col gap-2 justify-center items-center text-left">
                   <ol className="list-decimal pl-4 space-y-1">
-                    <li>Tap the menu icon (usually three dots "...")</li>
+                    <li>Tap the three dots "..."</li>
                     <li>Select "Open in Browser"</li>
                   </ol>
                 </div>
