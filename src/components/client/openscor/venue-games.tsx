@@ -26,8 +26,8 @@ function validateTennisScore(score: string): boolean {
   }
 
   const sets = score.split(/\s+/);
-  let winnerSets = 0;
-  let loserSets = 0;
+  let firstPlayerGames = 0;
+  let secondPlayerGames = 0;
 
   for (const set of sets) {
     const parts = set.split("-").map(Number);
@@ -42,16 +42,13 @@ function validateTennisScore(score: string): boolean {
       return false;
     }
 
-    // Count sets won by each player
-    if (first > second) {
-      winnerSets++;
-    } else {
-      loserSets++;
-    }
+    // Count total games won by each player
+    firstPlayerGames += first;
+    secondPlayerGames += second;
   }
 
-  // Winner must win more sets than loser
-  return winnerSets > loserSets;
+  // Winner must win more total games than loser
+  return firstPlayerGames > secondPlayerGames;
 }
 
 // Schema for singles matches
@@ -217,6 +214,7 @@ export function AddVenueGame({
                           }}
                           placeholder="Select a player"
                           searchPlaceholder="Search players..."
+                          className="capitalize"
                         />
                       </FormControl>
                       <FormMessage />

@@ -32,7 +32,7 @@ export function Combobox({
 	searchPlaceholder = "Search...",
 	emptyText = "No option found.",
 	disabled = false,
-	className,
+	className = "",
 }: ComboboxProps) {
 	const [open, setOpen] = React.useState(false);
 
@@ -57,6 +57,7 @@ export function Combobox({
 									onValueChange(currentValue === value ? "" : currentValue);
 									setOpen(false);
 								}}
+								className={className}
 							>
 								<Check className={cn("mr-2 h-4 w-4", value === option.value ? "opacity-100" : "opacity-0")} />
 								{option.label}
